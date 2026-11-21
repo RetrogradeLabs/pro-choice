@@ -1,4 +1,4 @@
-import type { CostUnit, EvaluatedConfig, ReasoningEffort } from "./schema.ts";
+import type { CostUnit, ReasoningEffort } from "./schema.ts";
 
 export function formatCost(value: number | null, _unit?: CostUnit): string {
   if (value === null || !Number.isFinite(value)) return "Unpriced";
@@ -39,38 +39,6 @@ export function formatAxisCost(value: number, _unit?: CostUnit): string {
 
 export function formatScore(score: number): string {
   return score.toFixed(1);
-}
-
-function modelInterval95(config: Pick<EvaluatedConfig, "score" | "se">) {
-  const margin = 1.96 * config.se;
-  return { lower: config.score - margin, upper: config.score + margin };
-}
-
-export function formatScoreInterval(config: Pick<EvaluatedConfig, "score" | "se">): string {
-  const { lower, upper } = modelInterval95(config);
-  return `${formatScore(lower)} to ${formatScore(upper)}`;
-}
-
-export function modelScoreEvidence(config: EvaluatedConfig) {
-  return {
-    observedBenchmarks: config.coverageCount,
-    activeBenchmarks: config.activeBenchmarkCount,
-    sourceCount: new Set(config.benchmarks.map((b) => b.sourceId)).size,
-    interval95: modelInterval95(config),
-  };
-}
-
-export type ModelScoreEvidence = ReturnType<typeof modelScoreEvidence>;
-
-export function formatScoreEvidence(e: ModelScoreEvidence): string {
-  return `${e.observedBenchmarks}/${e.activeBenchmarks} benchmarks · ${e.sourceCount} ${e.sourceCount === 1 ? "feed" : "feeds"} · 95% interval ${formatScore(e.interval95.lower)} to ${formatScore(e.interval95.upper)}`;
-}
-
-export function formatSharedOrder(order: number | null, other: string): string {
-  if (order === null)
-    return `Comparison with ${other} relies on linked scores. They share no benchmark.`;
-  if (Math.abs(order) < 1e-9) return `Tied with ${other} on shared benchmarks.`;
-  return order < 0 ? `The order reverses against ${other} on shared benchmarks.` : "";
 }
 
 export function formatEffort(effort: ReasoningEffort): string {

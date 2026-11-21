@@ -4,7 +4,6 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { MouseEvent } from "react";
 import { DOMAINS } from "@/config/benchmarks";
-import { formatScoreEvidence } from "@/lib/format";
 import type { HomeDomainSummary, HomeSparkPoint } from "@/lib/home-summaries";
 import type { DomainId } from "@/lib/schema";
 import { domainToPathname, REPO_URL } from "@/lib/seo";
@@ -82,7 +81,7 @@ export function HomeView({ summaries, onSelectDomain }: HomeViewProps) {
           <strong className="font-medium text-(--ink)">
             Models that cost more while scoring lower are left off the chart
           </strong>
-          . Open a score to see its evidence and uncertainty.
+          , so you can always pick the model that performs best for your task and fits your budget.
         </p>
       </section>
 
@@ -137,61 +136,63 @@ export function HomeView({ summaries, onSelectDomain }: HomeViewProps) {
 
                 {sum ? (
                   <div className="mt-4 space-y-2 border-t border-(--border) pt-3 font-mono text-[11.5px] tabular">
-                    {[
-                      {
-                        label:
-                          sum.domainId === "harnesses"
-                            ? "Highest pass rate"
-                            : sum.topRecommended
-                              ? "Top score"
-                              : "Highest estimate",
-                        pick: sum.topPick,
-                        descriptiveOnly: sum.topRecommended === false,
-                      },
-                      {
-                        label: sum.secondaryTag,
-                        pick: sum.secondaryPick,
-                        descriptiveOnly: false,
-                      },
-                    ].map(
-                      ({ label, pick, descriptiveOnly }) =>
-                        pick && (
-                          <div key={label}>
-                            <div className="flex items-center justify-between gap-2">
-                              <span className="flex min-w-0 items-center gap-1.5">
-                                <span className="shrink-0 text-[10.5px] text-(--ink-faint)">
-                                  {label}
-                                </span>
-                                {pick.provider && (
-                                  <ProviderMarkerIcon provider={pick.provider} size={8} />
-                                )}
-                                <span className="truncate font-sans text-[12.5px] font-medium text-(--ink)">
-                                  {pick.name}
-                                </span>
-                                {pick.effort && (
-                                  <span className="shrink-0 text-[10.5px] text-(--ink-muted)">
-                                    {pick.effort}
-                                  </span>
-                                )}
-                              </span>
-                              <span className="shrink-0 text-(--ink-secondary)">
-                                {pick.metricText} · {pick.costText}
-                              </span>
-                            </div>
-                            {pick.controlInterval && (
-                              <p className="mt-0.5 text-[10.5px] text-(--ink-muted)">
-                                {pick.controlInterval}
-                              </p>
-                            )}
-                            {pick.evidence && (
-                              <p className="mt-0.5 text-[10.5px] leading-relaxed text-(--ink-muted)">
-                                {formatScoreEvidence(pick.evidence)}
-                                {descriptiveOnly ? " · Estimate only" : ""}
-                              </p>
-                            )}
-                          </div>
-                        ),
-                    )}
+                    {sum.topPick ? (
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="flex min-w-0 items-center gap-1.5">
+                          <span className="w-18 shrink-0 text-[10.5px] text-(--ink-faint)">
+                            Top score
+                          </span>
+                          {sum.topPick.provider ? (
+                            <ProviderMarkerIcon provider={sum.topPick.provider} size={8} />
+                          ) : (
+                            <span
+                              aria-hidden="true"
+                              className="h-2 w-2 shrink-0 rounded-full bg-(--interactive)"
+                            />
+                          )}
+                          <span className="truncate font-sans text-[12.5px] font-medium text-(--ink)">
+                            {sum.topPick.name}
+                          </span>
+                          {sum.topPick.effort ? (
+                            <span className="hidden shrink-0 text-[10.5px] text-(--ink-faint) xl:inline">
+                              {sum.topPick.effort}
+                            </span>
+                          ) : null}
+                        </span>
+                        <span className="shrink-0 text-(--ink-secondary)">
+                          {sum.topPick.metricText} · {sum.topPick.costText}
+                        </span>
+                      </div>
+                    ) : null}
+
+                    {sum.secondaryPick && sum.secondaryPick.id !== sum.topPick?.id ? (
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="flex min-w-0 items-center gap-1.5">
+                          <span className="w-18 shrink-0 text-[10.5px] text-(--ink-faint)">
+                            {sum.secondaryTag}
+                          </span>
+                          {sum.secondaryPick.provider ? (
+                            <ProviderMarkerIcon provider={sum.secondaryPick.provider} size={8} />
+                          ) : (
+                            <span
+                              aria-hidden="true"
+                              className="h-2 w-2 shrink-0 rounded-full bg-(--ink-muted)"
+                            />
+                          )}
+                          <span className="truncate font-sans text-[12.5px] text-(--ink-secondary)">
+                            {sum.secondaryPick.name}
+                          </span>
+                          {sum.secondaryPick.effort ? (
+                            <span className="hidden shrink-0 text-[10.5px] text-(--ink-faint) xl:inline">
+                              {sum.secondaryPick.effort}
+                            </span>
+                          ) : null}
+                        </span>
+                        <span className="shrink-0 text-(--ink-muted)">
+                          {sum.secondaryPick.metricText} · {sum.secondaryPick.costText}
+                        </span>
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
               </article>
@@ -203,13 +204,14 @@ export function HomeView({ summaries, onSelectDomain }: HomeViewProps) {
       <section aria-label="How ProChoice works" className="px-5 py-8 sm:px-9 lg:px-11 lg:py-9">
         <div className="grid grid-cols-1 gap-6 text-[13px] leading-[1.65] text-(--ink-muted) sm:grid-cols-2 lg:gap-10">
           <p className="text-pretty">
-            Each index combines benchmarks for one kind of work. Open a model row to see which tasks
-            it was tested on, how much each benchmark counts, and how its cost was calculated. The
-            harness leaderboard compares coding agents on shared test models.
+            Each composite index combines 45 active public benchmarks across nine model providers on
+            one shared score scale, paired with real dollar task cost from verified first-party API
+            pricing. Coding agent harnesses are tested separately across eight fixed open models so
+            harness quality and model quality stay distinct.
           </p>
           <p className="text-pretty">
-            Rankings update daily from public benchmark and pricing feeds. Read how scores and costs
-            are computed on{" "}
+            Rankings update daily from 18 live public benchmark and pricing sources. Read how scores
+            and costs are computed on{" "}
             <Link href="/about" className="text-(--ink) underline underline-offset-4">
               About
             </Link>

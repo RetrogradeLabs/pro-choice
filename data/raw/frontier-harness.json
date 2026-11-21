@@ -3,8 +3,8 @@
     "sourceId": "frontier-harness",
     "label": "FrontierHarness Eval v1.1 (TB 2.1 + TB 4.0)",
     "status": "ok",
-    "fetchedAt": "2026-11-21T09:31:21.239Z",
-    "lastHealthyAt": "2026-11-21T09:31:21.239Z",
+    "fetchedAt": "2026-11-21T06:39:49.514Z",
+    "lastHealthyAt": "2026-11-21T06:39:49.514Z",
     "staleDays": 0,
     "rowCount": 130,
     "license": "Public Research Leaderboard / Attribution Required",
@@ -18,7 +18,7 @@
         "rejectedCount": 53,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-21T09:31:21.239Z",
+        "lastHealthyAt": "2026-11-21T06:39:49.514Z",
         "message": null
       }
     ],
@@ -67,9 +67,6 @@
                   "passAll3Rate": 65.56,
                   "costPerTrialUsd": 0.38277,
                   "nTasks": 45,
-                  "nScored": 900,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1435,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -82,9 +79,6 @@
                   "passAll3Rate": 7.94,
                   "costPerTrialUsd": 1.37908,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3944,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -119,9 +113,6 @@
                   "passAll3Rate": 63,
                   "costPerTrialUsd": 0.369464,
                   "nTasks": 45,
-                  "nScored": 900,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1484.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -134,9 +125,6 @@
                   "passAll3Rate": 6.18,
                   "costPerTrialUsd": 1.110022,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": 6496825,
-                  "agentSecondsPerTrial": 1930.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -171,9 +159,6 @@
                   "passAll3Rate": 63.22,
                   "costPerTrialUsd": 0.441655,
                   "nTasks": 45,
-                  "nScored": 900,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1467,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -186,9 +171,6 @@
                   "passAll3Rate": 7.65,
                   "costPerTrialUsd": 1.199895,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3497,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -223,9 +205,6 @@
                   "passAll3Rate": 63.11,
                   "costPerTrialUsd": 0.439904,
                   "nTasks": 45,
-                  "nScored": 900,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1593.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -238,9 +217,6 @@
                   "passAll3Rate": 8.82,
                   "costPerTrialUsd": 1.438322,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3703.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -275,9 +251,6 @@
                   "passAll3Rate": 60.67,
                   "costPerTrialUsd": 0.440121,
                   "nTasks": 45,
-                  "nScored": 900,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1603.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -290,9 +263,6 @@
                   "passAll3Rate": 8.24,
                   "costPerTrialUsd": 1.338956,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3417,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -327,9 +297,6 @@
                   "passAll3Rate": null,
                   "costPerTrialUsd": 0.423302,
                   "nTasks": 45,
-                  "nScored": 898,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1444.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -342,9 +309,6 @@
                   "passAll3Rate": 4.41,
                   "costPerTrialUsd": 1.519995,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3640.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -379,9 +343,6 @@
                   "passAll3Rate": 62.33,
                   "costPerTrialUsd": 0.532307,
                   "nTasks": 45,
-                  "nScored": 896,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1600.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -394,9 +355,6 @@
                   "passAll3Rate": 5.59,
                   "costPerTrialUsd": 1.324097,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3398.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -431,9 +389,6 @@
                   "passAll3Rate": 59.44,
                   "costPerTrialUsd": 0.48181,
                   "nTasks": 45,
-                  "nScored": 899,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1698.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -446,9 +401,6 @@
                   "passAll3Rate": 6.47,
                   "costPerTrialUsd": 2.048519,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4536,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -483,9 +435,6 @@
                   "passAll3Rate": null,
                   "costPerTrialUsd": 0.387358,
                   "nTasks": 45,
-                  "nScored": 898,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1388.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -498,9 +447,6 @@
                   "passAll3Rate": 4.71,
                   "costPerTrialUsd": 1.4874,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4044.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -535,9 +481,6 @@
                   "passAll3Rate": 59.89,
                   "costPerTrialUsd": 0.334098,
                   "nTasks": 45,
-                  "nScored": 899,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1407.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -550,9 +493,6 @@
                   "passAll3Rate": 4.12,
                   "costPerTrialUsd": 1.18353,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3100.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -587,9 +527,6 @@
                   "passAll3Rate": 58.22,
                   "costPerTrialUsd": 0.427337,
                   "nTasks": 45,
-                  "nScored": 900,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1570.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -602,9 +539,6 @@
                   "passAll3Rate": 5.59,
                   "costPerTrialUsd": 1.262525,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3107.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -639,9 +573,6 @@
                   "passAll3Rate": 58.78,
                   "costPerTrialUsd": 0.393139,
                   "nTasks": 45,
-                  "nScored": 899,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1575.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -654,9 +585,6 @@
                   "passAll3Rate": 5,
                   "costPerTrialUsd": 1.278865,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3680.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -691,9 +619,6 @@
                   "passAll3Rate": 56.89,
                   "costPerTrialUsd": 0.411222,
                   "nTasks": 45,
-                  "nScored": 900,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1629.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -706,9 +631,6 @@
                   "passAll3Rate": 9.12,
                   "costPerTrialUsd": 1.318031,
                   "nTasks": 17,
-                  "nScored": 339,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3614.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -743,9 +665,6 @@
                   "passAll3Rate": 58,
                   "costPerTrialUsd": 0.356378,
                   "nTasks": 45,
-                  "nScored": 900,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1511,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -758,9 +677,6 @@
                   "passAll3Rate": 4.71,
                   "costPerTrialUsd": 1.098744,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3430.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -795,9 +711,6 @@
                   "passAll3Rate": 58.22,
                   "costPerTrialUsd": 0.47788,
                   "nTasks": 45,
-                  "nScored": 900,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1529.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -810,9 +723,6 @@
                   "passAll3Rate": 7.94,
                   "costPerTrialUsd": 1.712233,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3998,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -847,9 +757,6 @@
                   "passAll3Rate": 57.67,
                   "costPerTrialUsd": 0.434498,
                   "nTasks": 45,
-                  "nScored": 899,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1515.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -862,9 +769,6 @@
                   "passAll3Rate": 2.94,
                   "costPerTrialUsd": 1.187903,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3513.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -899,9 +803,6 @@
                   "passAll3Rate": 57,
                   "costPerTrialUsd": 0.424464,
                   "nTasks": 45,
-                  "nScored": 900,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1698.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -914,9 +815,6 @@
                   "passAll3Rate": 8.53,
                   "costPerTrialUsd": 1.473615,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3741,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -951,9 +849,6 @@
                   "passAll3Rate": 54.89,
                   "costPerTrialUsd": 0.419602,
                   "nTasks": 45,
-                  "nScored": 898,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1678.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -966,9 +861,6 @@
                   "passAll3Rate": 5.88,
                   "costPerTrialUsd": 1.556116,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3621.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1003,9 +895,6 @@
                   "passAll3Rate": 54.11,
                   "costPerTrialUsd": 0.595436,
                   "nTasks": 45,
-                  "nScored": 898,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1632.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1018,9 +907,6 @@
                   "passAll3Rate": 4.71,
                   "costPerTrialUsd": 1.681969,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3720.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1055,9 +941,6 @@
                   "passAll3Rate": 54.33,
                   "costPerTrialUsd": 0.434948,
                   "nTasks": 45,
-                  "nScored": 899,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1653.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1070,9 +953,6 @@
                   "passAll3Rate": 9.71,
                   "costPerTrialUsd": 1.365048,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3483.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1107,9 +987,6 @@
                   "passAll3Rate": 47,
                   "costPerTrialUsd": 0.463253,
                   "nTasks": 45,
-                  "nScored": 900,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1591.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1122,9 +999,6 @@
                   "passAll3Rate": 4.41,
                   "costPerTrialUsd": 1.30275,
                   "nTasks": 17,
-                  "nScored": 340,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3240.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1166,9 +1040,6 @@
                   "passAll3Rate": 75,
                   "costPerTrialUsd": 0.087818,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1277,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1181,9 +1052,6 @@
                   "passAll3Rate": 4.41,
                   "costPerTrialUsd": 0.32526,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3975.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1218,9 +1086,6 @@
                   "passAll3Rate": 71.11,
                   "costPerTrialUsd": 0.106042,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1685.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1233,9 +1098,6 @@
                   "passAll3Rate": 13.24,
                   "costPerTrialUsd": 0.426984,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4483.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1270,9 +1132,6 @@
                   "passAll3Rate": 63.33,
                   "costPerTrialUsd": 0.071325,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1611.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1285,9 +1144,6 @@
                   "passAll3Rate": 16.18,
                   "costPerTrialUsd": 0.393362,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 13523925,
-                  "agentSecondsPerTrial": 2433.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1322,9 +1178,6 @@
                   "passAll3Rate": 73.33,
                   "costPerTrialUsd": 0.111051,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1437.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1337,9 +1190,6 @@
                   "passAll3Rate": 11.76,
                   "costPerTrialUsd": 0.345878,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3816.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1374,9 +1224,6 @@
                   "passAll3Rate": 66.11,
                   "costPerTrialUsd": 0.093202,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1601.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1389,9 +1236,6 @@
                   "passAll3Rate": 14.71,
                   "costPerTrialUsd": 0.437899,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4534.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1426,9 +1270,6 @@
                   "passAll3Rate": 63.89,
                   "costPerTrialUsd": 0.08245,
                   "nTasks": 45,
-                  "nScored": 179,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1291.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1441,9 +1282,6 @@
                   "passAll3Rate": 7.35,
                   "costPerTrialUsd": 0.30071,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3117.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1478,9 +1316,6 @@
                   "passAll3Rate": 71.11,
                   "costPerTrialUsd": 0.108755,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1886.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1493,9 +1328,6 @@
                   "passAll3Rate": 11.76,
                   "costPerTrialUsd": 0.35967,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4405.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1530,9 +1362,6 @@
                   "passAll3Rate": 72.78,
                   "costPerTrialUsd": 0.106509,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1735.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1545,9 +1374,6 @@
                   "passAll3Rate": 4.41,
                   "costPerTrialUsd": 0.286217,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3370.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1582,9 +1408,6 @@
                   "passAll3Rate": 62.78,
                   "costPerTrialUsd": 0.097291,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1660.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1597,9 +1420,6 @@
                   "passAll3Rate": 14.71,
                   "costPerTrialUsd": 0.336783,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3815.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1634,9 +1454,6 @@
                   "passAll3Rate": 66.11,
                   "costPerTrialUsd": 0.105859,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1526.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1649,9 +1466,6 @@
                   "passAll3Rate": 4.41,
                   "costPerTrialUsd": 1.70582,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 6570.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1686,9 +1500,6 @@
                   "passAll3Rate": 63.89,
                   "costPerTrialUsd": 0.103722,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1624.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1701,9 +1512,6 @@
                   "passAll3Rate": 1.47,
                   "costPerTrialUsd": 0.292569,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3946.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1738,9 +1546,6 @@
                   "passAll3Rate": 59.44,
                   "costPerTrialUsd": 0.150504,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1535.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1753,9 +1558,6 @@
                   "passAll3Rate": 8.82,
                   "costPerTrialUsd": 0.318028,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3700.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1790,9 +1592,6 @@
                   "passAll3Rate": 63.89,
                   "costPerTrialUsd": 0.104682,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1609.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1805,9 +1604,6 @@
                   "passAll3Rate": 13.24,
                   "costPerTrialUsd": 0.383254,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4028.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1842,9 +1638,6 @@
                   "passAll3Rate": 60.56,
                   "costPerTrialUsd": 0.063254,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1606.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1857,9 +1650,6 @@
                   "passAll3Rate": 13.24,
                   "costPerTrialUsd": 0.227816,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3433,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1894,9 +1684,6 @@
                   "passAll3Rate": 61.67,
                   "costPerTrialUsd": 0.079962,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 2038692,
-                  "agentSecondsPerTrial": 1434.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1909,9 +1696,6 @@
                   "passAll3Rate": 7.35,
                   "costPerTrialUsd": 0.257948,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3898,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1946,9 +1730,6 @@
                   "passAll3Rate": 60.56,
                   "costPerTrialUsd": 0.086749,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 1728570,
-                  "agentSecondsPerTrial": 1479.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -1961,9 +1742,6 @@
                   "passAll3Rate": 11.76,
                   "costPerTrialUsd": 0.19644,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 5064388,
-                  "agentSecondsPerTrial": 2626,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -1998,9 +1776,6 @@
                   "passAll3Rate": 61.11,
                   "costPerTrialUsd": 0.101788,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1582,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2013,9 +1788,6 @@
                   "passAll3Rate": 2.94,
                   "costPerTrialUsd": 0.290999,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3253.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2050,9 +1822,6 @@
                   "passAll3Rate": 61.11,
                   "costPerTrialUsd": 0.120859,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1633.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2065,9 +1834,6 @@
                   "passAll3Rate": 2.94,
                   "costPerTrialUsd": 0.306036,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3710.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2102,9 +1868,6 @@
                   "passAll3Rate": 60.56,
                   "costPerTrialUsd": 0.166088,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1615.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2117,9 +1880,6 @@
                   "passAll3Rate": 11.76,
                   "costPerTrialUsd": 0.608705,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4068.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2154,9 +1914,6 @@
                   "passAll3Rate": 57.22,
                   "costPerTrialUsd": 0.087807,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1569.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2169,9 +1926,6 @@
                   "passAll3Rate": 5.88,
                   "costPerTrialUsd": 0.292515,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3552.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2206,9 +1960,6 @@
                   "passAll3Rate": 54.44,
                   "costPerTrialUsd": 0.116613,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 2498152,
-                  "agentSecondsPerTrial": 1828.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2221,9 +1972,6 @@
                   "passAll3Rate": 5.88,
                   "costPerTrialUsd": 0.353032,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4286.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2265,9 +2013,6 @@
                   "passAll3Rate": 54.44,
                   "costPerTrialUsd": 0.580227,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1721.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2280,9 +2025,6 @@
                   "passAll3Rate": 20.59,
                   "costPerTrialUsd": 1.646856,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4592,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2317,9 +2059,6 @@
                   "passAll3Rate": 60.56,
                   "costPerTrialUsd": 0.606472,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1639.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2332,9 +2071,6 @@
                   "passAll3Rate": 10.29,
                   "costPerTrialUsd": 1.672012,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3540.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2369,9 +2105,6 @@
                   "passAll3Rate": 56.67,
                   "costPerTrialUsd": 0.379173,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1247.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2384,9 +2117,6 @@
                   "passAll3Rate": 5.88,
                   "costPerTrialUsd": 0.684738,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 2917904,
-                  "agentSecondsPerTrial": 1239.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2421,9 +2151,6 @@
                   "passAll3Rate": 52.78,
                   "costPerTrialUsd": 0.649139,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1917.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2436,9 +2163,6 @@
                   "passAll3Rate": 14.71,
                   "costPerTrialUsd": 1.768665,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4303.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2473,9 +2197,6 @@
                   "passAll3Rate": 50,
                   "costPerTrialUsd": 0.552741,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1780.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2488,9 +2209,6 @@
                   "passAll3Rate": 8.82,
                   "costPerTrialUsd": 1.578957,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3849.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2525,9 +2243,6 @@
                   "passAll3Rate": 59.44,
                   "costPerTrialUsd": 0.517992,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 1548334,
-                  "agentSecondsPerTrial": 1737.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2540,9 +2255,6 @@
                   "passAll3Rate": 8.82,
                   "costPerTrialUsd": 1.821521,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 7419479,
-                  "agentSecondsPerTrial": 3384.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2577,9 +2289,6 @@
                   "passAll3Rate": 58.89,
                   "costPerTrialUsd": 0.62939,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1784.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2592,9 +2301,6 @@
                   "passAll3Rate": 10.29,
                   "costPerTrialUsd": 1.668962,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3741.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2629,9 +2335,6 @@
                   "passAll3Rate": 52.78,
                   "costPerTrialUsd": 0.641411,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1701.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2644,9 +2347,6 @@
                   "passAll3Rate": 19.12,
                   "costPerTrialUsd": 2.024331,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 6711489,
-                  "agentSecondsPerTrial": 4198.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2681,9 +2381,6 @@
                   "passAll3Rate": 45,
                   "costPerTrialUsd": 0.597754,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1943.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2696,9 +2393,6 @@
                   "passAll3Rate": 13.24,
                   "costPerTrialUsd": 2.206541,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4566.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2733,9 +2427,6 @@
                   "passAll3Rate": 52.78,
                   "costPerTrialUsd": 0.668156,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1633.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2748,9 +2439,6 @@
                   "passAll3Rate": 11.76,
                   "costPerTrialUsd": 1.748636,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4197.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2785,9 +2473,6 @@
                   "passAll3Rate": 47.22,
                   "costPerTrialUsd": 0.630518,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1813,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2800,9 +2485,6 @@
                   "passAll3Rate": 10.29,
                   "costPerTrialUsd": 1.777882,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3901.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2837,9 +2519,6 @@
                   "passAll3Rate": 48.89,
                   "costPerTrialUsd": 0.608314,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1903.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2852,9 +2531,6 @@
                   "passAll3Rate": 11.76,
                   "costPerTrialUsd": 1.90149,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4320.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2889,9 +2565,6 @@
                   "passAll3Rate": 51.11,
                   "costPerTrialUsd": 0.555646,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1769.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2904,9 +2577,6 @@
                   "passAll3Rate": 2.94,
                   "costPerTrialUsd": 1.720794,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 6271007,
-                  "agentSecondsPerTrial": 4320.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2941,9 +2611,6 @@
                   "passAll3Rate": 44.44,
                   "costPerTrialUsd": 0.709366,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1994.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -2956,9 +2623,6 @@
                   "passAll3Rate": 16.18,
                   "costPerTrialUsd": 2.064002,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3834.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -2993,9 +2657,6 @@
                   "passAll3Rate": 51.11,
                   "costPerTrialUsd": 0.798432,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 2745561,
-                  "agentSecondsPerTrial": 1971,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3008,9 +2669,6 @@
                   "passAll3Rate": 7.35,
                   "costPerTrialUsd": 1.890325,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 7279475,
-                  "agentSecondsPerTrial": 4058.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3045,9 +2703,6 @@
                   "passAll3Rate": 42.78,
                   "costPerTrialUsd": 0.878531,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1997.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3060,9 +2715,6 @@
                   "passAll3Rate": 14.71,
                   "costPerTrialUsd": 2.480179,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4547,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3097,9 +2749,6 @@
                   "passAll3Rate": 53.89,
                   "costPerTrialUsd": 0.506991,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 1131523,
-                  "agentSecondsPerTrial": 1469.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3112,9 +2761,6 @@
                   "passAll3Rate": 5.88,
                   "costPerTrialUsd": 1.664604,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4028.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3149,9 +2795,6 @@
                   "passAll3Rate": 45.56,
                   "costPerTrialUsd": 0.648943,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1893,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3164,9 +2807,6 @@
                   "passAll3Rate": 16.18,
                   "costPerTrialUsd": 2.41326,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4348.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3201,9 +2841,6 @@
                   "passAll3Rate": 43.33,
                   "costPerTrialUsd": 0.521756,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1691.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3216,9 +2853,6 @@
                   "passAll3Rate": 13.24,
                   "costPerTrialUsd": 1.462254,
                   "nTasks": 17,
-                  "nScored": 66,
-                  "tokensPerTrial": 4227980,
-                  "agentSecondsPerTrial": 2061.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3253,9 +2887,6 @@
                   "passAll3Rate": 43.33,
                   "costPerTrialUsd": 0.652397,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1695.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3268,9 +2899,6 @@
                   "passAll3Rate": 7.35,
                   "costPerTrialUsd": 1.51409,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4026.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3305,9 +2933,6 @@
                   "passAll3Rate": 41.11,
                   "costPerTrialUsd": 0.884801,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2060.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3320,9 +2945,6 @@
                   "passAll3Rate": 4.41,
                   "costPerTrialUsd": 2.613128,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4013.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3357,9 +2979,6 @@
                   "passAll3Rate": 36.67,
                   "costPerTrialUsd": 0.603305,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2059.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3372,9 +2991,6 @@
                   "passAll3Rate": 11.76,
                   "costPerTrialUsd": 2.102249,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4464.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3416,9 +3032,6 @@
                   "passAll3Rate": 54.44,
                   "costPerTrialUsd": 0.129786,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1777,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3431,9 +3044,6 @@
                   "passAll3Rate": 16.18,
                   "costPerTrialUsd": 0.384135,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3444.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3468,9 +3078,6 @@
                   "passAll3Rate": 59.44,
                   "costPerTrialUsd": 0.109353,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1658,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3483,9 +3090,6 @@
                   "passAll3Rate": 13.24,
                   "costPerTrialUsd": 0.290079,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3447.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3520,9 +3124,6 @@
                   "passAll3Rate": 54.44,
                   "costPerTrialUsd": 0.139277,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1926.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3535,9 +3136,6 @@
                   "passAll3Rate": 14.71,
                   "costPerTrialUsd": 0.456091,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3798,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3572,9 +3170,6 @@
                   "passAll3Rate": 58.89,
                   "costPerTrialUsd": 0.115247,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1498.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3587,9 +3182,6 @@
                   "passAll3Rate": 5.88,
                   "costPerTrialUsd": 0.183835,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 3612829,
-                  "agentSecondsPerTrial": 1756.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3624,9 +3216,6 @@
                   "passAll3Rate": 60.56,
                   "costPerTrialUsd": 0.120579,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1659,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3639,9 +3228,6 @@
                   "passAll3Rate": 7.35,
                   "costPerTrialUsd": 0.313324,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3159.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3676,9 +3262,6 @@
                   "passAll3Rate": 53.89,
                   "costPerTrialUsd": 0.127504,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1691.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3691,9 +3274,6 @@
                   "passAll3Rate": 10.29,
                   "costPerTrialUsd": 0.311644,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4079.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3728,9 +3308,6 @@
                   "passAll3Rate": 57.78,
                   "costPerTrialUsd": 0.100567,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1391,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3743,9 +3320,6 @@
                   "passAll3Rate": 4.41,
                   "costPerTrialUsd": 0.206738,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2761.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3780,9 +3354,6 @@
                   "passAll3Rate": 51.67,
                   "costPerTrialUsd": 0.102294,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1560.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3795,9 +3366,6 @@
                   "passAll3Rate": 7.35,
                   "costPerTrialUsd": 0.306483,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3505.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3832,9 +3400,6 @@
                   "passAll3Rate": 53.89,
                   "costPerTrialUsd": 0.144095,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1990.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3847,9 +3412,6 @@
                   "passAll3Rate": 7.35,
                   "costPerTrialUsd": 0.379488,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 6570694,
-                  "agentSecondsPerTrial": 4134.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3884,9 +3446,6 @@
                   "passAll3Rate": 53.33,
                   "costPerTrialUsd": 0.106618,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1684,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3899,9 +3458,6 @@
                   "passAll3Rate": 13.24,
                   "costPerTrialUsd": 0.256083,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3441.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3936,9 +3492,6 @@
                   "passAll3Rate": 52.78,
                   "costPerTrialUsd": 0.120826,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1859.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -3951,9 +3504,6 @@
                   "passAll3Rate": 8.82,
                   "costPerTrialUsd": 0.270964,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3638,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -3988,9 +3538,6 @@
                   "passAll3Rate": 52.22,
                   "costPerTrialUsd": 0.113236,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1962.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4003,9 +3550,6 @@
                   "passAll3Rate": 5.88,
                   "costPerTrialUsd": 0.229957,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3077.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4040,9 +3584,6 @@
                   "passAll3Rate": 57.22,
                   "costPerTrialUsd": 0.181843,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1755.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4055,9 +3596,6 @@
                   "passAll3Rate": 13.24,
                   "costPerTrialUsd": 0.427926,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4229.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4092,9 +3630,6 @@
                   "passAll3Rate": 56.67,
                   "costPerTrialUsd": 0.129431,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1991.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4107,9 +3642,6 @@
                   "passAll3Rate": 8.82,
                   "costPerTrialUsd": 0.308774,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3587.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4144,9 +3676,6 @@
                   "passAll3Rate": 57.78,
                   "costPerTrialUsd": 0.090009,
                   "nTasks": 45,
-                  "nScored": 179,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1658.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4159,9 +3688,6 @@
                   "passAll3Rate": null,
                   "costPerTrialUsd": 0.257562,
                   "nTasks": 17,
-                  "nScored": 65,
-                  "tokensPerTrial": 4311081,
-                  "agentSecondsPerTrial": 2715.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4196,9 +3722,6 @@
                   "passAll3Rate": 50.56,
                   "costPerTrialUsd": 0.128466,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1850.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4211,9 +3734,6 @@
                   "passAll3Rate": 4.41,
                   "costPerTrialUsd": 0.310284,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3936.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4248,9 +3768,6 @@
                   "passAll3Rate": 48.33,
                   "costPerTrialUsd": 0.175864,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1820.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4263,9 +3780,6 @@
                   "passAll3Rate": 5.88,
                   "costPerTrialUsd": 0.43659,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 9615651,
-                  "agentSecondsPerTrial": 4064.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4300,9 +3814,6 @@
                   "passAll3Rate": 50,
                   "costPerTrialUsd": 0.17503,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1970.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4315,9 +3826,6 @@
                   "passAll3Rate": 17.65,
                   "costPerTrialUsd": 0.512513,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4275,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4352,9 +3860,6 @@
                   "passAll3Rate": 45,
                   "costPerTrialUsd": 0.129621,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1852.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4367,9 +3872,6 @@
                   "passAll3Rate": 13.24,
                   "costPerTrialUsd": 0.400503,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3567.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4404,9 +3906,6 @@
                   "passAll3Rate": 48.33,
                   "costPerTrialUsd": 0.165785,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2037.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4419,9 +3918,6 @@
                   "passAll3Rate": 19.12,
                   "costPerTrialUsd": 0.458476,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3865,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4456,9 +3952,6 @@
                   "passAll3Rate": 47.22,
                   "costPerTrialUsd": 0.157881,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2020.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4471,9 +3964,6 @@
                   "passAll3Rate": 13.24,
                   "costPerTrialUsd": 0.499568,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3839.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4508,9 +3998,6 @@
                   "passAll3Rate": 43.33,
                   "costPerTrialUsd": 0.157682,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2003.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4523,9 +4010,6 @@
                   "passAll3Rate": 11.76,
                   "costPerTrialUsd": 0.362701,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3490.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4567,9 +4051,6 @@
                   "passAll3Rate": 76.11,
                   "costPerTrialUsd": 0.866328,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 1082698,
-                  "agentSecondsPerTrial": 1501.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4582,9 +4063,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.496341,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 3637200,
-                  "agentSecondsPerTrial": 3275.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4619,9 +4097,6 @@
                   "passAll3Rate": 77.78,
                   "costPerTrialUsd": 0.625836,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1036.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4634,9 +4109,6 @@
                   "passAll3Rate": 1.47,
                   "costPerTrialUsd": 2.036559,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3074.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4671,9 +4143,6 @@
                   "passAll3Rate": 72.22,
                   "costPerTrialUsd": 0.62799,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1351.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4686,9 +4155,6 @@
                   "passAll3Rate": 1.47,
                   "costPerTrialUsd": 2.215278,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3973.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4723,9 +4189,6 @@
                   "passAll3Rate": 72.22,
                   "costPerTrialUsd": 0.612503,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 661768,
-                  "agentSecondsPerTrial": 1652.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4738,9 +4201,6 @@
                   "passAll3Rate": 1.47,
                   "costPerTrialUsd": 2.513479,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 3572756,
-                  "agentSecondsPerTrial": 2363.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4775,9 +4235,6 @@
                   "passAll3Rate": 73.89,
                   "costPerTrialUsd": 0.743526,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 931906,
-                  "agentSecondsPerTrial": 1214.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4790,9 +4247,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.899688,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3069.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4827,9 +4281,6 @@
                   "passAll3Rate": 72.78,
                   "costPerTrialUsd": 0.753958,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 846419,
-                  "agentSecondsPerTrial": 1391.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4842,9 +4293,6 @@
                   "passAll3Rate": 1.47,
                   "costPerTrialUsd": 2.098574,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 2836175,
-                  "agentSecondsPerTrial": 3190.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4879,9 +4327,6 @@
                   "passAll3Rate": 72.22,
                   "costPerTrialUsd": 0.701766,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 722598,
-                  "agentSecondsPerTrial": 1433.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4894,9 +4339,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.544938,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 3169163,
-                  "agentSecondsPerTrial": 4060.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4931,9 +4373,6 @@
                   "passAll3Rate": 71.11,
                   "costPerTrialUsd": 0.834604,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 822100,
-                  "agentSecondsPerTrial": 1480.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4946,9 +4385,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.796957,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3297.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -4983,9 +4419,6 @@
                   "passAll3Rate": 75,
                   "costPerTrialUsd": 0.613919,
                   "nTasks": 45,
-                  "nScored": 178,
-                  "tokensPerTrial": 667348,
-                  "agentSecondsPerTrial": 964.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -4998,9 +4431,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.982769,
                   "nTasks": 17,
-                  "nScored": 67,
-                  "tokensPerTrial": 2545449,
-                  "agentSecondsPerTrial": 1122.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5035,9 +4465,6 @@
                   "passAll3Rate": 72.22,
                   "costPerTrialUsd": 0.673145,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 813546,
-                  "agentSecondsPerTrial": 1305,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5050,9 +4477,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.113038,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 3029114,
-                  "agentSecondsPerTrial": 3912.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5087,9 +4511,6 @@
                   "passAll3Rate": 70,
                   "costPerTrialUsd": 0.57307,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 563084,
-                  "agentSecondsPerTrial": 1401.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5102,9 +4523,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.903816,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 2644117,
-                  "agentSecondsPerTrial": 3038,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5139,9 +4557,6 @@
                   "passAll3Rate": 70,
                   "costPerTrialUsd": 0.627496,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 641140,
-                  "agentSecondsPerTrial": 1162.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5154,9 +4569,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.214862,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 2446572,
-                  "agentSecondsPerTrial": 3444.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5191,9 +4603,6 @@
                   "passAll3Rate": 73.33,
                   "costPerTrialUsd": 0.714974,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1380.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5206,9 +4615,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.151185,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2663.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5243,9 +4649,6 @@
                   "passAll3Rate": 69.44,
                   "costPerTrialUsd": 0.688086,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1140.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5258,9 +4661,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.210663,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3974.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5295,9 +4695,6 @@
                   "passAll3Rate": 69.44,
                   "costPerTrialUsd": 0.585159,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1386.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5310,9 +4707,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.115665,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 3080941,
-                  "agentSecondsPerTrial": 3115.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5347,9 +4741,6 @@
                   "passAll3Rate": 64.44,
                   "costPerTrialUsd": 0.707836,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1386.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5362,9 +4753,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.928884,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 2913104,
-                  "agentSecondsPerTrial": 3661.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5399,9 +4787,6 @@
                   "passAll3Rate": 64.44,
                   "costPerTrialUsd": 0.48123,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1426.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5414,9 +4799,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.784935,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3774,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5451,9 +4833,6 @@
                   "passAll3Rate": 64.44,
                   "costPerTrialUsd": 0.678288,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 737918,
-                  "agentSecondsPerTrial": 1382.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5466,9 +4845,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.935996,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3984.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5503,9 +4879,6 @@
                   "passAll3Rate": 65.56,
                   "costPerTrialUsd": 0.955067,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1430.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5518,9 +4891,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 3.126107,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 5640611,
-                  "agentSecondsPerTrial": 3724.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5555,9 +4925,6 @@
                   "passAll3Rate": 62.78,
                   "costPerTrialUsd": 0.658698,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1452,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5570,9 +4937,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.56596,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3264,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5607,9 +4971,6 @@
                   "passAll3Rate": 59.44,
                   "costPerTrialUsd": 0.634892,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 681438,
-                  "agentSecondsPerTrial": 1401,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5622,9 +4983,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.184966,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3104.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5659,9 +5017,6 @@
                   "passAll3Rate": 33.89,
                   "costPerTrialUsd": 0.660109,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 561404,
-                  "agentSecondsPerTrial": 1130.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5674,9 +5029,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.808485,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2672.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5718,9 +5070,6 @@
                   "passAll3Rate": null,
                   "costPerTrialUsd": 0.481135,
                   "nTasks": 45,
-                  "nScored": 168,
-                  "tokensPerTrial": 1540811,
-                  "agentSecondsPerTrial": 1020,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5733,9 +5082,6 @@
                   "passAll3Rate": null,
                   "costPerTrialUsd": 1.34655,
                   "nTasks": 17,
-                  "nScored": 63,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1145.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5770,9 +5116,6 @@
                   "passAll3Rate": 67.22,
                   "costPerTrialUsd": 0.58152,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1281.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5785,9 +5128,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.322034,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 8515719,
-                  "agentSecondsPerTrial": 3007.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5822,9 +5162,6 @@
                   "passAll3Rate": 69.44,
                   "costPerTrialUsd": 0.480039,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1185.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5837,9 +5174,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.331903,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2420.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5874,9 +5208,6 @@
                   "passAll3Rate": 63.33,
                   "costPerTrialUsd": 0.556201,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1405.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5889,9 +5220,6 @@
                   "passAll3Rate": 1.47,
                   "costPerTrialUsd": 2.072766,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2972.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5926,9 +5254,6 @@
                   "passAll3Rate": 63.89,
                   "costPerTrialUsd": 0.669072,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1411.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5941,9 +5266,6 @@
                   "passAll3Rate": 1.47,
                   "costPerTrialUsd": 1.774694,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 8856709,
-                  "agentSecondsPerTrial": 1860.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -5978,9 +5300,6 @@
                   "passAll3Rate": 66.67,
                   "costPerTrialUsd": 0.508462,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1167.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -5993,9 +5312,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.417928,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3731,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6030,9 +5346,6 @@
                   "passAll3Rate": null,
                   "costPerTrialUsd": 0.636982,
                   "nTasks": 45,
-                  "nScored": 178,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1113.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6045,9 +5358,6 @@
                   "passAll3Rate": 1.47,
                   "costPerTrialUsd": 3.28856,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 4279.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6082,9 +5392,6 @@
                   "passAll3Rate": 58.33,
                   "costPerTrialUsd": 0.663391,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1191.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6097,9 +5404,6 @@
                   "passAll3Rate": 1.47,
                   "costPerTrialUsd": 1.314829,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2355.4,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6134,9 +5438,6 @@
                   "passAll3Rate": 59.44,
                   "costPerTrialUsd": 0.546316,
                   "nTasks": 45,
-                  "nScored": 179,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1232.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6149,9 +5450,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.924452,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3281,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6186,9 +5484,6 @@
                   "passAll3Rate": 62.22,
                   "costPerTrialUsd": 0.497058,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": 1939522,
-                  "agentSecondsPerTrial": 936.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6201,9 +5496,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.376404,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 5915600,
-                  "agentSecondsPerTrial": 1736.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6238,9 +5530,6 @@
                   "passAll3Rate": null,
                   "costPerTrialUsd": 0.589829,
                   "nTasks": 45,
-                  "nScored": 178,
-                  "tokensPerTrial": 1794441,
-                  "agentSecondsPerTrial": 1098.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6253,9 +5542,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.595632,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 5289421,
-                  "agentSecondsPerTrial": 2738.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6290,9 +5576,6 @@
                   "passAll3Rate": 57.22,
                   "costPerTrialUsd": 0.552822,
                   "nTasks": 45,
-                  "nScored": 179,
-                  "tokensPerTrial": 2068716,
-                  "agentSecondsPerTrial": 1336,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6305,9 +5588,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.061713,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 10294172,
-                  "agentSecondsPerTrial": 3099.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6342,9 +5622,6 @@
                   "passAll3Rate": 59.44,
                   "costPerTrialUsd": 0.719817,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1322.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6357,9 +5634,6 @@
                   "passAll3Rate": 5.88,
                   "costPerTrialUsd": 3.963297,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3982.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6394,9 +5668,6 @@
                   "passAll3Rate": 63.33,
                   "costPerTrialUsd": 0.732483,
                   "nTasks": 45,
-                  "nScored": 177,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1476.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6409,9 +5680,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.505181,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 6506957,
-                  "agentSecondsPerTrial": 2312.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6446,9 +5714,6 @@
                   "passAll3Rate": 57.22,
                   "costPerTrialUsd": 0.549354,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1149.7,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6461,9 +5726,6 @@
                   "passAll3Rate": 1.47,
                   "costPerTrialUsd": 1.510312,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2686.3,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6498,9 +5760,6 @@
                   "passAll3Rate": 57.22,
                   "costPerTrialUsd": 0.600874,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1187.1,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6513,9 +5772,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.41865,
                   "nTasks": 17,
-                  "nScored": 67,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2278.2,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6550,9 +5806,6 @@
                   "passAll3Rate": 57.22,
                   "costPerTrialUsd": 0.599879,
                   "nTasks": 45,
-                  "nScored": 178,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1285.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6565,9 +5818,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.425651,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 3440.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6602,9 +5852,6 @@
                   "passAll3Rate": 51.11,
                   "costPerTrialUsd": 0.848835,
                   "nTasks": 45,
-                  "nScored": 179,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1477,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6617,9 +5864,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 4.989695,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 5681.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6654,9 +5898,6 @@
                   "passAll3Rate": 56.67,
                   "costPerTrialUsd": 0.528452,
                   "nTasks": 45,
-                  "nScored": 180,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1312,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6669,9 +5910,6 @@
                   "passAll3Rate": 1.47,
                   "costPerTrialUsd": 1.159584,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 5127256,
-                  "agentSecondsPerTrial": 2127.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6706,9 +5944,6 @@
                   "passAll3Rate": 50.56,
                   "costPerTrialUsd": 0.398899,
                   "nTasks": 45,
-                  "nScored": 179,
-                  "tokensPerTrial": 1237355,
-                  "agentSecondsPerTrial": 1071,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6721,9 +5956,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.727625,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2418.9,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6758,9 +5990,6 @@
                   "passAll3Rate": 52.78,
                   "costPerTrialUsd": 0.84686,
                   "nTasks": 45,
-                  "nScored": 178,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1275.5,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6773,9 +6002,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 2.060932,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": 8711495,
-                  "agentSecondsPerTrial": 2558.6,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]
@@ -6810,9 +6036,6 @@
                   "passAll3Rate": 55.56,
                   "costPerTrialUsd": 0.560016,
                   "nTasks": 45,
-                  "nScored": 179,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 1222.8,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 },
                 {
@@ -6825,9 +6048,6 @@
                   "passAll3Rate": 0,
                   "costPerTrialUsd": 1.734539,
                   "nTasks": 17,
-                  "nScored": 68,
-                  "tokensPerTrial": null,
-                  "agentSecondsPerTrial": 2587,
                   "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/"
                 }
               ]

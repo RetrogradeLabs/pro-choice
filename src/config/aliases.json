@@ -1,13 +1,5 @@
 [
   {
-    "provider": "deepseek",
-    "modelSlug": "deepseek-r1-0528",
-    "displayName": "DeepSeek R1 (0528)",
-    "releaseDate": "2025-05-28",
-    "defaultEffort": "thinking",
-    "patterns": ["deepseek[\\s_-]+r1[\\s_-]+0528"]
-  },
-  {
     "provider": "anthropic",
     "modelSlug": "claude-fable-5.2",
     "displayName": "Claude Fable 5.2",

@@ -12,17 +12,12 @@ import {
   formatPricePer1m,
   formatRawMetric,
   formatScore,
-  formatScoreEvidence,
-  formatScoreInterval,
-  formatSharedOrder,
-  modelScoreEvidence,
 } from "@/lib/format";
-import { buildWeightMapFromAnchors } from "@/lib/math/aggregate";
-import { sharedScoreOrder } from "@/lib/math/pareto";
 import type {
   AnchorStats,
   CostUnit,
   EvaluatedConfig,
+  FrontierPoint,
   HarnessRegime,
   ProviderFrontier,
 } from "@/lib/schema";
@@ -44,7 +39,7 @@ interface FrontierCatalogueProps {
 
 interface CatalogueRow {
   provider: ProviderFrontier["provider"];
-  comparison: string;
+  point: FrontierPoint;
   config: EvaluatedConfig;
 }
 
@@ -70,20 +65,10 @@ export function FrontierCatalogue({
       ? anchorStats[`${benchmarkId}::standardized`]
       : anchorStats[benchmarkId];
   const rows: CatalogueRow[] = [];
-  const weights = buildWeightMapFromAnchors(anchorStats, activeRegime);
   for (const pf of frontiers) {
-    let previous: EvaluatedConfig | undefined;
     for (const pt of pf.frontier) {
       const cfg = configById.get(pt.configId);
-      if (!cfg) continue;
-      const comparison = previous
-        ? formatSharedOrder(
-            sharedScoreOrder(cfg, previous, weights),
-            `${previous.displayName} (${formatEffort(previous.effort)})`,
-          )
-        : "";
-      rows.push({ provider: pf.provider, comparison, config: cfg });
-      previous = cfg;
+      if (cfg) rows.push({ provider: pf.provider, point: pt, config: cfg });
     }
   }
 
@@ -122,7 +107,7 @@ export function FrontierCatalogue({
               </tr>
             </thead>
             <tbody>
-              {rows.map(({ provider, config, comparison }) => {
+              {rows.map(({ provider, config }) => {
                 const pMeta = PROVIDER_BY_ID[provider];
                 const expanded = expandedSet.has(config.id);
                 const hovered = hoveredConfigId === config.id;
@@ -198,10 +183,6 @@ export function FrontierCatalogue({
                             </>
                           )}
                         </button>
-                        <div className="mt-1 pl-5 text-[10.5px] leading-snug text-(--ink-muted)">
-                          {formatScoreEvidence(modelScoreEvidence(config))}
-                          {comparison && <span className="block">{comparison}</span>}
-                        </div>
                       </td>
 
                       <td className="px-3 py-2.5 whitespace-nowrap">
@@ -260,12 +241,12 @@ export function FrontierCatalogue({
                                 return (
                                   <>
                                     <p className="mb-3 text-[11.5px] leading-relaxed text-(--ink-muted)">
-                                      This configuration has results on {config.coverageCount} of{" "}
-                                      {config.activeBenchmarkCount} benchmarks. Shared models put
-                                      the results below on the same score scale. Its 95% model
-                                      interval runs from {formatScoreInterval(config)}.
+                                      Each benchmark uses its own units, and few models run every
+                                      benchmark. Shared models put all benchmarks on one common
+                                      score scale, and this model&apos;s score combines the
+                                      converted scores below.
                                       {rawWeightedAvg !== null && pullPct >= 2
-                                        ? ` Pulling the weighted average of ${rawWeightedAvg.toFixed(1)} by ${pullPct}% toward the domain average of ${domainAvg.toFixed(1)} gives a score of ${formatScore(config.score)}.`
+                                        ? ` Weighted average ${rawWeightedAvg.toFixed(1)} is pulled ${pullPct}% toward the domain average (${domainAvg.toFixed(1)}) to give ${formatScore(config.score)} across ${config.coverageCount} of ${config.activeBenchmarkCount} benchmarks.`
                                         : ""}
                                       {config.costImputed
                                         ? isPartialBasket

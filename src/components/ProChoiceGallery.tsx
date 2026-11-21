@@ -35,12 +35,10 @@ import type {
   SourceHealth,
 } from "@/lib/schema";
 import { domainToPathname, ORG_NAME, ORG_URL, REPO_URL, SITE_NAME, SITE_TITLE } from "@/lib/seo";
-import { ControlledBoardPicker } from "./ControlledBoardPicker";
 import { EpochMonographDrawer } from "./EpochMonographDrawer";
 import { FrontierCatalogue } from "./FrontierCatalogue";
 import { HarnessesControlledView } from "./HarnessesView";
 import { HomeView } from "./HomeView";
-import { ObservedBenchmarkTables } from "./ObservedBenchmarkTables";
 import { ParetoPlate } from "./ParetoPlate";
 import { ProviderPicker } from "./ProviderPicker";
 import { PrunedCatalogue } from "./PrunedCatalogue";
@@ -272,7 +270,6 @@ export function ProChoiceGallery({
   const hasSyncedConfigHashRef = useRef(false);
   const [hoveredConfigId, setHoveredConfigId] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [requestedObservations, setRequestedObservations] = useState(false);
   const [sliceVisit, setSliceVisit] = useState(0);
 
   const activeMeta = release.meta;
@@ -298,12 +295,11 @@ export function ProChoiceGallery({
       ? release.harnessLeaderboard === null
       : domain === null || activeDomainStaleRegime);
   const needsDrawerData = drawerOpen && (!release.hydratedFull || activeLifecycle === null);
-  const needsImmediateFetch =
-    needsActiveDomain || needsDrawerData || (requestedObservations && !release.hydratedFull);
+  const needsImmediateFetch = needsActiveDomain || needsDrawerData;
 
   // Lazily hydrate remaining domains from /api/snapshot and adopt an entire release atomically without ever rolling backward
   useEffect(() => {
-    if (!needsImmediateFetch || domainFetchError) return;
+    if (allDomainsLoaded || domainFetchError) return;
     if (activeDomainStaleRegime) {
       snapshotPromiseRef.current = null;
     }
@@ -322,13 +318,7 @@ export function ProChoiceGallery({
       if (!body.snapshot?.domains || !body.snapshot.harnessLeaderboard || !body.lifecycle) {
         return null;
       }
-      if (
-        body.snapshot.generatedAt !== body.lifecycle.auditedAt ||
-        !Array.isArray(body.lifecycle.sourceSensitivity) ||
-        !Array.isArray(body.lifecycle.rankEvidence) ||
-        DOMAINS.some((meta) => body.snapshot?.domains[meta.id]?.epochVersion !== meta.epochVersion)
-      )
-        return null;
+      if (body.snapshot.generatedAt !== body.lifecycle.auditedAt) return null;
       const cmp = compareIsoInstants(body.snapshot.generatedAt, minGeneratedAt);
       if (cmp === null || cmp < 0) return null;
       return { snapshot: body.snapshot, lifecycle: body.lifecycle };
@@ -373,17 +363,26 @@ export function ProChoiceGallery({
             };
           });
           setDomainFetchError(false);
-        } else {
+        } else if (needsImmediateFetch) {
           setDomainFetchError(true);
         }
       });
     };
 
-    loadRelease();
+    if (needsImmediateFetch) {
+      loadRelease();
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    const timer = window.setTimeout(loadRelease, 400);
     return () => {
       cancelled = true;
+      window.clearTimeout(timer);
     };
   }, [
+    allDomainsLoaded,
     activeDomainStaleRegime,
     needsImmediateFetch,
     domainFetchError,
@@ -394,8 +393,6 @@ export function ProChoiceGallery({
   useEffect(() => {
     const onPopState = () => {
       setNavMotion({ viewDir: 0, tabDx: 0 });
-      setDrawerOpen(false);
-      setDomainFetchError(false);
       setHarnessSliceDx(0);
     };
     const applyHash = () => {
@@ -595,7 +592,7 @@ export function ProChoiceGallery({
     const dx =
       prevIdx !== -1 && nextIdx !== -1 && prevIdx !== nextIdx ? (nextIdx > prevIdx ? -12 : 12) : 0;
     setHarnessSliceDx(dx);
-    updateUrl({ harnessModel: sliceId }, false, true);
+    updateUrl({ harnessModel: sliceId });
   };
 
   const handleSelectHarness = (nextHarness: HarnessId | "all") => {
@@ -692,8 +689,8 @@ export function ProChoiceGallery({
   const selectedProviderSet = new Set(effectiveProviders);
   const availableNativeHarnesses = domain
     ? [
-        ...new Set([
-          ...domain.configs
+        ...new Set(
+          domain.configs
             .filter(
               (c) =>
                 c.harnessRegime === "native" &&
@@ -701,12 +698,7 @@ export function ProChoiceGallery({
                 selectedProviderSet.has(c.provider),
             )
             .map((c) => c.harness),
-          ...(domain.observedBenchmarks ?? []).flatMap((bm) =>
-            bm.rows
-              .filter((row) => row.harness !== "direct" && selectedProviderSet.has(row.provider))
-              .map((row) => row.harness),
-          ),
-        ]),
+        ),
       ]
     : [];
 
@@ -922,30 +914,13 @@ export function ProChoiceGallery({
                     {!needsActiveDomain ? (
                       <button
                         type="button"
-                        onClick={() => {
-                          if (domainFetchError) {
-                            window.location.reload();
-                            return;
-                          }
-                          setDrawerOpen(true);
-                        }}
-                        aria-busy={needsDrawerData && !domainFetchError}
+                        onClick={() => setDrawerOpen(true)}
                         className="cursor-pointer text-[12.5px] text-(--ink-faint) underline-offset-4 transition-colors hover:text-(--ink) hover:underline"
                       >
-                        {needsDrawerData
-                          ? domainFetchError
-                            ? "Reload to open methodology"
-                            : "Loading methodology…"
-                          : "Methodology"}
+                        Methodology
                       </button>
                     ) : null}
                   </div>
-
-                  {activeDomainId !== "harnesses" && (
-                    <p className="mt-2 max-w-prose text-[13px] leading-relaxed text-(--ink-muted)">
-                      {domainMeta.description}
-                    </p>
-                  )}
 
                   {activeDomainId === "harnesses" ? (
                     <div
@@ -1003,15 +978,6 @@ export function ProChoiceGallery({
                       />
                     </div>
                   )}
-                  {activeDomainId === "harnesses" && urlState.harnessTab === "stacks" && (
-                    <p className="mt-3 text-[13px] text-(--ink-muted)">
-                      The chart compares software engineering scores.{" "}
-                      <a href="#additional-results" className="underline underline-offset-4">
-                        Other task results
-                      </a>{" "}
-                      are listed by benchmark below.
-                    </p>
-                  )}
                 </section>
 
                 <motion.div
@@ -1032,13 +998,47 @@ export function ProChoiceGallery({
                   {activeDomainId === "harnesses" ? (
                     <div className="px-5 pb-6 sm:px-9 lg:px-11 lg:pb-7">
                       {isControlledHarnesses ? (
-                        release.harnessLeaderboard && (
-                          <ControlledBoardPicker
-                            leaderboard={release.harnessLeaderboard}
-                            sliceId={urlState.harnessModel}
-                            onSelect={handleSelectHarnessModel}
-                          />
-                        )
+                        <div className="no-scrollbar flex min-h-8 flex-nowrap items-center gap-1 overflow-x-auto text-[12px] sm:flex-wrap">
+                          <span className="mr-1 shrink-0 font-mono text-[11px] text-(--ink-faint)">
+                            Test model
+                          </span>
+                          {(release.harnessLeaderboard?.slices ?? []).map((s) => {
+                            const slices = release.harnessLeaderboard?.slices ?? [];
+                            const activeSlice =
+                              slices.find((item) => item.sliceId === urlState.harnessModel)
+                                ?.sliceId ?? slices[0]?.sliceId;
+                            const active = s.sliceId === activeSlice;
+                            const sliceLabel =
+                              s.sliceId === "_all"
+                                ? `All ${Math.max(1, slices.length - 1)} models`
+                                : s.sliceId === "deepseek-v4.1-flash-1017"
+                                  ? "DS-V4.1 (1017)"
+                                  : s.label;
+                            return (
+                              <button
+                                key={s.sliceId}
+                                type="button"
+                                aria-pressed={active}
+                                onClick={() => handleSelectHarnessModel(s.sliceId)}
+                                className={`relative h-8 shrink-0 cursor-pointer whitespace-nowrap rounded-md px-2 transition-colors duration-150 ${
+                                  active
+                                    ? "font-medium text-(--ink)"
+                                    : "text-(--ink-faint) hover:bg-(--surface-hover) hover:text-(--ink)"
+                                }`}
+                              >
+                                {active ? (
+                                  <motion.span
+                                    layoutId="harnesses-model-pill"
+                                    aria-hidden="true"
+                                    transition={prefersReducedMotion ? { duration: 0 } : TAB_SPRING}
+                                    className="absolute inset-0 rounded-md border border-(--border-strong) bg-(--surface)"
+                                  />
+                                ) : null}
+                                <span className="relative z-10">{sliceLabel}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
                       ) : (
                         <ProviderPicker
                           selectedProviders={effectiveProviders}
@@ -1069,10 +1069,10 @@ export function ProChoiceGallery({
                         <span>Could not load {domainMeta.indexTitle} snapshot.</span>
                         <button
                           type="button"
-                          onClick={() => window.location.reload()}
+                          onClick={() => setDomainFetchError(false)}
                           className="cursor-pointer rounded border border-(--border-strong) px-2.5 py-1 text-(--ink) hover:bg-(--surface-hover)"
                         >
-                          Reload page
+                          Retry
                         </button>
                       </div>
                     ) : (
@@ -1129,7 +1129,6 @@ export function ProChoiceGallery({
                   ) : (
                     <>
                       <VerdictPlacards
-                        epochVersion={domain.epochVersion}
                         selectedProviders={effectiveProviders}
                         harnessFilter={effectiveHarness}
                         activeRegime={effectiveRegime}
@@ -1187,18 +1186,6 @@ export function ProChoiceGallery({
                         expandedPrunedIds={expandedPrunedIds}
                         onSelectPrunedConfig={(id) => handleSelectPrunedConfig(id, false)}
                       />
-                      {domain.observedBenchmarks?.length ? (
-                        <ObservedBenchmarkTables
-                          key={domain.epochVersion}
-                          ready={release.hydratedFull}
-                          failed={domainFetchError}
-                          requestRows={() => setRequestedObservations(true)}
-                          showHarness={activeDomainId === "harnesses"}
-                          benchmarks={domain.observedBenchmarks}
-                          providers={selectedProviderSet}
-                          harness={effectiveHarness}
-                        />
-                      ) : null}
                     </>
                   )}
                 </motion.div>
@@ -1254,7 +1241,6 @@ export function ProChoiceGallery({
           domain={domain}
           activeRegime={effectiveRegime}
           activeHarnessTab={urlState.harnessTab}
-          controlledSliceId={urlState.harnessModel}
           harnessLeaderboard={release.harnessLeaderboard}
           lifecycle={activeLifecycle}
           sources={activeMeta.sources}

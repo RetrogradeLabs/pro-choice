@@ -80,7 +80,6 @@ export const BenchmarkLifecycleStateSchema = z.enum([
   "ACTIVE",
   "WATCHLIST",
   "RETIRED",
-  "STANDALONE",
 ]);
 export type BenchmarkLifecycleState = z.infer<typeof BenchmarkLifecycleStateSchema>;
 
@@ -185,11 +184,6 @@ export const AnchorStatsSchema = z.object({
   reliability: z.number().min(0).max(1),
   discrimination: z.number().min(0).max(1),
   effectiveWeight: z.number().min(0.1).max(1),
-  measurementFamily: z.string().min(1).optional(),
-  datasetPools: z.array(z.string().min(1)).min(1).optional(),
-  qualityWeight: z.number().min(0.1).max(1).optional(),
-  weightPolicy: z.enum(["family-quality", "family-equal"]).optional(),
-  linkMinProviderCorrelation: z.number().finite().positive().max(1).optional(),
   introducedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   invertScore: z.boolean(),
   popoviciuSe: z.number().finite().positive().optional(),
@@ -461,38 +455,6 @@ export const EpochManifestSchema = z.record(
 );
 export type EpochManifest = z.infer<typeof EpochManifestSchema>;
 
-const ObservedBenchmarkSchema = z.object({
-  scale: BenchmarkScaleSchema,
-  invertScore: z.boolean(),
-  benchmarkId: z.string().min(1),
-  version: z.string().min(1),
-  name: z.string().min(1),
-  sourceUrl: HttpsUrlSchema,
-  rows: z
-    .array(
-      z.object({
-        configId: z.string().min(1),
-        provider: ProviderIdSchema,
-        modelSlug: z.string().min(1),
-        displayName: z.string().min(1),
-        effort: ReasoningEffortSchema,
-        harness: HarnessIdSchema,
-        harnessRegime: HarnessRegimeSchema,
-        rawScore: z.number().finite(),
-        ciLower: z.number().finite().nullable(),
-        ciUpper: z.number().finite().nullable(),
-        ciHalfWidth: z.number().positive().nullable(),
-        seRaw: z.number().positive().nullable(),
-        measuredCostUsd: z.number().positive().nullable(),
-        sourceRowId: z.string().min(1),
-        sourceUrl: HttpsUrlSchema,
-      }),
-    )
-    .min(1),
-});
-
-export type ObservedBenchmark = z.infer<typeof ObservedBenchmarkSchema>;
-
 export const DomainSnapshotSchema = z.object({
   domainId: DomainIdSchema,
   epochVersion: EpochVersionSchema,
@@ -507,7 +469,6 @@ export const DomainSnapshotSchema = z.object({
   configs: z.array(EvaluatedConfigSchema),
   provisionalConfigs: z.array(EvaluatedConfigSchema),
   frontiers: z.array(ProviderFrontierSchema),
-  observedBenchmarks: z.array(ObservedBenchmarkSchema).optional(),
 });
 export type DomainSnapshot = z.infer<typeof DomainSnapshotSchema>;
 
@@ -554,51 +515,6 @@ export const CrossDomainCorrelationSchema = z.object({
 });
 export type CrossDomainCorrelation = z.infer<typeof CrossDomainCorrelationSchema>;
 
-const SourceSensitivitySchema = z.object({
-  domainId: DomainIdSchema,
-  harnessRegime: HarnessRegimeSchema,
-  sourceId: z.string().min(1),
-  benchmarkIds: z.array(z.string().min(1)).min(1),
-  affectedConfigs: z.number().int().nonnegative(),
-  retainedConfigs: z.number().int().nonnegative(),
-  kendallTau: z.number().min(-1).max(1).nullable(),
-});
-export type SourceSensitivity = z.infer<typeof SourceSensitivitySchema>;
-
-const PairOrderCountsSchema = z.object({
-  agreed: z.number().int().nonnegative(),
-  reversed: z.number().int().nonnegative(),
-  tied: z.number().int().nonnegative(),
-  noOverlap: z.number().int().nonnegative(),
-});
-export type PairOrderCounts = z.infer<typeof PairOrderCountsSchema>;
-
-const RankEvidenceSchema = z.object({
-  domainId: DomainIdSchema,
-  harnessRegime: HarnessRegimeSchema,
-  allPairs: PairOrderCountsSchema,
-  frontierSteps: PairOrderCountsSchema,
-  heldOutBenchmarks: z.array(
-    z.object({
-      benchmarkId: z.string().min(1),
-      sourceId: z.string().min(1),
-      testConfigs: z.number().int().nonnegative(),
-      matchedConfigs: z.number().int().nonnegative(),
-      matchedProviders: z.number().int().nonnegative(),
-      kendallTau: z.number().min(-1).max(1).nullable(),
-      equalWeightTau: z.number().min(-1).max(1).nullable(),
-      familyPolicyComparison: z
-        .object({
-          matchedConfigs: z.number().int().nonnegative(),
-          equalFamilyTau: z.number().min(-1).max(1).nullable(),
-          qualityFamilyTau: z.number().min(-1).max(1).nullable(),
-        })
-        .nullable(),
-    }),
-  ),
-});
-export type RankEvidence = z.infer<typeof RankEvidenceSchema>;
-
 function isValidIsoUtcTimestamp(value: string): boolean {
   const m = value.match(
     /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(Z|[+-]\d{2}:\d{2})$/,
@@ -633,17 +549,8 @@ export const LifecycleReportSchema = z.object({
   auditedAt: IsoUtcTimestampSchema,
   audits: z.array(BenchmarkAuditSchema),
   crossDomainTau: z.array(CrossDomainCorrelationSchema),
-  sourceSensitivity: z.array(SourceSensitivitySchema).min(1),
-  rankEvidence: z.array(RankEvidenceSchema).min(1),
 });
 export type LifecycleReport = z.infer<typeof LifecycleReportSchema>;
-
-// The prior daily report may predate feed sensitivity. Preserve its exact shape for Git comparison.
-export const PriorLifecycleReportSchema = LifecycleReportSchema.partial({
-  sourceSensitivity: true,
-  rankEvidence: true,
-});
-export type PriorLifecycleReport = z.infer<typeof PriorLifecycleReportSchema>;
 
 export const HarnessBenchmarkMetricSchema = z
   .object({
@@ -656,9 +563,6 @@ export const HarnessBenchmarkMetricSchema = z
     passAll3Rate: z.number().min(0).max(100).nullable().optional(),
     costPerTrialUsd: z.number().finite().positive(),
     nTasks: z.number().int().positive(),
-    nScored: z.number().int().positive().optional(),
-    tokensPerTrial: z.number().finite().nonnegative().nullable().optional(),
-    agentSecondsPerTrial: z.number().finite().nonnegative().nullable().optional(),
     sourceUrl: HttpsUrlSchema.optional(),
   })
   .superRefine((val, ctx) => {
@@ -698,7 +602,7 @@ export const HarnessEntrySchema = z
     passAll3Rate: z.number().min(0).max(100).nullable(),
     tokensPerTrial: z.number().finite().nonnegative().nullable(),
     agentSecondsPerTrial: z.number().finite().nonnegative().nullable(),
-    nScored: z.number().int().nonnegative().nullable(),
+    nScored: z.number().int().nonnegative(),
     onFrontier: z.boolean(),
     dominatedById: z.string().min(1).nullable(),
     scoreDeficit: z.number().finite().nonnegative().nullable(),
@@ -752,10 +656,6 @@ export type HarnessEntry = z.infer<typeof HarnessEntrySchema>;
 export const HarnessModelSliceSchema = z
   .object({
     sliceId: z.string().min(1),
-    instrumentId: z.enum(["terminal-bench-4.0", "deep-swe"]).optional(),
-    controlModelId: z.string().min(1).nullable().optional(),
-    sourceVersion: z.string().min(1).optional(),
-    upstreamGeneratedAt: IsoUtcTimestampSchema.optional(),
     label: z.string().min(1),
     org: z.string().nullable(),
     entries: z.array(HarnessEntrySchema).min(8),
@@ -801,60 +701,6 @@ export const HarnessLeaderboardSnapshotSchema = z
     slices: z.array(HarnessModelSliceSchema).min(1),
   })
   .superRefine((board, ctx) => {
-    if (board.sourceVersion.startsWith("instrument-panels:")) {
-      for (const id of ["terminal-bench-4.0", "deep-swe"] as const) {
-        if (
-          board.slices.filter((s) => s.instrumentId === id && s.controlModelId === null).length !==
-          1
-        ) {
-          ctx.addIssue({
-            code: "custom",
-            path: ["slices"],
-            message: `Expected exactly one pooled ${id} slice`,
-          });
-        }
-      }
-      for (const [i, slice] of board.slices.entries()) {
-        const id = slice.instrumentId;
-        const control = slice.controlModelId;
-        const key =
-          id === "terminal-bench-4.0" && control === null ? "_all" : `${id}::${control ?? "_all"}`;
-        if (
-          !id ||
-          control === undefined ||
-          slice.sliceId !== key ||
-          !slice.upstreamGeneratedAt ||
-          !slice.sourceVersion
-        ) {
-          ctx.addIssue({
-            code: "custom",
-            path: ["slices", i],
-            message: "Invalid instrument or control identification",
-          });
-        }
-        for (const entry of slice.entries) {
-          const b = entry.benchmarks[0]!;
-          if (
-            entry.benchmarks.length !== 1 ||
-            b.benchmarkId !== id ||
-            entry.passRate !== b.passRate ||
-            entry.costPerTrialUsd !== b.costPerTrialUsd ||
-            entry.ciLower !== b.ciLower ||
-            entry.ciUpper !== b.ciUpper ||
-            entry.passAll3Rate !== (b.passAll3Rate ?? null) ||
-            entry.nScored !== (b.nScored ?? null) ||
-            entry.tokensPerTrial !== (b.tokensPerTrial ?? null) ||
-            entry.agentSecondsPerTrial !== (b.agentSecondsPerTrial ?? null)
-          ) {
-            ctx.addIssue({
-              code: "custom",
-              path: ["slices", i, "entries"],
-              message: `${entry.harnessId} mixes instruments or disagrees with its measured result`,
-            });
-          }
-        }
-      }
-    }
     if (board.slices[0]?.sliceId !== "_all") {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

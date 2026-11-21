@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export default async function DocsPage() {
-  const { snapshot, lifecycle } = await loadCachedRelease();
+  const { snapshot } = await loadCachedRelease();
   const updated = formatUtcDate(snapshot.generatedAt);
 
   return (
@@ -30,7 +30,7 @@ export default async function DocsPage() {
         <h2 className="font-display text-[22px] font-normal text-(--ink)">REST API v1 endpoints</h2>
         <p>
           All API routes are public, require no API key or OAuth token, and serve read-only
-          benchmark data compiled daily from {snapshot.sources.length} sources.
+          benchmark data compiled daily from 18 public sources under CC BY 4.0.
         </p>
         <div className="overflow-x-auto border border-(--border) bg-(--surface)">
           <table className="w-full border-collapse text-left text-[13px]">
@@ -46,8 +46,8 @@ export default async function DocsPage() {
                 <td className="px-4 py-2.5 font-mono text-(--ink)">GET /api/v1/snapshot</td>
                 <td className="px-4 py-2.5 font-mono text-(--ink-muted)">application/json</td>
                 <td className="px-4 py-2.5">
-                  Full snapshot, controlled harness results, source health, and{" "}
-                  {lifecycle.audits.length} benchmark audits with feed-removal checks.
+                  Full snapshot across all 6 domains, 25 controlled harnesses, source health, and 45
+                  lifecycle audits.
                 </td>
               </tr>
               <tr className="border-b border-(--border)">
@@ -57,9 +57,7 @@ export default async function DocsPage() {
                 <td className="px-4 py-2.5 font-mono text-(--ink-muted)">application/json</td>
                 <td className="px-4 py-2.5">
                   Headline picks and Pareto frontier for coding, writing, design, research, cyber,
-                  or harnesses. The harness endpoint defaults to Terminal-Bench 4.0. Choose an ID
-                  from controlledSlices and pass it as the m query parameter for a specific
-                  benchmark and test model.
+                  or harnesses.
                 </td>
               </tr>
               <tr className="border-b border-(--border)">

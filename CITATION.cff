@@ -10,7 +10,7 @@ url: "https://prochoice.industries"
 license: MIT
 version: "1.0.0"
 date-released: "2026-11-21"
-abstract: "ProChoice aggregates public LLM and coding agent benchmarks from daily benchmark and pricing feeds into six cost-quality composite indices covering Coding, Writing, Design, Research, Cyber, and Harnesses using equal-1.0 anchor standardization, heteroscedastic REML Empirical Bayes pooling, active-set monotone effort cost regression, and bootstrap Pareto frontier analysis."
+abstract: "ProChoice aggregates 45 active public LLM and coding agent benchmarks across 18 daily sources into six cost-quality composite indices covering Coding, Writing, Design, Research, Cyber, and Harnesses using equal-1.0 anchor standardization, heteroscedastic REML Empirical Bayes pooling, active-set monotone effort cost regression, and bootstrap Pareto frontier analysis."
 keywords:
   - llm-leaderboard
   - llm-benchmarks

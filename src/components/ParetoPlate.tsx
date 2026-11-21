@@ -21,9 +21,7 @@ import {
   formatCost,
   formatEffort,
   formatScore,
-  formatScoreEvidence,
   formatSpendCap,
-  modelScoreEvidence,
 } from "@/lib/format";
 import type {
   DomainSnapshot,
@@ -651,12 +649,9 @@ export function ParetoPlate({
     if (!activeHoveredNode) return null;
     const px = MARGIN.left + activeHoveredNode.cx;
     const py = MARGIN.top + activeHoveredNode.cy;
-    const placeBelow = py < 74;
-    const pillWidth = Math.min(292, width - 12);
-    const half = pillWidth / 2 + 6;
-    const clampedX = Math.max(half, Math.min(width - half, px));
+    const placeBelow = py < 46;
+    const clampedX = Math.max(130, Math.min(width - 130, px));
     return {
-      width: pillWidth,
       left: `${clampedX}px`,
       top: `${placeBelow ? py + 14 : py - 14}px`,
       transform: placeBelow ? "translate(-50%, 0)" : "translate(-50%, -100%)",
@@ -846,7 +841,7 @@ export function ParetoPlate({
                       isHarnessDomain && prunedHarness
                         ? `${prunedHarness} + ${n.cfg.displayName}`
                         : n.cfg.displayName;
-                    const label = `${prunedName} ${formatEffort(n.cfg.effort)}, pruned, score ${formatScore(n.cfg.score)}, cost ${formatCost(n.cfg.effectiveCostUsd, domain.costUnit)}, ${formatScoreEvidence(modelScoreEvidence(n.cfg))}`;
+                    const label = `${prunedName} ${formatEffort(n.cfg.effort)}, pruned, score ${formatScore(n.cfg.score)}, cost ${formatCost(n.cfg.effectiveCostUsd, domain.costUnit)}`;
 
                     return (
                       <g key={`pruned-${n.cfg.id}`} opacity={dimmed ? 0.14 : 0.72}>
@@ -1020,7 +1015,7 @@ export function ParetoPlate({
                           isHarnessDomain && nodeHarness
                             ? `${nodeHarness} + ${cfg.displayName} (${pMeta.shortName})`
                             : `${pMeta.shortName} ${cfg.displayName}`;
-                        const nodeLabel = `${nodeName} ${formatEffort(cfg.effort)}, score ${formatScore(cfg.score)}, cost ${formatCost(cfg.effectiveCostUsd, domain.costUnit)}, ${formatScoreEvidence(modelScoreEvidence(cfg))}`;
+                        const nodeLabel = `${nodeName} ${formatEffort(cfg.effort)}, score ${formatScore(cfg.score)}, cost ${formatCost(cfg.effectiveCostUsd, domain.costUnit)}`;
 
                         return (
                           <g key={`node-${cfg.id}`}>
@@ -1124,42 +1119,36 @@ export function ParetoPlate({
                   animate={{ opacity: 1, scale: 1 }}
                   {...(prefersReducedMotion ? {} : { exit: { opacity: 0, scale: 0.97 } })}
                   transition={{ duration: 0.11, ease: EASE }}
-                  className="flex max-w-[min(22rem,80vw)] flex-col gap-0.5 rounded-md border border-(--border-strong) bg-(--surface)/95 px-2.5 py-1 text-[12px] shadow-(--shadow-button) backdrop-blur-sm"
+                  className="inline-flex max-w-95 items-center gap-1.5 whitespace-nowrap rounded-md border border-(--border-strong) bg-(--surface)/95 px-2.5 py-1 text-[12px] shadow-(--shadow-button) backdrop-blur-sm"
                 >
-                  <div className="flex items-center gap-1.5">
-                    <ProviderMarkerIcon provider={activeHoveredNode.provider} size={9} />
-                    {isHarnessDomain && activeHoveredHarness ? (
-                      <>
-                        <span className="shrink-0 font-medium text-(--ink)">
-                          {activeHoveredHarness}
-                        </span>
-                        <span aria-hidden="true" className="text-(--ink-faint)">
-                          +
-                        </span>
-                        <span className="truncate text-(--ink-secondary)">
-                          {activeHoveredNode.cfg.displayName}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="truncate font-medium text-(--ink)">
+                  <ProviderMarkerIcon provider={activeHoveredNode.provider} size={9} />
+                  {isHarnessDomain && activeHoveredHarness ? (
+                    <>
+                      <span className="shrink-0 font-medium text-(--ink)">
+                        {activeHoveredHarness}
+                      </span>
+                      <span aria-hidden="true" className="text-(--ink-faint)">
+                        +
+                      </span>
+                      <span className="truncate text-(--ink-secondary)">
                         {activeHoveredNode.cfg.displayName}
                       </span>
-                    )}
-                    {activeHoveredEffort ? (
-                      <>
-                        <span aria-hidden="true" className="text-(--ink-faint)">
-                          ·
-                        </span>
-                        <span className="shrink-0 font-mono text-[10.5px] text-(--ink-faint)">
-                          {activeHoveredEffort}
-                        </span>
-                      </>
-                    ) : null}
-                  </div>
-                  <span className="text-[10px] text-(--ink-muted)">
-                    Score {formatScore(activeHoveredNode.cfg.score)} ·{" "}
-                    {formatScoreEvidence(modelScoreEvidence(activeHoveredNode.cfg))}
-                  </span>
+                    </>
+                  ) : (
+                    <span className="truncate font-medium text-(--ink)">
+                      {activeHoveredNode.cfg.displayName}
+                    </span>
+                  )}
+                  {activeHoveredEffort ? (
+                    <>
+                      <span aria-hidden="true" className="text-(--ink-faint)">
+                        ·
+                      </span>
+                      <span className="shrink-0 font-mono text-[10.5px] text-(--ink-faint)">
+                        {activeHoveredEffort}
+                      </span>
+                    </>
+                  ) : null}
                 </motion.div>
               </div>
             ) : null}
@@ -1187,7 +1176,7 @@ export function ParetoPlate({
                         isHarnessDomain && hTag
                           ? `${hTag} + ${p.active.displayName} (${PROVIDER_BY_ID[p.provider].shortName})`
                           : `${PROVIDER_BY_ID[p.provider].shortName} ${p.active.displayName}`;
-                      return `${pickName} ${formatEffort(p.active.effort)} ${formatScore(p.active.score)}, ${formatScoreEvidence(modelScoreEvidence(p.active))}`;
+                      return `${pickName} ${formatEffort(p.active.effort)} ${formatScore(p.active.score)}`;
                     })
                     .join(", ")}.`}
           </output>
@@ -1224,8 +1213,6 @@ export function ParetoPlate({
                         key={provider}
                         type="button"
                         data-budget-pick="true"
-                        title={formatScoreEvidence(modelScoreEvidence(cfg))}
-                        aria-label={`${cfg.displayName} ${formatEffort(cfg.effort)}, score ${formatScore(cfg.score)}, ${formatScoreEvidence(modelScoreEvidence(cfg))}`}
                         onClick={() => onSelectConfig(cfg.id)}
                         className={`${visClass} min-w-0 shrink cursor-pointer items-center gap-1.5 rounded px-1.5 py-0.5 text-(--ink) transition-colors hover:bg-(--surface-hover)`}
                       >
@@ -1242,6 +1229,9 @@ export function ParetoPlate({
                         )}
                         <span className="shrink-0 text-(--ink-faint)">
                           {formatEffort(cfg.effort)}
+                        </span>
+                        <span className="shrink-0 text-(--ink-muted)">
+                          {formatScore(cfg.score)}
                         </span>
                       </button>
                     );

@@ -3,8 +3,8 @@
     "sourceId": "lmarena",
     "label": "LMArena Style-Controlled Parquet Leaderboards",
     "status": "ok",
-    "fetchedAt": "2026-11-21T09:31:21.239Z",
-    "lastHealthyAt": "2026-11-21T09:31:21.239Z",
+    "fetchedAt": "2026-11-21T06:39:49.514Z",
+    "lastHealthyAt": "2026-11-21T06:39:49.514Z",
     "staleDays": 0,
     "rowCount": 781,
     "license": "Apache-2.0 / CC-BY-4.0",
@@ -18,7 +18,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-21T09:31:21.239Z",
+        "lastHealthyAt": "2026-11-21T06:39:49.514Z",
         "message": null
       },
       {
@@ -28,7 +28,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-21T09:31:21.239Z",
+        "lastHealthyAt": "2026-11-21T06:39:49.514Z",
         "message": null
       },
       {
@@ -38,7 +38,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-21T09:31:21.239Z",
+        "lastHealthyAt": "2026-11-21T06:39:49.514Z",
         "message": null
       },
       {
@@ -48,7 +48,7 @@
         "rejectedCount": 2,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-21T09:31:21.239Z",
+        "lastHealthyAt": "2026-11-21T06:39:49.514Z",
         "message": null
       }
     ],

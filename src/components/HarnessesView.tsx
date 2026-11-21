@@ -13,10 +13,9 @@ import {
   useRef,
   useState,
 } from "react";
-import { controlledBoard, harnessInterval } from "@/lib/controlled-boards";
 import { formatAxisCost, formatCost } from "@/lib/format";
 import { normalizeHarnessVersion, selectControlledHarnessPicks } from "@/lib/math/harness-pareto";
-import type { HarnessEntry, HarnessLeaderboardSnapshot } from "@/lib/schema";
+import type { HarnessEntry, HarnessLeaderboardSnapshot, HarnessModelSlice } from "@/lib/schema";
 
 interface HarnessesControlledViewProps {
   leaderboard: HarnessLeaderboardSnapshot;
@@ -53,6 +52,37 @@ function formatDuration(seconds: number | null): string {
   return `${mins}m`;
 }
 
+interface HarnessColumnSpec {
+  id: "tb21" | "tb40" | "deepswe";
+  label: string;
+  matchIds: readonly string[];
+}
+
+const HARNESS_BENCHMARK_COLS: readonly HarnessColumnSpec[] = [
+  {
+    id: "tb21",
+    label: "TB 2.1",
+    matchIds: ["terminal-bench-2.1", "tb21-frontierharness", "tb21-harness-lb"],
+  },
+  { id: "tb40", label: "TB 4.0", matchIds: ["terminal-bench-4.0"] },
+  { id: "deepswe", label: "DeepSWE", matchIds: ["deep-swe"] },
+];
+
+function computeColumnPassRate(entry: HarnessEntry, col: HarnessColumnSpec): number | null {
+  const matches = entry.benchmarks.filter((b) => col.matchIds.includes(b.benchmarkId));
+  if (matches.length === 0) return null;
+  if (matches.length === 1) return matches[0]!.passRate;
+  // Combine multiple TB 2.1 suites using transparent task-count weights (never using upper-bound CIs as inverse variances)
+  let wSum = 0;
+  let wxSum = 0;
+  for (const m of matches) {
+    const w = m.nTasks > 0 ? m.nTasks : 1;
+    wSum += w;
+    wxSum += w * m.passRate;
+  }
+  return wSum > 0 ? wxSum / wSum : matches[0]!.passRate;
+}
+
 export function HarnessesControlledView({
   leaderboard,
   selectedModelSlice,
@@ -66,9 +96,9 @@ export function HarnessesControlledView({
   const [expandedIds, setExpandedIds] = useState<readonly string[]>([]);
   const expandedSet = new Set(expandedIds);
 
-  const board = controlledBoard(leaderboard, selectedModelSlice);
-  const slice = board.selected;
-  const activeSliceId = slice.sliceId;
+  const slice: HarnessModelSlice | undefined =
+    leaderboard.slices.find((s) => s.sliceId === selectedModelSlice) ?? leaderboard.slices[0];
+  const activeSliceId = slice?.sliceId ?? "_all";
   const [initialSliceId] = useState(activeSliceId);
 
   const onEscapeKeyDown = useEffectEvent((e: globalThis.KeyboardEvent) => {
@@ -224,9 +254,7 @@ export function HarnessesControlledView({
 
   return (
     <div>
-      <p className="px-5 pb-4 text-[13px] text-(--ink-muted) sm:px-9 lg:px-11">
-        {board.scope} · {board.metric.nTasks} tasks · {slice.entries.length} harnesses
-      </p>
+      {/* Top 3 Controlled Harness Picks */}
       {picks.length > 0 ? (
         <motion.section
           key={`hpicks-${slice.sliceId}`}
@@ -252,9 +280,22 @@ export function HarnessesControlledView({
                   isHighlighted ? "bg-(--subtle)" : "bg-(--surface) hover:bg-(--subtle)/70"
                 }`}
               >
+                {item.accent ? (
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 top-0 h-0.5 bg-(--interactive)"
+                  />
+                ) : null}
+
                 <div>
                   <div className="flex items-center justify-between gap-2 text-[11.5px]">
-                    <span className={"text-(--ink-faint)"}>{item.tag}</span>
+                    <span
+                      className={
+                        item.accent ? "font-medium text-(--interactive)" : "text-(--ink-faint)"
+                      }
+                    >
+                      {item.tag}
+                    </span>
                     <span className="text-(--ink-muted)">{h.vendor}</span>
                   </div>
 
@@ -291,7 +332,6 @@ export function HarnessesControlledView({
                     <span className="text-[10.5px] text-(--ink-faint)">/ run</span>
                   </div>
                 </div>
-                <p className="mt-2 text-[11px] text-(--ink-muted)">{harnessInterval(h)}</p>
               </article>
             );
           })}
@@ -444,7 +484,7 @@ export function HarnessesControlledView({
                     <g key={`hdom-${entry.harnessId}`}>
                       <a
                         href={`#harness-${encodeURIComponent(entry.harnessId)}`}
-                        aria-label={`${entry.name}, ${entry.passRate.toFixed(1)}% pass rate, ${harnessInterval(entry)}, ${formatCost(entry.costPerTrialUsd, "usd_per_task")} per run`}
+                        aria-label={`${entry.name}, ${entry.passRate.toFixed(1)}% pass rate, ${formatCost(entry.costPerTrialUsd, "usd_per_task")} per run`}
                         className="cursor-pointer"
                         onPointerEnter={() => setHoveredId(entry.harnessId)}
                         onFocus={() => setHoveredId(entry.harnessId)}
@@ -482,7 +522,7 @@ export function HarnessesControlledView({
                     <g key={`hfront-${entry.harnessId}`}>
                       <a
                         href={`#harness-${encodeURIComponent(entry.harnessId)}`}
-                        aria-label={`${entry.name}, ${entry.passRate.toFixed(1)}% pass rate, ${harnessInterval(entry)}, ${formatCost(entry.costPerTrialUsd, "usd_per_task")} per run`}
+                        aria-label={`${entry.name}, ${entry.passRate.toFixed(1)}% pass rate, ${formatCost(entry.costPerTrialUsd, "usd_per_task")} per run`}
                         className="cursor-pointer"
                         onPointerEnter={() => setHoveredId(entry.harnessId)}
                         onFocus={() => setHoveredId(entry.harnessId)}
@@ -560,13 +600,20 @@ export function HarnessesControlledView({
       {/* Clean Harness Comparison Table */}
       <section aria-label="Harness rankings" className="bg-(--bg)">
         {(() => {
+          const presentCols = HARNESS_BENCHMARK_COLS.filter((col) =>
+            entries.some((e) => e.benchmarks.some((b) => col.matchIds.includes(b.benchmarkId))),
+          );
+          const firstColPct = 22 + (3 - presentCols.length) * 7.5;
           return (
             <div className="overflow-x-auto">
               <table className="w-full min-w-220 table-fixed border-collapse text-left text-[12.5px] tabular">
                 <colgroup>
-                  <col style={{ width: "31%" }} />
+                  <col style={{ width: `${firstColPct}%` }} />
                   <col style={{ width: "11%" }} />
-                  <col style={{ width: "22.5%" }} />
+                  <col style={{ width: "9%" }} />
+                  {presentCols.map((col) => (
+                    <col key={col.id} style={{ width: "7.5%" }} />
+                  ))}
                   <col style={{ width: "10.5%" }} />
                   <col style={{ width: "12.5%" }} />
                   <col style={{ width: "12.5%" }} />
@@ -580,6 +627,14 @@ export function HarnessesControlledView({
                     <th className="px-3 py-2.5 text-right font-normal whitespace-nowrap">
                       Pass rate
                     </th>
+                    {presentCols.map((col) => (
+                      <th
+                        key={col.id}
+                        className="px-3 py-2.5 text-right font-normal whitespace-nowrap"
+                      >
+                        {col.label}
+                      </th>
+                    ))}
                     <th className="px-3 py-2.5 text-right font-normal whitespace-nowrap">
                       Cost / run
                     </th>
@@ -641,10 +696,18 @@ export function HarnessesControlledView({
                           </td>
                           <td className="px-3 py-2.5 text-right font-mono font-medium whitespace-nowrap text-(--ink)">
                             {entry.passRate.toFixed(1)}%
-                            <span className="block font-normal text-[10.5px] text-(--ink-muted)">
-                              {harnessInterval(entry)}
-                            </span>
                           </td>
+                          {presentCols.map((col) => {
+                            const val = computeColumnPassRate(entry, col);
+                            return (
+                              <td
+                                key={col.id}
+                                className="px-3 py-2.5 text-right font-mono whitespace-nowrap text-(--ink-secondary)"
+                              >
+                                {val !== null ? `${val.toFixed(1)}%` : "N/A"}
+                              </td>
+                            );
+                          })}
                           <td className="px-3 py-2.5 text-right font-mono whitespace-nowrap text-(--ink)">
                             {formatCost(entry.costPerTrialUsd, "usd_per_task")}
                           </td>
@@ -657,16 +720,13 @@ export function HarnessesControlledView({
                             {entry.passAll3Rate !== null
                               ? `${entry.passAll3Rate.toFixed(1)}%`
                               : "N/A"}
-                            {entry.passAll3Rate !== null && (
-                              <span className="block text-[10.5px]">Interval unavailable</span>
-                            )}
                           </td>
                         </tr>
 
                         {expanded ? (
                           <tr className="border-b border-(--border) bg-(--subtle) last:border-b-0">
                             <td
-                              colSpan={6}
+                              colSpan={6 + presentCols.length}
                               aria-label={`${entry.name} benchmark details`}
                               className="p-0"
                             >
@@ -729,10 +789,7 @@ export function HarnessesControlledView({
                                         </div>
                                         <div className="flex justify-between">
                                           <span className="text-(--ink-faint)">Scored runs</span>
-                                          <span>
-                                            {entry.nScored?.toLocaleString("en-US") ??
-                                              "Unavailable"}
-                                          </span>
+                                          <span>{entry.nScored.toLocaleString("en-US")}</span>
                                         </div>
                                       </div>
                                     </div>

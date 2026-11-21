@@ -154,7 +154,7 @@ jobs:
             const nextSnap = await Bun.file("data/snapshot.json").json();
             const headLife = JSON.parse(await Bun.$`git show HEAD:data/lifecycle.json`.text());
             const nextLife = await Bun.file("data/lifecycle.json").json();
-            const stripLife = (l) => ({ audits: l.audits, crossDomainTau: l.crossDomainTau, sourceSensitivity: l.sourceSensitivity, rankEvidence: l.rankEvidence });
+            const stripLife = (l) => ({ audits: l.audits, crossDomainTau: l.crossDomainTau });
             const healthSig = (s) => s.sources.map((src) => ({
               id: src.sourceId,
               status: src.status,

@@ -282,16 +282,9 @@ function buildEntryFromTrials(
   const allTaskCosts: number[] = [];
   const allTaskP3Rates: number[] = [];
   let allSubsetsHave3 = true;
-  const trialsBySubset = Map.groupBy(trials, (t) => t.subset);
 
   for (const subsetKey of expectedSubsets) {
     const expectedTasks = expectedTasksBySubset.get(subsetKey) ?? 0;
-    const subsetTrials = trialsBySubset.get(subsetKey) ?? [];
-    if (
-      subsetTrials.length <
-      Math.ceil(expectedTasks * modelCountInSlice * attemptsK * MIN_SLICE_COMPLETION_FRAC)
-    )
-      return null;
     const subRates: number[] = [];
     const subCosts: number[] = [];
     const subP3Rates: number[] = [];
@@ -346,13 +339,6 @@ function buildEntryFromTrials(
       passAll3Rate: subPassAll3Rate,
       costPerTrialUsd: Number(subCostMean.toFixed(6)),
       nTasks: subRates.length,
-      nScored: subsetTrials.length,
-      tokensPerTrial: subsetTrials.every((t) => t.totalTokens !== null)
-        ? Math.round(subsetTrials.reduce((n, t) => n + t.totalTokens!, 0) / subsetTrials.length)
-        : null,
-      agentSecondsPerTrial: subsetTrials.every((t) => t.runSec !== null)
-        ? Number((subsetTrials.reduce((n, t) => n + t.runSec!, 0) / subsetTrials.length).toFixed(1))
-        : null,
       sourceUrl: FH_PUBLIC_URL,
     });
   }

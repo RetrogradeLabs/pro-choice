@@ -6,18 +6,7 @@ import { Activity, Fragment } from "react";
 import { BENCHMARK_BY_ID } from "@/config/benchmarks";
 import { HARNESS_BY_ID } from "@/config/harnesses";
 import { PROVIDER_BY_ID } from "@/config/providers";
-import {
-  formatCost,
-  formatEffort,
-  formatRawMetric,
-  formatScore,
-  formatScoreEvidence,
-  formatScoreInterval,
-  formatSharedOrder,
-  modelScoreEvidence,
-} from "@/lib/format";
-import { buildWeightMapFromAnchors } from "@/lib/math/aggregate";
-import { sharedScoreOrder } from "@/lib/math/pareto";
+import { formatCost, formatEffort, formatRawMetric, formatScore } from "@/lib/format";
 import type {
   AnchorStats,
   CostUnit,
@@ -82,7 +71,6 @@ export function PrunedCatalogue({
       ? anchorStats[`${benchmarkId}::standardized`]
       : anchorStats[benchmarkId];
 
-  const weights = buildWeightMapFromAnchors(anchorStats, activeRegime);
   const prunedRows = frontiers
     .flatMap((pf) =>
       pf.pruned.map((pr) => ({
@@ -209,15 +197,6 @@ export function PrunedCatalogue({
                               </>
                             )}
                           </button>
-                          <div className="mt-1 pl-5 text-[10.5px] leading-snug text-(--ink-muted)">
-                            {formatScoreEvidence(modelScoreEvidence(row.pruned))}
-                            <span className="block">
-                              {formatSharedOrder(
-                                sharedScoreOrder(row.winner, row.pruned, weights),
-                                "the frontier selection",
-                              )}
-                            </span>
-                          </div>
                         </td>
                         <td className="px-3 py-2.5 text-right font-mono text-(--ink-muted)">
                           {formatScore(row.pruned.score)}
@@ -293,7 +272,6 @@ export function PrunedCatalogue({
                                         {rawWeightedAvg !== null && pullPct >= 2
                                           ? `Weighted average ${rawWeightedAvg.toFixed(1)} is pulled ${pullPct}% toward the domain average (${domainAvg.toFixed(1)}) to give ${formatScore(row.pruned.score)} across ${row.pruned.coverageCount} of ${row.pruned.activeBenchmarkCount} benchmarks.`
                                           : `Combined score ${formatScore(row.pruned.score)} across ${row.pruned.coverageCount} of ${row.pruned.activeBenchmarkCount} benchmarks.`}
-                                        {` The 95% model interval runs from ${formatScoreInterval(row.pruned)}.`}
                                         {row.pruned.costImputed
                                           ? isPartialBasket
                                             ? " Task cost combines measured benchmark cost with an estimate for the unmeasured cost benchmark in this domain."

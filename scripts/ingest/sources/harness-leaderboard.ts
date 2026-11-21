@@ -36,8 +36,6 @@ interface HlbRawBenchmark {
   pass_all3?: number;
   ci?: [number, number] | number[];
   cost_per_trial?: number;
-  tokens_per_trial?: number;
-  agent_s_per_trial?: number;
   n_tasks?: number;
   n_tasks_expected?: number;
   n_tasks3?: number;
@@ -276,9 +274,6 @@ function parseSliceHarnesses(
         passAll3Rate: bmHas3 && rawBmP3Pct !== null ? roundPct(rawBmP3Pct) : null,
         costPerTrialUsd: Number(bmCost.toFixed(6)),
         nTasks: authUniqueN,
-        nScored: bmNScored,
-        tokensPerTrial: parseNonNegative(bm.tokens_per_trial),
-        agentSecondsPerTrial: parseNonNegative(bm.agent_s_per_trial),
         sourceUrl: HLB_PUBLIC_URL,
       });
     }

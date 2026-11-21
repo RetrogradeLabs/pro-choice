@@ -10,14 +10,8 @@ import {
   getCandidateBenchmarks,
   getCoverageFloorForDomain,
   getRegimesForDomain,
-  STANDALONE_BENCHMARKS,
 } from "../../src/config/benchmarks.ts";
 import { NATIVE_SELECTABLE_HARNESSES } from "../../src/config/harnesses.ts";
-import {
-  assertDisjointRoster,
-  datasetPoolsFor,
-  measurementFamilyFor,
-} from "../../src/config/measurement-families.ts";
 import { ALL_PROVIDER_IDS, isRetiredPurchaseSku } from "../../src/config/providers.ts";
 import {
   aggregateDomain,
@@ -48,11 +42,6 @@ import {
   recomputeHarnessLeaderboard,
 } from "../../src/lib/math/harness-pareto.ts";
 import { auditBenchmarkLifecycle, linkEpochScores } from "../../src/lib/math/lifecycle.ts";
-import {
-  allocateFamilyWeights,
-  epochWeightPolicy,
-  usesMeasurementFamilies,
-} from "../../src/lib/math/measurement-families.ts";
 import {
   computeBootstrapParetoProb,
   computeProviderFrontier,
@@ -98,6 +87,7 @@ import { withPublishLock } from "./lock.ts";
 import { aikidoAdapter } from "./sources/aikido.ts";
 import { artificialAnalysisAdapter } from "./sources/artificial-analysis.ts";
 import { cweBenchAdapter } from "./sources/cwe-bench.ts";
+import { cyberArenaAdapter } from "./sources/cyber-arena.ts";
 import { deepsweAdapter } from "./sources/deepswe.ts";
 import { designarenaAdapter } from "./sources/designarena.ts";
 import { epochAdapter } from "./sources/epoch.ts";
@@ -107,7 +97,6 @@ import { livebenchAdapter } from "./sources/livebench.ts";
 import { lmarenaAdapter } from "./sources/lmarena.ts";
 import { pricingAdapter } from "./sources/pricing.ts";
 import { scaleSealAdapter } from "./sources/scale-seal.ts";
-import { surgeAdapter } from "./sources/surge.ts";
 import { MIN_TBENCH_4_1_TRIALS, tbenchAdapter } from "./sources/tbench.ts";
 import { valsAdapter } from "./sources/vals.ts";
 import { vulcanbenchAdapter } from "./sources/vulcanbench.ts";
@@ -318,6 +307,7 @@ export const MANDATORY_ADAPTERS: readonly SourceAdapter[] = [
   artificialAnalysisAdapter,
   aikidoAdapter,
   cweBenchAdapter,
+  cyberArenaAdapter,
   deepsweAdapter,
   epochAdapter,
   frontierHarnessAdapter,
@@ -330,7 +320,6 @@ export const MANDATORY_ADAPTERS: readonly SourceAdapter[] = [
   designarenaAdapter,
   writingFeedsAdapter,
   scaleSealAdapter,
-  surgeAdapter,
   weirdmlAdapter,
   pricingAdapter,
 ];
@@ -805,24 +794,6 @@ export function validateFrozenMajorEpochSnapshot(
     );
   }
 
-  const tableIds = new Set([...snap.activeBenchmarkIds, ...snap.candidateBenchmarkIds]);
-  for (const table of snap.observedBenchmarks ?? []) {
-    if (tableIds.has(table.benchmarkId))
-      errors.push(`${filename}: invalid standalone table '${table.benchmarkId}'`);
-    tableIds.add(table.benchmarkId);
-    const rowIds = new Set<string>();
-    for (const row of table.rows) {
-      const expectedId = `${row.provider}:${row.modelSlug}:${row.effort}:${row.harness}:${row.harnessRegime}`;
-      if (
-        row.configId !== expectedId ||
-        rowIds.has(row.configId) ||
-        (table.scale === "percent" && (row.rawScore < 0 || row.rawScore > 100))
-      )
-        errors.push(`${filename}: invalid or repeated standalone configuration '${row.configId}'`);
-      rowIds.add(row.configId);
-    }
-  }
-
   const archiveMajor = parseEpochMajorNumber(filename);
   const publishedEpoch = publishedEpochByDomain?.get(snap.domainId) ?? domainMeta.epochVersion;
   const currentMajor = parseEpochMajorNumber(publishedEpoch);
@@ -1202,11 +1173,11 @@ export function validateFrozenMajorEpochSnapshot(
           }
         }
       }
-      const expectedVerdicts = extractVerdictPicks(pf.frontier, eligibleByIdInRegime, {
-        ...verdictOpts,
-        epochVersion: snap.epochVersion,
-        eligibleConfigs: sliceConfigs,
-      });
+      const expectedVerdicts = extractVerdictPicks(
+        expected.frontier,
+        eligibleByIdInRegime,
+        verdictOpts,
+      );
       if (
         pf.verdicts.budgetId !== expectedVerdicts.budgetId ||
         pf.verdicts.defaultId !== expectedVerdicts.defaultId ||
@@ -1249,13 +1220,6 @@ export function validateFrozenMajorEpochSnapshot(
     }
     let weightedDeltaSum = 0;
     let totalAnchorW = 0;
-    const familyMembers: {
-      benchmarkId: string;
-      measurementFamily: string;
-      qualityWeight: number;
-      datasetPools: string[];
-    }[] = [];
-    let archivedPolicy: AnchorStats["weightPolicy"];
     for (const bmId of rm.activeBenchmarkIds) {
       const anchorKey = regime === "standardized" ? `${bmId}::standardized` : bmId;
       const anchor = snap.anchorStats[anchorKey];
@@ -1267,57 +1231,9 @@ export function validateFrozenMajorEpochSnapshot(
       ) {
         errors.push(`${filename} (${regime}): missing or invalid frozen anchor '${anchorKey}'`);
       } else {
-        if (usesMeasurementFamilies(snap.epochVersion)) {
-          if (
-            anchor.linkedViaMeanSigma &&
-            !(anchor.linkMinProviderCorrelation && anchor.linkMinProviderCorrelation > 0)
-          ) {
-            errors.push(`${filename}: missing positive overlap association for ${bmId}`);
-          }
-          if (
-            anchor.measurementFamily === undefined ||
-            !anchor.datasetPools?.length ||
-            anchor.qualityWeight === undefined ||
-            !anchor.weightPolicy
-          ) {
-            errors.push(`${filename}: missing frozen family weight provenance on ${bmId}`);
-          } else {
-            if (archivedPolicy && archivedPolicy !== anchor.weightPolicy) {
-              errors.push(`${filename}: inconsistent weight policies within ${regime}`);
-            }
-            archivedPolicy = anchor.weightPolicy;
-            familyMembers.push({
-              benchmarkId: bmId,
-              measurementFamily: anchor.measurementFamily,
-              qualityWeight: anchor.qualityWeight,
-              datasetPools: anchor.datasetPools,
-            });
-            // Components are each rounded to four decimal places before archival.
-            if (
-              Math.abs(
-                anchor.qualityWeight - Math.max(0.1, anchor.reliability * anchor.discrimination),
-              ) > 0.00016
-            ) {
-              errors.push(`${filename}: invalid quality weight for ${bmId}`);
-            }
-          }
-        }
         weightedDeltaSum += anchor.effectiveWeight * anchor.raschDelta;
         totalAnchorW += anchor.effectiveWeight;
       }
-    }
-    try {
-      assertDisjointRoster(familyMembers);
-    } catch (err) {
-      errors.push(`${filename} (${regime}): ${err instanceof Error ? err.message : String(err)}`);
-    }
-    for (const [bmId, weight] of allocateFamilyWeights(
-      familyMembers,
-      archivedPolicy ?? "family-equal",
-    )) {
-      const key = regime === "standardized" ? `${bmId}::standardized` : bmId;
-      if (Math.abs(weight - snap.anchorStats[key]!.effectiveWeight) > 1e-8)
-        errors.push(`${filename}: inconsistent family allocation for ${bmId}`);
     }
     if (totalAnchorW > 0 && Math.abs(weightedDeltaSum) > 1e-3) {
       errors.push(
@@ -1533,19 +1449,7 @@ function assertFrozenEpochMatchesRegistry(
     }
     for (const bmId of expectedActive) {
       if (withheldSet.has(bmId)) continue;
-      const key = regime === "standardized" ? `${bmId}::standardized` : bmId;
-      expectedAnchorKeys.add(key);
-      if (
-        usesMeasurementFamilies(epochVersion) &&
-        (frozenEpoch.anchorStats[key]?.measurementFamily !== measurementFamilyFor(bmId) ||
-          JSON.stringify(frozenEpoch.anchorStats[key]?.datasetPools) !==
-            JSON.stringify(datasetPoolsFor(bmId)) ||
-          frozenEpoch.anchorStats[key]?.weightPolicy !== epochWeightPolicy(epochVersion))
-      ) {
-        throw new Error(
-          `${domainId}: measurement family for ${bmId} changed without bumping the MAJOR epoch`,
-        );
-      }
+      expectedAnchorKeys.add(regime === "standardized" ? `${bmId}::standardized` : bmId);
     }
   }
 
@@ -1665,11 +1569,7 @@ export function buildDomainFrontiers(
         ...(anchorStats ? { anchorStats } : {}),
         ...(linkJointCov ? { linkJointCov } : {}),
       };
-      const verdicts = extractVerdictPicks(frontier, configById, {
-        ...verdictOpts,
-        epochVersion,
-        eligibleConfigs: providerConfigs,
-      });
+      const verdicts = extractVerdictPicks(frontier, configById, verdictOpts);
 
       frontiers.push({
         provider,
@@ -1716,11 +1616,7 @@ export function buildDomainFrontiers(
             harnessFilter: h.id,
             frontier: sub.frontier,
             pruned: sub.pruned,
-            verdicts: extractVerdictPicks(sub.frontier, configById, {
-              ...verdictOpts,
-              epochVersion,
-              eligibleConfigs: subset,
-            }),
+            verdicts: extractVerdictPicks(sub.frontier, configById, verdictOpts),
           });
         }
       }
@@ -1781,13 +1677,6 @@ export function compileDomainsFromSources(
     const activeBenchmarks = getActiveBenchmarks(domain.id);
     const candidateBenchmarks = getCandidateBenchmarks(domain.id);
     const allActiveIds = activeBenchmarks.map((b) => b.id);
-    assertDisjointRoster(
-      allActiveIds.map((benchmarkId) => ({
-        benchmarkId,
-        measurementFamily: measurementFamilyFor(benchmarkId),
-        datasetPools: datasetPoolsFor(benchmarkId),
-      })),
-    );
     const candidateIds = candidateBenchmarks.map((b) => b.id);
     const benchmarkVersions: Record<string, string> = Object.fromEntries(
       activeBenchmarks.map((b) => [b.id, b.version]),
@@ -1806,44 +1695,7 @@ export function compileDomainsFromSources(
       );
     }
 
-    const domainCells = cellsByDomain.get(domain.id) ?? [];
-    const dedupedCells = domainCells.filter(
-      (c) => BENCHMARK_BY_ID[c.benchmarkId]?.lifecycleState !== "STANDALONE",
-    );
-    const observedBenchmarks = STANDALONE_BENCHMARKS.filter((bm) => bm.domainId === domain.id).map(
-      (bm) => ({
-        benchmarkId: bm.id,
-        scale: bm.scale,
-        invertScore: bm.invertScore,
-        version: bm.version,
-        name: bm.name,
-        sourceUrl: bm.sourceUrl,
-        rows: domainCells
-          .filter((c) => c.benchmarkId === bm.id)
-          .toSorted(
-            (a, b) =>
-              (bm.invertScore ? a.rawScore - b.rawScore : b.rawScore - a.rawScore) ||
-              compareAscii(a.configId, b.configId),
-          )
-          .map((c) => ({
-            configId: c.configId,
-            provider: c.provider,
-            modelSlug: c.modelSlug,
-            displayName: c.displayName,
-            effort: c.effort,
-            harness: c.harness,
-            harnessRegime: c.harnessRegime,
-            rawScore: c.rawScore,
-            ciLower: c.ciLower,
-            ciUpper: c.ciUpper,
-            ciHalfWidth: c.ciHalfWidth,
-            seRaw: c.seRaw,
-            measuredCostUsd: c.measuredCostUsd,
-            sourceRowId: c.sourceRowId,
-            sourceUrl: c.sourceUrl,
-          })),
-      }),
-    );
+    const dedupedCells = cellsByDomain.get(domain.id) ?? [];
     const frozenAnchors = frozenEpoch?.anchorStats;
     const prevEntry = prevMajorByDomain.get(domain.id) ?? null;
 
@@ -1876,7 +1728,6 @@ export function compileDomainsFromSources(
         frozenRegimeMeta?.tauModelSq,
         frozenRegimeMeta?.priorMean,
         frozenRegimeMeta?.linkJointCov,
-        epochWeightPolicy(domain.epochVersion),
       );
       linkJointCovByRegime[regime] = agg.linkJointCov;
 
@@ -2145,7 +1996,7 @@ export function compileDomainsFromSources(
       linkJointCovByRegime,
     );
 
-    domainsRecord[domain.id] = DomainSnapshotSchema.parse({
+    domainsRecord[domain.id] = {
       domainId: domain.id,
       epochVersion: domain.epochVersion,
       costUnit: domain.costUnit,
@@ -2161,8 +2012,7 @@ export function compileDomainsFromSources(
         (a, b) => b.score - a.score || compareAscii(a.id, b.id),
       ),
       frontiers,
-      ...(observedBenchmarks.length > 0 ? { observedBenchmarks } : {}),
-    });
+    };
   }
 
   const rawFrontierHarness = results.find((r) => r.health.sourceId === "frontier-harness")?.payload
@@ -2505,14 +2355,6 @@ async function runIngestionLocked(
     ...sources.map(
       (s) =>
         `| ${s.label} | ${s.status.toUpperCase()} | ${s.rowCount} | ${s.staleDays} | ${s.message ?? "OK"} |`,
-    ),
-    ...sources.flatMap((s) =>
-      s.subFeeds
-        .filter((f) => f.message !== null)
-        .map(
-          (f) =>
-            `| ↳ ${f.benchmarkId} | ${f.status.toUpperCase()} | ${f.rowCount} | | ${f.message} |`,
-        ),
     ),
     ``,
     `## Domain Coverage`,
