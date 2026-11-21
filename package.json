@@ -9,14 +9,14 @@
     "node": ">=26.0.0"
   },
   "scripts": {
-    "dev": "bun --bun next dev",
-    "build": "bun --bun next build",
+    "dev": "rm -rf .next/types && bun --bun next dev",
+    "build": "rm -rf .next/dev/types && bun --bun next build",
     "start": "bun --bun next start",
     "format": "bunx --bun biome format --write .",
     "check": "bunx --bun biome check .",
     "lint:fast": "bunx --bun oxlint --deny-warnings src scripts",
     "lint": "bunx --bun eslint .",
-    "typecheck": "bunx --bun next typegen && bunx --bun tsc --noEmit",
+    "typecheck": "rm -rf .next/dev/types && bunx --bun next typegen && bunx --bun tsc --noEmit",
     "verify": "bun run check && bun run lint:fast && bun run lint && bun run typecheck && bun run build",
     "ingest": "bun run scripts/ingest/run.ts",
     "audit:lifecycle": "bun run scripts/ingest/audit-lifecycle.ts",
