@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <title>ProChoice</title>
+  <style>
+    .tile { fill: #ffffff; stroke: #d4d1ca; }
+    .ink { fill: #111111; }
+    .muted { fill: #111111; fill-opacity: 0.28; }
+    @media (prefers-color-scheme: dark) {
+      .tile { fill: #211f1c; stroke: #3a3631; }
+      .ink { fill: #f5f4f0; }
+      .muted { fill: #f5f4f0; fill-opacity: 0.30; }
+    }
+  </style>
+  <rect class="tile" x="1" y="1" width="30" height="30" rx="8" stroke-width="1.6"/>
+  <g transform="translate(3.53 5.53) scale(0.9333)">
+    <path class="muted" d="M10.5 13.1L5.2 7.8L7.4 5.6L12 10.2L10.5 13.1Z"/>
+    <path class="ink" d="M10.4 20.5V11.8L16.3 5.9H12.4V3.2H20.8V11.6H18.1V7.7L13.2 12.6V20.5H10.4Z"/>
+  </g>
+</svg>

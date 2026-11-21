@@ -1,0 +1,31 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# Next.js
+/.next/
+/out/
+/.vercel
+
+# Local env
+.env*
+!.env.example
+
+# Debug and OS
+npm-debug.log*
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+
+# Local sync staging, atomic generations & recovery scratch
+/data/.sync-stage.*
+/data/.sync-backup.*
+/data/.sync-commit.json
+/data/.sync-commit.json.*
+/data/.generations/
+/data/.current-generation.json
+/data/.current-generation.json.*
+/data/epochs/.pending.*
+/data/epochs/.publish.*
+/data/epochs/.publish.lock.db*

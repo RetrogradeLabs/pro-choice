@@ -1,0 +1,200 @@
+name: ProChoice Daily Benchmark Ingestion
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prochoice-daily-ingest
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  ingest-and-audit:
+    name: Daily ingest, lifecycle audit, and verification
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun 1.4.x
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: "1.4.x"
+
+      - name: Setup Node.js 26 LTS
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "26"
+
+      - name: Cache Bun packages
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Restore shrink-confirmation recovery checkpoint
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: data/raw/.shrink-state.json
+          key: prochoice-shrink-state-${{ github.run_id }}
+          restore-keys: |
+            prochoice-shrink-state-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run daily mandatory benchmark ingestion
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: bun run ingest
+
+      - name: Save shrink-confirmation recovery checkpoint even if publication gate blocks
+        if: always()
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: data/raw/.shrink-state.json
+          key: prochoice-shrink-state-${{ github.run_id }}
+
+      - name: Run daily saturation and lifecycle audit
+        run: bun run audit:lifecycle
+
+      - name: Verify append-only epoch immutability against HEAD
+        run: |
+          BAD=$(git diff --name-status --diff-filter=MDTRCU HEAD -- 'data/epochs/*.json' ':!data/epochs/manifest.json')
+          if [ -n "$BAD" ]; then
+            echo "ERROR: Daily ingest attempted to alter archived MAJOR epochs:"
+            echo "$BAD"
+            exit 1
+          fi
+          if git cat-file -e "HEAD:data/epochs/manifest.json" 2>/dev/null; then
+            bun -e '
+              const base = JSON.parse(await Bun.$`git show HEAD:data/epochs/manifest.json`.text());
+              const head = await Bun.file("data/epochs/manifest.json").json();
+              for (const [file, sha] of Object.entries(base)) {
+                if (head[file] !== sha) {
+                  console.error(`ERROR: Manifest entry ${file} changed or removed`);
+                  process.exit(1);
+                }
+              }
+            '
+          fi
+
+      - name: Enforce snapshot, freshness, and recompute invariants (Bun 1.4.x & Node.js 26 LTS)
+        env:
+          STRICT_FRESHNESS: "1"
+        run: |
+          if git cat-file -e "HEAD:data/lifecycle.json" 2>/dev/null; then
+            git show HEAD:data/lifecycle.json > /tmp/head-lifecycle.json
+            CMP=$(bun -e '
+              import { compareIsoInstants } from "./src/lib/format.ts";
+              const base = await Bun.file("/tmp/head-lifecycle.json").json();
+              const cur = await Bun.file("data/lifecycle.json").json();
+              const cmp = compareIsoInstants(cur.auditedAt, base.auditedAt);
+              if (cmp === null || cmp < 0) {
+                console.log("regress");
+              } else {
+                const b = new Date(Date.parse(base.auditedAt)).toISOString().slice(0, 10);
+                const c = new Date(Date.parse(cur.auditedAt)).toISOString().slice(0, 10);
+                console.log(c < b ? "regress" : c > b ? "advance" : "same");
+              }
+            ')
+            if [ "$CMP" = "regress" ]; then
+              echo "ERROR: Lifecycle audit date regressed earlier than HEAD."
+              exit 1
+            elif [ "$CMP" = "advance" ]; then
+              export PRIOR_LIFECYCLE_PATH=/tmp/head-lifecycle.json
+              export REQUIRE_PRIOR_LIFECYCLE=1
+              export VERIFY_PERSISTED_PRIOR_MATCHES=1
+            else
+              if git cat-file -e "HEAD:data/lifecycle.prev.json" 2>/dev/null; then
+                git show HEAD:data/lifecycle.prev.json > /tmp/head-lifecycle-prev.json
+                export PRIOR_LIFECYCLE_PATH=/tmp/head-lifecycle-prev.json
+                export REQUIRE_PRIOR_LIFECYCLE=1
+                export VERIFY_PERSISTED_PRIOR_MATCHES=1
+              else
+                export IGNORE_LOCAL_PRIOR_LIFECYCLE=1
+              fi
+            fi
+          else
+            export IGNORE_LOCAL_PRIOR_LIFECYCLE=1
+          fi
+          bun run validate:snapshot
+          node scripts/ingest/validate-snapshot.ts
+
+      - name: Run full lint, typecheck, and production build on new release
+        run: bun run verify
+
+      - name: Publish daily health summary
+        run: |
+          if [ -f data/summary.md ]; then
+            cat data/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Commit updated data when canonical snapshot, lifecycle state, or source health changed
+        run: |
+          CHANGED=$(bun -e '
+            const hasHeadSnap = (await Bun.$`git cat-file -e HEAD:data/snapshot.json`.nothrow()).exitCode === 0;
+            const hasHeadLife = (await Bun.$`git cat-file -e HEAD:data/lifecycle.json`.nothrow()).exitCode === 0;
+            if (!hasHeadSnap || !hasHeadLife) {
+              console.log("yes");
+              process.exit(0);
+            }
+            const headSnap = JSON.parse(await Bun.$`git show HEAD:data/snapshot.json`.text());
+            const nextSnap = await Bun.file("data/snapshot.json").json();
+            const headLife = JSON.parse(await Bun.$`git show HEAD:data/lifecycle.json`.text());
+            const nextLife = await Bun.file("data/lifecycle.json").json();
+            const stripLife = (l) => ({ audits: l.audits, crossDomainTau: l.crossDomainTau });
+            const healthSig = (s) => s.sources.map((src) => ({
+              id: src.sourceId,
+              status: src.status,
+              staleDays: src.staleDays,
+              message: src.message,
+              subFeeds: src.subFeeds.map((sf) => ({
+                id: sf.benchmarkId,
+                status: sf.status,
+                rowCount: sf.rowCount,
+                consecutiveDropDays: sf.consecutiveDropDays,
+                lastLowCountDate: sf.lastLowCountDate,
+                message: sf.message,
+              })),
+              pricingHealth: src.pricingHealth
+                ? {
+                    status: src.pricingHealth.status,
+                    rowCount: src.pricingHealth.rowCount,
+                    consecutiveDropDays: src.pricingHealth.consecutiveDropDays,
+                    lastLowCountDate: src.pricingHealth.lastLowCountDate,
+                    message: src.pricingHealth.message,
+                  }
+                : null,
+            }));
+            const same =
+              headSnap.snapshotHash === nextSnap.snapshotHash &&
+              JSON.stringify(stripLife(headLife)) === JSON.stringify(stripLife(nextLife)) &&
+              JSON.stringify(healthSig(headSnap)) === JSON.stringify(healthSig(nextSnap));
+            console.log(same ? "no" : "yes");
+          ')
+          if [ "$CHANGED" = "yes" ]; then
+            if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
+              echo "ERROR: Refusing to publish automated data commits from non-main ref '${GITHUB_REF}'."
+              exit 1
+            fi
+            git config user.name "prochoice-bot[bot]"
+            git config user.email "prochoice-bot[bot]@users.noreply.github.com"
+            git add data/
+            git commit -m "chore(data): daily ProChoice benchmark snapshot and lifecycle audit"
+            # Push strictly the exact validated commit; if main advanced concurrently, fail so a fresh run validates on new HEAD
+            git push origin HEAD:main
+          else
+            echo "Canonical snapshot hash, lifecycle audits, and source health unchanged; skipping commit."
+          fi

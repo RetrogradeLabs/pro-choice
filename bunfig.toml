@@ -1,0 +1,9 @@
+[install]
+auto = "auto"
+exact = false
+
+[install.lockfile]
+save = true
+print = "bun"
+
+telemetry = false

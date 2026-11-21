@@ -1,0 +1,171 @@
+name: ProChoice CI Verification
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prochoice-ci-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  verify:
+    name: Verify snapshot, lint, typecheck, and build
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun 1.4.x
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: "1.4.x"
+
+      - name: Setup Node.js 26
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "26"
+
+      - name: Cache Bun packages
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Cache Next.js build cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .next/cache
+          key: next-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'next.config.ts') }}-${{ github.sha }}
+          restore-keys: |
+            next-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'next.config.ts') }}-
+            next-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Enforce append-only immutability on archived MAJOR epochs and manifest
+        run: |
+          BASE_REF="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [ -z "$BASE_REF" ] || [ "$BASE_REF" = "0000000000000000000000000000000000000000" ]; then
+            echo "Initial push without base commit; manifest SHA-256 check runs in validator."
+            exit 0
+          fi
+          if ! git cat-file -e "${BASE_REF}^{commit}" 2>/dev/null; then
+            echo "ERROR: Base commit $BASE_REF is unreachable; refusing to skip append-only epoch check."
+            exit 1
+          fi
+          # Verify EVERY consecutive commit pair in BASE_REF..HEAD so an epoch added at commit A cannot be rewritten at commit B
+          PREV="$BASE_REF"
+          mapfile -t PUSH_COMMITS < <(git rev-list --reverse "${BASE_REF}..HEAD")
+          for COMMIT in "${PUSH_COMMITS[@]}"; do
+            BAD=$(git diff --name-status --diff-filter=MDTRCU "$PREV" "$COMMIT" -- 'data/epochs/*.json' ':!data/epochs/manifest.json')
+            if [ -n "$BAD" ]; then
+              echo "ERROR: Archived MAJOR epoch files under data/epochs/ are strictly append-only ($PREV..$COMMIT):"
+              echo "$BAD"
+              exit 1
+            fi
+            if git cat-file -e "${PREV}:data/epochs/manifest.json" 2>/dev/null; then
+              PREV_REF="$PREV" CUR_REF="$COMMIT" bun -e '
+                const prev = JSON.parse(await Bun.$`git show ${process.env.PREV_REF}:data/epochs/manifest.json`.text());
+                const cur = JSON.parse(await Bun.$`git show ${process.env.CUR_REF}:data/epochs/manifest.json`.text());
+                for (const [file, sha] of Object.entries(prev)) {
+                  if (cur[file] !== sha) {
+                    console.error(`ERROR: Manifest entry ${file} changed or removed in ${process.env.PREV_REF}..${process.env.CUR_REF} (${sha} -> ${cur[file] ?? "MISSING"})`);
+                    process.exit(1);
+                  }
+                }
+              '
+            fi
+            PREV="$COMMIT"
+          done
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Validate snapshot and lifecycle invariants (Bun 1.4.x & Node.js 26)
+        env:
+          STRICT_FRESHNESS: "1"
+        run: |
+          BASE_REF="${{ github.event.pull_request.base.sha || github.event.before }}"
+          validate_against_anchor() {
+            local ANCHOR_REF="$1"
+            local TARGET_DIR="$2"
+            local RUN_STRICT="$3"
+            local PREV_ENV=()
+            if [ -n "$ANCHOR_REF" ] && git cat-file -e "${ANCHOR_REF}:data/lifecycle.json" 2>/dev/null; then
+              git show "${ANCHOR_REF}:data/lifecycle.json" > /tmp/anchor-lifecycle.json
+              CMP=$(TARGET_LIFE="$TARGET_DIR/lifecycle.json" bun -e '
+                import { compareIsoInstants } from "./src/lib/format.ts";
+                const base = await Bun.file("/tmp/anchor-lifecycle.json").json();
+                const cur = await Bun.file(process.env.TARGET_LIFE).json();
+                const cmp = compareIsoInstants(cur.auditedAt, base.auditedAt);
+                if (cmp === null || cmp < 0) {
+                  console.log("regress");
+                } else {
+                  const b = new Date(Date.parse(base.auditedAt)).toISOString().slice(0, 10);
+                  const c = new Date(Date.parse(cur.auditedAt)).toISOString().slice(0, 10);
+                  console.log(c < b ? "regress" : c > b ? "advance" : "same");
+                }
+              ')
+              if [ "$CMP" = "regress" ]; then
+                echo "ERROR: Proposed lifecycle.auditedAt regressed earlier than anchor $ANCHOR_REF."
+                exit 1
+              elif [ "$CMP" = "advance" ]; then
+                PREV_ENV=(PRIOR_LIFECYCLE_PATH=/tmp/anchor-lifecycle.json REQUIRE_PRIOR_LIFECYCLE=1 VERIFY_PERSISTED_PRIOR_MATCHES=1)
+              else
+                if git cat-file -e "${ANCHOR_REF}:data/lifecycle.prev.json" 2>/dev/null; then
+                  git show "${ANCHOR_REF}:data/lifecycle.prev.json" > /tmp/anchor-lifecycle-prev.json
+                  PREV_ENV=(PRIOR_LIFECYCLE_PATH=/tmp/anchor-lifecycle-prev.json REQUIRE_PRIOR_LIFECYCLE=1 VERIFY_PERSISTED_PRIOR_MATCHES=1)
+                else
+                  PREV_ENV=(IGNORE_LOCAL_PRIOR_LIFECYCLE=1)
+                fi
+              fi
+            else
+              PREV_ENV=(IGNORE_LOCAL_PRIOR_LIFECYCLE=1)
+            fi
+            if [ "$TARGET_DIR" = "data" ]; then
+              env "${PREV_ENV[@]}" STRICT_FRESHNESS="$RUN_STRICT" bun run validate:snapshot
+              env "${PREV_ENV[@]}" STRICT_FRESHNESS="$RUN_STRICT" node scripts/ingest/validate-snapshot.ts
+            else
+              local WORK_ROOT
+              WORK_ROOT=$(dirname "$TARGET_DIR")
+              (cd "$WORK_ROOT" && env "${PREV_ENV[@]}" STRICT_FRESHNESS="$RUN_STRICT" bun run validate:snapshot)
+            fi
+          }
+
+          ANCHOR=""
+          if [ -n "$BASE_REF" ] && [ "$BASE_REF" != "0000000000000000000000000000000000000000" ]; then
+            ANCHOR="$BASE_REF"
+            # Validate every intermediate commit in BASE_REF..HEAD with its OWN compiler/registry tree so historical releases verify accurately
+            mapfile -t LIFE_COMMITS < <(git rev-list --reverse "${BASE_REF}..HEAD" -- data/lifecycle.json)
+            if [ "${#LIFE_COMMITS[@]}" -gt 1 ]; then
+              LAST_IDX=$((${#LIFE_COMMITS[@]} - 1))
+              for ((i = 0; i < LAST_IDX; i++)); do
+                COMMIT="${LIFE_COMMITS[$i]}"
+                STAGE_ROOT=$(mktemp -d)
+                git archive "$COMMIT" | tar -x -C "$STAGE_ROOT"
+                if git diff --quiet "$COMMIT" HEAD -- bun.lock package.json; then
+                  ln -s "$PWD/node_modules" "$STAGE_ROOT/node_modules"
+                else
+                  (cd "$STAGE_ROOT" && bun install --frozen-lockfile)
+                fi
+                validate_against_anchor "$ANCHOR" "$STAGE_ROOT/data" "0"
+                rm -rf "$STAGE_ROOT"
+                ANCHOR="$COMMIT"
+              done
+            fi
+          fi
+          validate_against_anchor "$ANCHOR" "data" "1"
+
+      - name: Run Biome, Oxlint, ESLint, TypeScript, and Next.js build
+        run: bun run verify

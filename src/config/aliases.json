@@ -1,0 +1,889 @@
+[
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-fable-5.2",
+    "displayName": "Claude Fable 5.2",
+    "releaseDate": "2026-11-09",
+    "defaultEffort": "high",
+    "patterns": ["claude[\\s_-]+fable[\\s_-]+5[._-]2", "fable[\\s_-]+5[._-]2"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-fable-5.1",
+    "displayName": "Claude Fable 5.1",
+    "releaseDate": "2026-09-12",
+    "defaultEffort": "high",
+    "patterns": ["claude[\\s_-]+fable[\\s_-]+5[._-]1", "fable[\\s_-]+5[._-]1"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-fable-5",
+    "displayName": "Claude Fable 5",
+    "releaseDate": "2026-06-09",
+    "defaultEffort": "high",
+    "patterns": ["claude[\\s_-]+fable[\\s_-]+5", "fable[\\s_-]+5"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-opus-5.5",
+    "displayName": "Claude Opus 5.5",
+    "releaseDate": "2026-09-22",
+    "defaultEffort": "medium",
+    "patterns": ["claude[\\s_-]+opus[\\s_-]+5[._-]5", "opus[\\s_-]+5[._-]5"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-opus-5",
+    "displayName": "Claude Opus 5",
+    "releaseDate": "2026-07-28",
+    "defaultEffort": "high",
+    "patterns": ["claude[\\s_-]+opus[\\s_-]+5", "opus[\\s_-]+5"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-opus-4.8",
+    "displayName": "Claude Opus 4.8",
+    "releaseDate": "2026-06-12",
+    "defaultEffort": "none",
+    "patterns": ["claude[\\s_-]+opus[\\s_-]+4[._-]8", "opus[\\s_-]+4[._-]8"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-opus-4.7",
+    "displayName": "Claude Opus 4.7",
+    "releaseDate": "2026-04-16",
+    "defaultEffort": "none",
+    "patterns": ["claude[\\s_-]+opus[\\s_-]+4[._-]7", "opus[\\s_-]+4[._-]7"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-opus-4.6",
+    "displayName": "Claude Opus 4.6",
+    "releaseDate": "2026-02-05",
+    "defaultEffort": "none",
+    "patterns": ["claude[\\s_-]+opus[\\s_-]+4[._-]6", "opus[\\s_-]+4[._-]6"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-sonnet-5.5",
+    "displayName": "Claude Sonnet 5.5",
+    "releaseDate": "2026-09-28",
+    "defaultEffort": "high",
+    "patterns": ["claude[\\s_-]+sonnet[\\s_-]+5[._-]5", "sonnet[\\s_-]+5[._-]5"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-sonnet-5",
+    "displayName": "Claude Sonnet 5",
+    "releaseDate": "2026-07-15",
+    "defaultEffort": "high",
+    "patterns": ["claude[\\s_-]+sonnet[\\s_-]+5", "sonnet[\\s_-]+5"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-sonnet-4.6",
+    "displayName": "Claude Sonnet 4.6",
+    "releaseDate": "2026-02-17",
+    "defaultEffort": "none",
+    "patterns": ["claude[\\s_-]+sonnet[\\s_-]+4[._-]6", "sonnet[\\s_-]+4[._-]6"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-opus-4.5",
+    "displayName": "Claude Opus 4.5",
+    "releaseDate": "2025-11-24",
+    "defaultEffort": "none",
+    "revisionStamps": ["2025-11-01", "20251101", "1101"],
+    "patterns": ["claude[\\s_-]+opus[\\s_-]+4[._-]5", "opus[\\s_-]+4[._-]5"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-sonnet-4.5",
+    "displayName": "Claude Sonnet 4.5",
+    "releaseDate": "2025-09-29",
+    "defaultEffort": "none",
+    "patterns": ["claude[\\s_-]+sonnet[\\s_-]+4[._-]5", "sonnet[\\s_-]+4[._-]5"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-haiku-5.5",
+    "displayName": "Claude Haiku 5.5",
+    "releaseDate": "2026-10-07",
+    "defaultEffort": "medium",
+    "patterns": ["claude[\\s_-]+haiku[\\s_-]+5[._-]5", "haiku[\\s_-]+5[._-]5"]
+  },
+  {
+    "provider": "anthropic",
+    "modelSlug": "claude-haiku-4.5",
+    "displayName": "Claude Haiku 4.5",
+    "releaseDate": "2025-10-15",
+    "defaultEffort": "none",
+    "revisionStamps": ["2025-10-01", "20251001", "1001"],
+    "patterns": ["claude[\\s_-]+haiku[\\s_-]+4[._-]5", "haiku[\\s_-]+4[._-]5"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-6.2-astra-pro",
+    "displayName": "GPT-6.2 Astra Pro",
+    "releaseDate": "2026-11-17",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*6[._-]2[\\s_-]+astra[\\s_-]+pro"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-6.2-astra",
+    "displayName": "GPT-6.2 Astra",
+    "releaseDate": "2026-11-17",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*6[._-]2[\\s_-]+astra"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "astra-for-law-6.2",
+    "displayName": "Astra for Law 6.2",
+    "releaseDate": "2026-11-17",
+    "defaultEffort": "medium",
+    "patterns": ["astra[\\s_-]+for[\\s_-]+law[\\s_-]+6[._-]2"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-6.2-sol-pro",
+    "displayName": "GPT-6.2 Sol Pro",
+    "releaseDate": "2026-11-17",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*6[._-]2[\\s_-]+sol[\\s_-]+pro"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-6.2-sol",
+    "displayName": "GPT-6.2 Sol",
+    "releaseDate": "2026-11-17",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*6[._-]2[\\s_-]+sol"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-6.1-sol",
+    "displayName": "GPT-6.1 Sol",
+    "releaseDate": "2026-09-25",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*6[._-]1[\\s_-]+sol"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-6.1-terra",
+    "displayName": "GPT-6.1 Terra",
+    "releaseDate": "2026-09-25",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*6[._-]1[\\s_-]+terra"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-6-astra",
+    "displayName": "GPT-6 Astra",
+    "releaseDate": "2026-08-22",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*6[\\s_-]+astra"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-6-sol",
+    "displayName": "GPT-6 Sol",
+    "releaseDate": "2026-08-22",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*6[\\s_-]+sol"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-6-luna",
+    "displayName": "GPT-6 Luna",
+    "releaseDate": "2026-08-22",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*6[\\s_-]+luna"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5.6-sol",
+    "displayName": "GPT-5.6 Sol",
+    "releaseDate": "2026-06-18",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*5[._-]6[\\s_-]+sol"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5.6-terra",
+    "displayName": "GPT-5.6 Terra",
+    "releaseDate": "2026-06-18",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*5[._-]6[\\s_-]+terra"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5.6-luna",
+    "displayName": "GPT-5.6 Luna",
+    "releaseDate": "2026-06-18",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*5[._-]6[\\s_-]+luna"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5.5-pro",
+    "displayName": "GPT-5.5 Pro",
+    "releaseDate": "2026-04-23",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*5[._-]5[\\s_-]+pro"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5.5-codex",
+    "displayName": "GPT-5.5 Codex",
+    "releaseDate": "2026-05-15",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*5[._-]5[\\s_-]+codex"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5.5-instant",
+    "displayName": "GPT-5.5 Instant",
+    "releaseDate": "2026-06-01",
+    "defaultEffort": "none",
+    "patterns": ["gpt[\\s_-]*5[._-]5[\\s_-]+instant"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5.5",
+    "displayName": "GPT-5.5",
+    "releaseDate": "2026-04-23",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*5[._-]5"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5.4",
+    "displayName": "GPT-5.4",
+    "releaseDate": "2026-03-05",
+    "defaultEffort": "none",
+    "patterns": ["gpt[\\s_-]*5[._-]4"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5.4-mini",
+    "displayName": "GPT-5.4 Mini",
+    "releaseDate": "2026-03-17",
+    "defaultEffort": "none",
+    "patterns": ["gpt[\\s_-]*5[._-]4[\\s_-]+mini"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5.4-nano",
+    "displayName": "GPT-5.4 Nano",
+    "releaseDate": "2026-03-17",
+    "defaultEffort": "none",
+    "patterns": ["gpt[\\s_-]*5[._-]4[\\s_-]+nano"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5.3-codex",
+    "displayName": "GPT-5.3 Codex",
+    "releaseDate": "2026-02-15",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*5[._-]3[\\s_-]+codex"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5.2",
+    "displayName": "GPT-5.2",
+    "releaseDate": "2025-12-11",
+    "defaultEffort": "none",
+    "patterns": ["gpt[\\s_-]*5[._-]2"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5.1",
+    "displayName": "GPT-5.1",
+    "releaseDate": "2025-11-13",
+    "defaultEffort": "none",
+    "patterns": ["gpt[\\s_-]*5[._-]1"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-5",
+    "displayName": "GPT-5",
+    "releaseDate": "2025-08-07",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*5"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-oss-120b",
+    "displayName": "gpt-oss-120b",
+    "releaseDate": "2025-08-05",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*oss[\\s_-]*120b"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "gpt-oss-20b",
+    "displayName": "gpt-oss-20b",
+    "releaseDate": "2025-08-05",
+    "defaultEffort": "medium",
+    "patterns": ["gpt[\\s_-]*oss[\\s_-]*20b"]
+  },
+  {
+    "provider": "openai",
+    "modelSlug": "o3",
+    "displayName": "o3",
+    "releaseDate": "2025-04-16",
+    "defaultEffort": "medium",
+    "patterns": ["o3"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-4-neon",
+    "displayName": "Gemini 4 Neon",
+    "releaseDate": "2026-11-18",
+    "defaultEffort": "high",
+    "patterns": ["gemini[\\s_-]+4[\\s_-]+neon"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-4-carbon",
+    "displayName": "Gemini 4 Carbon",
+    "releaseDate": "2026-10-12",
+    "defaultEffort": "medium",
+    "patterns": ["gemini[\\s_-]+4[\\s_-]+carbon"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-4-argon",
+    "displayName": "Gemini 4 Argon",
+    "releaseDate": "2026-09-20",
+    "defaultEffort": "medium",
+    "patterns": ["gemini[\\s_-]+4[\\s_-]+argon"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-4-hydrogen",
+    "displayName": "Gemini 4 Hydrogen",
+    "releaseDate": "2026-09-20",
+    "defaultEffort": "high",
+    "patterns": ["gemini[\\s_-]+4[\\s_-]+hydrogen"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-3.8-flash",
+    "displayName": "Gemini 3.8 Flash",
+    "releaseDate": "2026-08-10",
+    "defaultEffort": "medium",
+    "patterns": ["gemini[\\s_-]+3[._-]8[\\s_-]+flash"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-3.7-flash",
+    "displayName": "Gemini 3.7 Flash",
+    "releaseDate": "2026-06-18",
+    "defaultEffort": "high",
+    "patterns": ["gemini[\\s_-]+3[._-]7[\\s_-]+flash"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-3.6-flash",
+    "displayName": "Gemini 3.6 Flash",
+    "releaseDate": "2026-05-05",
+    "defaultEffort": "medium",
+    "patterns": ["gemini[\\s_-]+3[._-]6[\\s_-]+flash"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-3.5-flash-lite",
+    "displayName": "Gemini 3.5 Flash-Lite",
+    "releaseDate": "2026-04-12",
+    "defaultEffort": "minimal",
+    "patterns": ["gemini[\\s_-]+3[._-]5[\\s_-]+flash[\\s_-]+lite"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-3.5-flash",
+    "displayName": "Gemini 3.5 Flash",
+    "releaseDate": "2026-04-12",
+    "defaultEffort": "high",
+    "patterns": ["gemini[\\s_-]+3[._-]5[\\s_-]+flash"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-3.1-pro",
+    "displayName": "Gemini 3.1 Pro",
+    "releaseDate": "2026-02-19",
+    "defaultEffort": "high",
+    "patterns": ["gemini[\\s_-]+3[._-]1[\\s_-]+pro(?:[\\s_-]+preview)?"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-3.1-flash-lite-preview",
+    "displayName": "Gemini 3.1 Flash-Lite Preview",
+    "releaseDate": "2026-03-03",
+    "defaultEffort": "minimal",
+    "patterns": ["gemini[\\s_-]+3[._-]1[\\s_-]+flash[\\s_-]+lite[\\s_-]+preview"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-3.1-flash-lite",
+    "displayName": "Gemini 3.1 Flash-Lite",
+    "releaseDate": "2026-05-25",
+    "defaultEffort": "minimal",
+    "patterns": ["gemini[\\s_-]+3[._-]1[\\s_-]+flash[\\s_-]+lite"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-3-pro",
+    "displayName": "Gemini 3 Pro",
+    "releaseDate": "2025-11-18",
+    "defaultEffort": "high",
+    "patterns": ["gemini[\\s_-]+3[\\s_-]+pro(?:[\\s_-]+preview)?"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemini-3-flash",
+    "displayName": "Gemini 3 Flash",
+    "releaseDate": "2025-12-15",
+    "defaultEffort": "high",
+    "patterns": ["gemini[\\s_-]+3[\\s_-]+flash(?:[\\s_-]+preview)?"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemma-4-31b",
+    "displayName": "Gemma 4 31B",
+    "releaseDate": "2026-07-01",
+    "defaultEffort": "none",
+    "patterns": ["gemma[\\s_-]+4[\\s_-]+31b"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemma-4-26b-a4b",
+    "displayName": "Gemma 4 26B A4B",
+    "releaseDate": "2026-07-01",
+    "defaultEffort": "none",
+    "patterns": ["gemma[\\s_-]+4[\\s_-]+26b[\\s_-]+a4b"]
+  },
+  {
+    "provider": "google",
+    "modelSlug": "gemma-4-12b",
+    "displayName": "Gemma 4 12B",
+    "releaseDate": "2026-07-01",
+    "defaultEffort": "none",
+    "patterns": ["gemma[\\s_-]+4[\\s_-]+12b"]
+  },
+  {
+    "provider": "spacexai",
+    "modelSlug": "grok-4.7",
+    "displayName": "Grok 4.7",
+    "releaseDate": "2026-10-18",
+    "defaultEffort": "high",
+    "patterns": ["grok[\\s_-]+4[._-]7"]
+  },
+  {
+    "provider": "spacexai",
+    "modelSlug": "grok-4.6",
+    "displayName": "Grok 4.6",
+    "releaseDate": "2026-08-25",
+    "defaultEffort": "high",
+    "patterns": ["grok[\\s_-]+4[._-]6"]
+  },
+  {
+    "provider": "spacexai",
+    "modelSlug": "grok-4.5",
+    "displayName": "Grok 4.5",
+    "releaseDate": "2026-06-30",
+    "defaultEffort": "high",
+    "patterns": ["grok[\\s_-]+4[._-]5"]
+  },
+  {
+    "provider": "spacexai",
+    "modelSlug": "grok-4.3",
+    "displayName": "Grok 4.3",
+    "releaseDate": "2026-05-01",
+    "defaultEffort": "low",
+    "patterns": ["grok[\\s_-]+4[._-]3"]
+  },
+  {
+    "provider": "spacexai",
+    "modelSlug": "grok-4.20",
+    "displayName": "Grok 4.20",
+    "releaseDate": "2026-03-09",
+    "defaultEffort": "none",
+    "patterns": ["grok[\\s_-]+4[._-]20(?:[\\s_-]+beta(?:[\\s_-]+1)?)?"]
+  },
+  {
+    "provider": "spacexai",
+    "modelSlug": "grok-4.1",
+    "displayName": "Grok 4.1",
+    "releaseDate": "2025-11-20",
+    "defaultEffort": "none",
+    "patterns": ["grok[\\s_-]+4[._-]1"]
+  },
+  {
+    "provider": "meta",
+    "modelSlug": "muse-wonder-full",
+    "displayName": "Muse Wonder Full",
+    "releaseDate": null,
+    "defaultEffort": "max",
+    "patterns": ["muse[\\s_-]+wonder[\\s_-]+full"]
+  },
+  {
+    "provider": "meta",
+    "modelSlug": "muse-wonder",
+    "displayName": "Muse Wonder",
+    "releaseDate": null,
+    "defaultEffort": "max",
+    "patterns": ["muse[\\s_-]+wonder(?:[\\s_-]+1[._-]0)?"]
+  },
+  {
+    "provider": "meta",
+    "modelSlug": "muse-spark-open",
+    "displayName": "Muse Spark Open",
+    "releaseDate": null,
+    "defaultEffort": "high",
+    "patterns": ["muse[\\s_-]+spark[\\s_-]+open(?:[\\s_-]+816b[\\s_-]+a42b)?"]
+  },
+  {
+    "provider": "meta",
+    "modelSlug": "muse-spark-1.3",
+    "displayName": "Muse Spark 1.3",
+    "releaseDate": null,
+    "defaultEffort": "high",
+    "patterns": ["muse[\\s_-]+spark[\\s_-]+1[._-]3"]
+  },
+  {
+    "provider": "meta",
+    "modelSlug": "muse-spark-1.2",
+    "displayName": "Muse Spark 1.2",
+    "releaseDate": null,
+    "defaultEffort": "high",
+    "patterns": ["muse[\\s_-]+spark[\\s_-]+1[._-]2"]
+  },
+  {
+    "provider": "meta",
+    "modelSlug": "muse-spark-1.1",
+    "displayName": "Muse Spark 1.1",
+    "releaseDate": null,
+    "defaultEffort": "high",
+    "patterns": ["muse[\\s_-]+spark[\\s_-]+1[._-]1"]
+  },
+  {
+    "provider": "meta",
+    "modelSlug": "muse-spark",
+    "displayName": "Muse Spark",
+    "releaseDate": null,
+    "defaultEffort": "high",
+    "patterns": ["muse[\\s_-]+spark"]
+  },
+  {
+    "provider": "meta",
+    "modelSlug": "muse-glimmer",
+    "displayName": "Muse Glimmer",
+    "releaseDate": null,
+    "defaultEffort": "high",
+    "patterns": ["muse[\\s_-]+glimmer"]
+  },
+  {
+    "provider": "meta",
+    "modelSlug": "muse-ember",
+    "displayName": "Muse Ember",
+    "releaseDate": null,
+    "defaultEffort": "max",
+    "patterns": ["muse[\\s_-]+ember(?:[\\s_-]+1[._-]0)?"]
+  },
+  {
+    "provider": "meta",
+    "modelSlug": "llama-4-maverick",
+    "displayName": "Llama 4 Maverick",
+    "releaseDate": "2025-04-05",
+    "defaultEffort": "none",
+    "patterns": ["llama[\\s_-]+4[\\s_-]+maverick(?:[\\s_-]+17b[\\s_-]+128e[\\s_-]+instruct)?"]
+  },
+  {
+    "provider": "meta",
+    "modelSlug": "llama-4-scout",
+    "displayName": "Llama 4 Scout",
+    "releaseDate": "2025-04-05",
+    "defaultEffort": "none",
+    "patterns": ["llama[\\s_-]+4[\\s_-]+scout(?:[\\s_-]+17b[\\s_-]+16e[\\s_-]+instruct)?"]
+  },
+  {
+    "provider": "meta",
+    "modelSlug": "llama-3.3-70b",
+    "displayName": "Llama 3.3 70B",
+    "releaseDate": "2024-12-06",
+    "defaultEffort": "none",
+    "patterns": ["llama[\\s_-]+3[._-]3[\\s_-]+70b(?:[\\s_-]+instruct)?"]
+  },
+  {
+    "provider": "deepseek",
+    "modelSlug": "deepseek-v4-pro-0813",
+    "displayName": "DeepSeek V4 Pro (0813)",
+    "releaseDate": "2026-08-13",
+    "defaultEffort": "high",
+    "revisionStamps": ["0813", "20260813", "2026-08-13"],
+    "patterns": ["deepseek[\\s_-]+v4[\\s_-]+pro[\\s_-]+(?:2026[\\s_-]?)?08[\\s_-]?13"]
+  },
+  {
+    "provider": "deepseek",
+    "modelSlug": "deepseek-v4-pro",
+    "displayName": "DeepSeek V4 Pro (0424)",
+    "releaseDate": "2026-04-24",
+    "defaultEffort": "high",
+    "requireExplicitEffort": true,
+    "revisionStamps": ["0424", "20260424", "2026-04-24"],
+    "patterns": ["deepseek[\\s_-]+v4[\\s_-]+pro(?:[\\s_-]+preview)?"]
+  },
+  {
+    "provider": "deepseek",
+    "modelSlug": "deepseek-v4.1-flash-1017",
+    "displayName": "DeepSeek V4.1 Flash (1017)",
+    "releaseDate": "2026-10-17",
+    "defaultEffort": "high",
+    "revisionStamps": ["1017", "20261017", "2026-10-17"],
+    "patterns": ["deepseek[\\s_-]+v4[._p-]1[\\s_-]+flash[\\s_-]+(?:2026[\\s_-]?)?10[\\s_-]?17"]
+  },
+  {
+    "provider": "deepseek",
+    "modelSlug": "deepseek-v4.1-flash",
+    "displayName": "DeepSeek V4.1 Flash",
+    "releaseDate": "2026-09-10",
+    "defaultEffort": "high",
+    "revisionStamps": ["0910", "20260910", "2026-09-10"],
+    "patterns": ["deepseek[\\s_-]+v4[._p-]1[\\s_-]+flash"]
+  },
+  {
+    "provider": "deepseek",
+    "modelSlug": "deepseek-v4-flash-vision",
+    "displayName": "DeepSeek V4 Flash Vision",
+    "releaseDate": "2026-09-10",
+    "defaultEffort": "high",
+    "patterns": ["deepseek[\\s_-]+v4[\\s_-]+flash[\\s_-]+vision"]
+  },
+  {
+    "provider": "deepseek",
+    "modelSlug": "deepseek-v4-flash",
+    "displayName": "DeepSeek V4 Flash",
+    "releaseDate": "2026-07-31",
+    "defaultEffort": "high",
+    "patterns": ["deepseek[\\s_-]+v4[\\s_-]+flash"]
+  },
+  {
+    "provider": "deepseek",
+    "modelSlug": "deepseek-v3.2-exp",
+    "displayName": "DeepSeek V3.2-Exp",
+    "releaseDate": "2025-09-29",
+    "defaultEffort": "none",
+    "patterns": ["deepseek[\\s_-]+v3[._-]2[\\s_-]+exp"]
+  },
+  {
+    "provider": "deepseek",
+    "modelSlug": "deepseek-v3.2",
+    "displayName": "DeepSeek V3.2",
+    "releaseDate": "2025-12-01",
+    "defaultEffort": "none",
+    "patterns": ["deepseek[\\s_-]+v3[._-]2"]
+  },
+  {
+    "provider": "moonshot",
+    "modelSlug": "kimi-k3.1-pro",
+    "displayName": "Kimi K3.1 Pro",
+    "releaseDate": "2026-10-10",
+    "defaultEffort": "max",
+    "patterns": ["kimi[\\s_-]+k3[._p-]1[\\s_-]+pro"]
+  },
+  {
+    "provider": "moonshot",
+    "modelSlug": "kimi-k3",
+    "displayName": "Kimi K3",
+    "releaseDate": "2026-08-14",
+    "defaultEffort": "max",
+    "patterns": ["kimi[\\s_-]+k3"]
+  },
+  {
+    "provider": "moonshot",
+    "modelSlug": "kimi-k2.7-code",
+    "displayName": "Kimi K2.7 Code",
+    "releaseDate": "2026-06-15",
+    "defaultEffort": "max",
+    "patterns": ["kimi[\\s_-]+k2[._-]7[\\s_-]+code"]
+  },
+  {
+    "provider": "moonshot",
+    "modelSlug": "kimi-k2.6",
+    "displayName": "Kimi K2.6",
+    "releaseDate": "2026-04-10",
+    "defaultEffort": "thinking",
+    "patterns": ["kimi[\\s_-]+k2[._-]6"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen4-max",
+    "displayName": "Qwen4 Max",
+    "releaseDate": "2026-10-22",
+    "defaultEffort": "xhigh",
+    "patterns": ["qwen[\\s_-]*4[\\s_-]+max"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.8-2.4t-a95b",
+    "displayName": "Qwen3.8 2.4T A95B",
+    "releaseDate": "2026-09-12",
+    "defaultEffort": "xhigh",
+    "patterns": ["qwen[\\s_-]*3[._-]8[\\s_-]+2[._-]4t[\\s_-]+a95b"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.8-max-0902",
+    "displayName": "Qwen3.8 Max (0902)",
+    "releaseDate": "2026-09-02",
+    "defaultEffort": "xhigh",
+    "patterns": ["qwen[\\s_-]*3[._-]8[\\s_-]+max[\\s_-]+(?:2026-?09-?02|0902)"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.8-max",
+    "displayName": "Qwen3.8 Max",
+    "releaseDate": "2026-08-03",
+    "defaultEffort": "xhigh",
+    "patterns": ["qwen[\\s_-]*3[._-]8[\\s_-]+max"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.8-27b",
+    "displayName": "Qwen3.8 27B",
+    "releaseDate": "2026-09-05",
+    "defaultEffort": "xhigh",
+    "patterns": ["qwen[\\s_-]*3[._-]8[\\s_-]+27b"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.8-flash-next",
+    "displayName": "Qwen3.8 Flash Next",
+    "releaseDate": "2026-09-15",
+    "defaultEffort": "xhigh",
+    "patterns": ["qwen[\\s_-]*3[._-]8[\\s_-]+flash[\\s_-]+next"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.7-max-0517",
+    "displayName": "Qwen3.7 Max (0517)",
+    "releaseDate": "2026-05-17",
+    "defaultEffort": "thinking",
+    "patterns": ["qwen[\\s_-]*3[._-]7[\\s_-]+max[\\s_-]+(?:2026-?05-?17|0517)"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.7-max",
+    "displayName": "Qwen3.7 Max",
+    "releaseDate": "2026-05-20",
+    "defaultEffort": "thinking",
+    "patterns": ["qwen[\\s_-]*3[._-]7[\\s_-]+max"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.7-plus",
+    "displayName": "Qwen3.7 Plus",
+    "releaseDate": "2026-07-10",
+    "defaultEffort": "thinking",
+    "patterns": ["qwen[\\s_-]*3[._-]7[\\s_-]+plus"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.6-35b-a3b",
+    "displayName": "Qwen3.6 35B A3B",
+    "releaseDate": "2026-05-20",
+    "defaultEffort": "thinking",
+    "patterns": ["qwen[\\s_-]*3[._-]6[\\s_-]+35b[\\s_-]+a3b"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.5-397b-a17b",
+    "displayName": "Qwen3.5 397B A17B",
+    "releaseDate": "2026-03-20",
+    "defaultEffort": "thinking",
+    "patterns": ["qwen[\\s_-]*3[._-]5[\\s_-]+397b[\\s_-]+a17b"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.5-122b-a10b",
+    "displayName": "Qwen3.5 122B A10B",
+    "releaseDate": "2026-03-20",
+    "defaultEffort": "thinking",
+    "patterns": ["qwen[\\s_-]*3[._-]5[\\s_-]+122b[\\s_-]+a10b"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.5-omni-plus",
+    "displayName": "Qwen3.5 Omni Plus",
+    "releaseDate": "2026-04-01",
+    "defaultEffort": "thinking",
+    "patterns": ["qwen[\\s_-]*3[._-]5[\\s_-]+omni[\\s_-]+plus"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.5-omni-flash",
+    "displayName": "Qwen3.5 Omni Flash",
+    "releaseDate": "2026-04-01",
+    "defaultEffort": "thinking",
+    "patterns": ["qwen[\\s_-]*3[._-]5[\\s_-]+omni[\\s_-]+flash"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3.5-9b",
+    "displayName": "Qwen3.5 9B",
+    "releaseDate": "2026-03-20",
+    "defaultEffort": "thinking",
+    "patterns": ["qwen[\\s_-]*3[._-]5[\\s_-]+9b"]
+  },
+  {
+    "provider": "alibaba",
+    "modelSlug": "qwen3-coder-next",
+    "displayName": "Qwen3 Coder Next",
+    "releaseDate": "2026-02-03",
+    "defaultEffort": "none",
+    "patterns": ["qwen[\\s_-]*3[\\s_-]+coder[\\s_-]+next"]
+  },
+  {
+    "provider": "zhipu",
+    "modelSlug": "glm-5.3-flash",
+    "displayName": "GLM-5.3 Flash",
+    "releaseDate": "2026-09-28",
+    "defaultEffort": "max",
+    "patterns": ["glm[\\s_-]+5[._-]3[\\s_-]+flash"]
+  },
+  {
+    "provider": "zhipu",
+    "modelSlug": "glm-5.3",
+    "displayName": "GLM-5.3",
+    "releaseDate": "2026-09-18",
+    "defaultEffort": "max",
+    "patterns": ["glm[\\s_-]+5[._-]3"]
+  },
+  {
+    "provider": "zhipu",
+    "modelSlug": "glm-5.2",
+    "displayName": "GLM-5.2",
+    "releaseDate": "2026-07-02",
+    "defaultEffort": "thinking",
+    "patterns": ["glm[\\s_-]+5[._-]2"]
+  },
+  {
+    "provider": "zhipu",
+    "modelSlug": "glm-5.1",
+    "displayName": "GLM-5.1",
+    "releaseDate": "2026-04-15",
+    "defaultEffort": "thinking",
+    "patterns": ["glm[\\s_-]+5[._-]1"]
+  },
+  {
+    "provider": "zhipu",
+    "modelSlug": "glm-5",
+    "displayName": "GLM-5",
+    "releaseDate": "2026-02-01",
+    "defaultEffort": "thinking",
+    "patterns": ["glm[\\s_-]+5"]
+  }
+]
