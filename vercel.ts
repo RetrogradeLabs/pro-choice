@@ -1,8 +1,5 @@
 import type { VercelConfig } from "@vercel/config/v1";
 
-const VARY_PAGE_VALUE =
-  "Accept, rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch";
-
 export const config: VercelConfig = {
   framework: "nextjs",
   bunVersion: "1.4.x",
@@ -121,11 +118,23 @@ export const config: VercelConfig = {
     },
     {
       source: "/",
-      headers: [{ key: "Vary", value: VARY_PAGE_VALUE }],
+      headers: [
+        {
+          key: "Vary",
+          value:
+            "Accept, rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+        },
+      ],
     },
     {
       source: "/(coding|writing|design|research|cyber|harnesses|docs|about|contact|privacy)",
-      headers: [{ key: "Vary", value: VARY_PAGE_VALUE }],
+      headers: [
+        {
+          key: "Vary",
+          value:
+            "Accept, rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+        },
+      ],
     },
     {
       source:
