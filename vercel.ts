@@ -12,7 +12,6 @@ export const config: VercelConfig = {
   cleanUrls: true,
   trailingSlash: false,
   regions: ["iad1"],
-  functionFailoverRegions: ["cle1"],
   installCommand: "bun install --frozen-lockfile",
   buildCommand: "bun run build",
   redirects: [
