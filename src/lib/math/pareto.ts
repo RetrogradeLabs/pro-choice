@@ -21,6 +21,7 @@ import {
   logNormalInterval,
   type PartialBasketCostModel,
 } from "./cost.ts";
+import { usesMeasurementFamilies } from "./measurement-families.ts";
 
 // Calibrated from n=4,804 empirical Rasch residual pairs (same-family r~0.53, cross-family same-lab r~0.09)
 export const SAME_FAMILY_CORR = 0.5;
@@ -409,7 +410,7 @@ export function stepSignificance(
   weightByBenchmark?: ReadonlyMap<string, number>,
   anchorStats?: Readonly<Record<string, AnchorStats>>,
   linkJointCov?: LinkJointCov | null,
-): { zStep: number; pBetter: number; statisticallyTied: boolean } {
+): { zStep: number; pBetter: number; statisticallyTied: boolean; separated95: boolean } {
   // Exact weighted finite-roster covariance under scalar EB shrinkage: B_i * B_j * rho * sigma_resid^2 * sum_b c_ib * c_jb
   const rho =
     low.provider !== high.provider
@@ -444,6 +445,7 @@ export function stepSignificance(
     zStep: Number(zStep.toFixed(3)),
     pBetter: Number(normalCdf(zStep).toFixed(4)),
     statisticallyTied: zStep < 1.0,
+    separated95: zStep >= 1.96,
   };
 }
 
@@ -1296,31 +1298,97 @@ export function computeProviderFrontier(
 
 /**
  * Extracts Budget, Knee Default (largest perpendicular elevation above the budget-to-max
- * chord in normalized log-cost vs score space that beats Budget by >= 1.0 SE), and Max.
+ * chord in normalized log-cost vs score space), and the highest supported estimate.
  */
+export interface VerdictOptions {
+  preferDistinctModelSlug?: boolean;
+  weightByBenchmark?: ReadonlyMap<string, number>;
+  anchorStats?: Readonly<Record<string, AnchorStats>>;
+  linkJointCov?: LinkJointCov | null | undefined;
+  epochVersion?: string;
+  eligibleConfigs?: readonly EvaluatedConfig[];
+}
+
+export function usesCorroboratedVerdicts(epochVersion: string | undefined): boolean {
+  return !!epochVersion && usesMeasurementFamilies(epochVersion);
+}
+
+function hasRecommendationCoverage(cfg: EvaluatedConfig, opts: VerdictOptions): boolean {
+  const weights = opts.weightByBenchmark;
+  const minCount = cfg.domainId === "coding" || cfg.domainId === "research" ? 3 : 2;
+  if (!weights || cfg.coverageCount < minCount) return false;
+  const feeds = new Set<string>();
+  const families = new Set<string>();
+  let observed = 0;
+  for (const b of cfg.benchmarks) {
+    feeds.add(b.sourceId);
+    const key =
+      cfg.harnessRegime === "standardized" ? `${b.benchmarkId}::standardized` : b.benchmarkId;
+    families.add(opts.anchorStats?.[key]?.measurementFamily ?? b.benchmarkId);
+    observed += weights.get(b.benchmarkId) ?? 0;
+  }
+  const total = [...weights.values()].reduce((sum, w) => sum + w, 0);
+  return feeds.size >= 2 && families.size >= 2 && total > 0 && observed >= 0.25 * total;
+}
+
+export function sharedScoreOrder(
+  high: EvaluatedConfig,
+  low: EvaluatedConfig,
+  weights?: ReadonlyMap<string, number>,
+): number | null {
+  let weightedDifference = 0;
+  let weightSum = 0;
+  for (const a of high.benchmarks) {
+    const b = low.benchmarks.find((row) => row.benchmarkId === a.benchmarkId);
+    if (!b) continue;
+    const w = weights?.get(a.benchmarkId) ?? 1;
+    weightedDifference += w * (a.zScore - b.zScore);
+    weightSum += w;
+  }
+  return weightSum > 0 ? weightedDifference / weightSum : null;
+}
+
+export function unresolvedChallengers(
+  leader: EvaluatedConfig,
+  opts: VerdictOptions,
+): EvaluatedConfig[] {
+  return (opts.eligibleConfigs ?? []).filter(
+    (c) =>
+      c.id !== leader.id &&
+      (!stepSignificance(c, leader, opts.weightByBenchmark, opts.anchorStats, opts.linkJointCov)
+        .separated95 ||
+        (sharedScoreOrder(leader, c, opts.weightByBenchmark) ?? 0) <= 0),
+  );
+}
+
 export function extractVerdictPicks(
   frontier: readonly FrontierPoint[],
   configById: ReadonlyMap<string, EvaluatedConfig>,
-  options?: {
-    preferDistinctModelSlug?: boolean;
-    weightByBenchmark?: ReadonlyMap<string, number>;
-    anchorStats?: Readonly<Record<string, AnchorStats>>;
-    linkJointCov?: LinkJointCov | null | undefined;
-  },
+  options?: VerdictOptions,
 ): { budgetId: string | null; defaultId: string | null; maxId: string | null } {
   if (frontier.length === 0) {
     return { budgetId: null, defaultId: null, maxId: null };
   }
 
   const budgetId = frontier[0]!.configId;
-  const maxId = frontier[frontier.length - 1]!.configId;
+  const lastPoint = frontier[frontier.length - 1]!;
+  const last = configById.get(lastPoint.configId);
+  const strict = options !== undefined && usesCorroboratedVerdicts(options.epochVersion);
+  const maxId =
+    !strict ||
+    (last &&
+      hasRecommendationCoverage(last, options) &&
+      (options.eligibleConfigs?.length ?? 0) > 1 &&
+      !lastPoint.imputationSensitive &&
+      unresolvedChallengers(last, options).length === 0)
+      ? lastPoint.configId
+      : null;
 
   if (frontier.length < 3) {
     return { budgetId, defaultId: null, maxId };
   }
 
   const first = configById.get(budgetId);
-  const last = configById.get(maxId);
   if (!first || !last || first.effectiveCostUsd === null || last.effectiveCostUsd === null) {
     return { budgetId, defaultId: null, maxId };
   }
@@ -1359,11 +1427,17 @@ export function extractVerdictPicks(
     const pt = frontier[idx]!;
     const cfg = configById.get(pt.configId);
     if (!cfg || cfg.effectiveCostUsd === null) continue;
-    // Require a statistically reliable gain (>= 1.0 SE) over Budget rather than over the adjacent step
-    if (
-      stepSignificance(first, cfg, weightByBenchmark, anchorStats, linkJointCov).statisticallyTied
-    )
-      continue;
+    const step = stepSignificance(first, cfg, weightByBenchmark, anchorStats, linkJointCov);
+    if (strict) {
+      if (
+        !hasRecommendationCoverage(cfg, options) ||
+        pt.imputationSensitive ||
+        pt.paretoProb < 0.5 ||
+        !step.separated95 ||
+        (sharedScoreOrder(cfg, first, weightByBenchmark) ?? 0) <= 0
+      )
+        continue;
+    } else if (step.statisticallyTied) continue;
 
     const normCost = (Math.log10(Math.max(1e-6, cfg.effectiveCostUsd)) - logMin) / logSpan;
     const normScore = (cfg.score - first.score) / scoreSpan;

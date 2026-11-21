@@ -2,9 +2,11 @@
 
 import { Dialog } from "@base-ui/react/dialog";
 import { ExternalLink, X } from "lucide-react";
-import { DOMAIN_BY_ID, getActiveBenchmarksForRegime } from "@/config/benchmarks";
+import { RankEvidenceDetails } from "@/components/RankEvidenceDetails";
+import { BENCHMARK_BY_ID, DOMAIN_BY_ID } from "@/config/benchmarks";
 import { HARNESS_BY_ID } from "@/config/harnesses";
 import { isRetiredPurchaseSku, PROVIDER_BY_ID } from "@/config/providers";
+import { controlledBoard } from "@/lib/controlled-boards";
 import { formatEffort, formatScore } from "@/lib/format";
 import type { HarnessViewTab } from "@/lib/gallery-url";
 import type {
@@ -23,6 +25,7 @@ interface EpochMonographDrawerProps {
   domain: DomainSnapshot;
   activeRegime: HarnessRegime;
   activeHarnessTab: HarnessViewTab;
+  controlledSliceId: string;
   harnessLeaderboard: HarnessLeaderboardSnapshot;
   lifecycle: LifecycleReport;
   sources: readonly SourceHealth[];
@@ -79,6 +82,7 @@ export function EpochMonographDrawer({
   domain,
   activeRegime,
   activeHarnessTab,
+  controlledSliceId,
   harnessLeaderboard,
   lifecycle,
   sources,
@@ -88,7 +92,7 @@ export function EpochMonographDrawer({
 }: EpochMonographDrawerProps) {
   const meta = DOMAIN_BY_ID[domain.domainId];
   const regimeInfo = domain.regimeMeta[activeRegime];
-  const activeBenchmarks = getActiveBenchmarksForRegime(domain.domainId, activeRegime);
+  const activeBenchmarks = (regimeInfo?.activeBenchmarkIds ?? []).map((id) => BENCHMARK_BY_ID[id]!);
   const auditByKey = new Map(
     lifecycle.audits.map((a) => [`${a.benchmarkId}::${a.harnessRegime}`, a]),
   );
@@ -97,11 +101,22 @@ export function EpochMonographDrawer({
     domain.domainId === "harnesses" && activeHarnessTab === "controlled";
   const hasArenaBenchmarks = activeBenchmarks.some((b) => b.isArena);
 
-  const pooledHarnessSlice =
-    harnessLeaderboard.slices.find((s) => s.sliceId === "_all") ?? harnessLeaderboard.slices[0];
-  const controlledHarnessCount = pooledHarnessSlice?.entries.length ?? 0;
-  const controlledModelSlices = harnessLeaderboard.slices.filter((s) => s.sliceId !== "_all");
+  const board = controlledBoard(harnessLeaderboard, controlledSliceId);
+  const controlledHarnessCount = board.selected.entries.length;
+  const controlledModelSlices = board.controls.filter((s) => s.controlModelId !== null);
   const anchorProviderCount = regimeInfo?.anchorLabs ?? 0;
+  const rankEvidence = lifecycle.rankEvidence.find(
+    (row) => row.domainId === domain.domainId && row.harnessRegime === activeRegime,
+  );
+  const ranked = domain.configs.filter((cfg) => cfg.harnessRegime === activeRegime);
+  const coverage = new Map<string, number>();
+  if (open && !isControlledHarnesses) {
+    for (const config of ranked) {
+      for (const { benchmarkId } of config.benchmarks) {
+        coverage.set(benchmarkId, (coverage.get(benchmarkId) ?? 0) + 1);
+      }
+    }
+  }
 
   const anchorFor = (benchmarkId: string) =>
     activeRegime === "standardized"
@@ -109,13 +124,14 @@ export function EpochMonographDrawer({
       : domain.anchorStats[benchmarkId];
 
   const activeSourceIds = new Set(
-    isControlledHarnesses
-      ? ["frontier-harness", "harness-leaderboard"]
-      : activeBenchmarks.map((b) => b.sourceId),
+    isControlledHarnesses ? [board.sourceId] : activeBenchmarks.map((b) => b.sourceId),
   );
   const showPricingSource =
     !isControlledHarnesses && (domain.domainId === "writing" || hasDisplayedListTariffs);
   const pricingSourceIds = new Set<string>(showPricingSource ? ["pricing"] : []);
+  const sensitivity = lifecycle.sourceSensitivity.filter(
+    (row) => row.domainId === domain.domainId && row.harnessRegime === activeRegime,
+  );
 
   const domainSources = sources
     .filter((s) => activeSourceIds.has(s.sourceId) || pricingSourceIds.has(s.sourceId))
@@ -143,7 +159,7 @@ export function EpochMonographDrawer({
               </Dialog.Title>
               <Dialog.Description className="mt-1 font-mono text-[11.5px] text-(--ink-muted) tabular">
                 {isControlledHarnesses
-                  ? `Updated ${formatUtcDate(harnessLeaderboard.upstreamGeneratedAt)} · ${controlledHarnessCount} harnesses · ${controlledModelSlices.length} test models`
+                  ? `Updated ${formatUtcDate(board.selected.upstreamGeneratedAt ?? null)} · ${board.scope} · ${controlledHarnessCount} harnesses`
                   : `Updated ${formatUtcDate(generatedAt)} · ${activeBenchmarks.length} benchmarks`}
               </Dialog.Description>
             </div>
@@ -162,24 +178,17 @@ export function EpochMonographDrawer({
               {isControlledHarnesses ? (
                 <div className="space-y-2.5 text-[13px] leading-relaxed text-(--ink-secondary)">
                   <p>
-                    This view isolates the coding agent harness by running different harnesses on
-                    the same open-weight test models. It combines FrontierHarness v1.1 and Harness
-                    Leaderboard into one ranking of {controlledHarnessCount} harnesses across{" "}
-                    {controlledModelSlices.length} test models covering Terminal-Bench 2.1,
-                    Terminal-Bench 4.0, and DeepSWE v1.1.
+                    {board.name} measures how often a coding agent completes each of its{" "}
+                    {board.metric.nTasks} tasks. The selected control is {board.selected.label}.
+                    Compare harnesses within this selection using the pass rate and cost per run
+                    measured on the same task set.
                   </p>
                   <p>
-                    Nine harnesses appear on both leaderboards. Those nine shared harnesses measure
-                    the difference in benchmark difficulty and average run cost between the two
-                    leaderboards, putting every harness&apos;s pass rate and cost per run on one
-                    common scale.
-                  </p>
-                  <p>
-                    Terminal-Bench 2.1 appears on both leaderboards, so each copy gets half weight
-                    and Terminal-Bench 2.1 is never counted twice. Benchmarks with smaller error
-                    bars get higher weight, Pass all 3 reports how often a harness solves a task
-                    three times in a row on that same shared scale, and harnesses tested on
-                    different versions across the two leaderboards list both versions.
+                    Terminal-Bench 4.0 comes from FrontierHarness. DeepSWE 1.1 comes from Harness
+                    Leaderboard. Each benchmark keeps its own roster, model controls, costs and
+                    uncertainty intervals. The shared Terminal-Bench 2.1 results are excluded from
+                    both boards. Pass all 3 measures repeat success on the same task; its sampling
+                    interval is unreported.
                   </p>
                 </div>
               ) : (
@@ -199,16 +208,19 @@ export function EpochMonographDrawer({
                   </p>
                   <p>
                     A model&apos;s score starts from the weighted average of its converted benchmark
-                    scores, with higher weight on benchmarks that have smaller error bars and
-                    clearer separation among top providers. Models tested on fewer benchmarks are
-                    pulled modestly toward the domain average so one lucky score cannot outrank a
-                    model proven across many benchmarks.
+                    scores. The less precise the evidence, the further we pull the estimate toward
+                    the domain average. A single strong result can still lead a table. Reported
+                    intervals assume independent sampling errors across benchmarks and comparable
+                    performance on missing tasks. The 95% model interval uses the score estimate
+                    plus or minus 1.96 posterior standard errors, conditional on this panel and the
+                    model assumptions. It excludes changes of judge, task mix and missingness that
+                    the model does not capture.
                   </p>
                   <p>
                     {domain.domainId === "writing"
                       ? "Every model is priced for a standard writing brief of 10,000 input tokens and 4,000 output tokens using its published first-party API token rates. If a model costs more and scores lower than another model from the same provider, it is left off the chart."
                       : domain.domainId === "cyber"
-                        ? "Aikido Arena runs all models in one shared security environment. CWE-bench v2 runs four rollouts per task inside one assigned CLI agent per model, and CyberArena likewise evaluates each model inside one assigned CLI agent, because upstream publishes no shared-scaffold split. Every model is plotted against one cost per task scale, with missing benchmark costs estimated from public API token rates and measured costs in this domain. If a model costs more and scores lower than another model from the same provider, it is left off the chart."
+                        ? "CWE-bench tests whether a patch repairs the defect while preserving legitimate behavior. Aikido measures detection, including false alarms. The chart compares cost per task, with missing costs estimated only where the model has public API pricing and the domain supplies measured costs."
                         : "Every model is plotted against one cost per task scale. When a benchmark does not report dollar cost, we estimate task cost from the model's public API token price and measured dollar costs in this domain. If a model costs more and scores lower than another model from the same provider, it is left off the chart."}
                   </p>
                 </div>
@@ -218,15 +230,12 @@ export function EpochMonographDrawer({
                 <div className="space-y-2 rounded-md border border-(--border) bg-(--subtle) p-3 font-mono text-[11.5px] tabular">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <span className="text-[10.5px] text-(--ink-faint)">Pass rate</span>
-                    <span className="text-right text-(--ink)">
-                      Weighted pass rate (%) across Terminal-Bench 2.1, Terminal-Bench 4.0, and
-                      DeepSWE v1.1
-                    </span>
+                    <span className="text-right text-(--ink)">{board.name} task pass rate (%)</span>
                   </div>
                   <div className="flex flex-wrap items-baseline justify-between gap-2 border-t border-(--border) pt-2">
                     <span className="text-[10.5px] text-(--ink-faint)">Cost per run</span>
                     <span className="text-right text-(--ink)">
-                      Measured token cost per run on one common cost scale (USD, log scale)
+                      Measured cost per run on {board.name} (USD, log scale)
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 border-t border-(--border) pt-2">
@@ -288,9 +297,11 @@ export function EpochMonographDrawer({
                     Benchmarks ({activeBenchmarks.length})
                   </h3>
                   <p className="text-[12.5px] leading-relaxed text-(--ink-secondary)">
-                    Every benchmark below counts directly toward this domain&apos;s score. Weight
-                    ranges from 0.10 to 1.00 based on measurement precision and how clearly the
-                    benchmark separates top providers.
+                    Coverage counts ranked configurations across all providers and reasoning
+                    efforts.
+                    {Object.values(domain.anchorStats).some((a) => a.measurementFamily)
+                      ? " One benchmark represents each distinct task family. Each receives equal weight on the full panel. The quality diagnostic describes measurement precision and separation among providers."
+                      : " Each benchmark’s weight reflects its precision and how clearly it separates the leading providers."}
                   </p>
 
                   <div className="space-y-2.5">
@@ -316,7 +327,7 @@ export function EpochMonographDrawer({
                                   {bm.name}
                                 </span>
                                 <span className="font-mono text-[11px] text-(--ink-faint)">
-                                  v{bm.version}
+                                  v{domain.benchmarkVersions[bm.id]}
                                 </span>
                                 <a
                                   href={bm.sourceUrl}
@@ -330,9 +341,11 @@ export function EpochMonographDrawer({
                               </div>
                               {anchor ? (
                                 <p className="mt-0.5 font-mono text-[11px] text-(--ink-faint) tabular">
-                                  Weight {anchor.effectiveWeight.toFixed(2)} · Average{" "}
-                                  {anchor.mean.toFixed(1)} · Spread {anchor.sd.toFixed(1)} ·{" "}
-                                  {anchor.anchorLabs} providers
+                                  {coverage.get(bm.id) ?? 0} of {ranked.length} ranked
+                                  configurations · Weight {anchor.effectiveWeight.toFixed(2)}
+                                  {anchor.measurementFamily && anchor.qualityWeight !== undefined
+                                    ? ` · ${anchor.measurementFamily} · Quality diagnostic ${anchor.qualityWeight.toFixed(2)}`
+                                    : ""}
                                 </p>
                               ) : (
                                 <p className="mt-0.5 font-mono text-[11px] text-(--warning)">
@@ -465,8 +478,11 @@ export function EpochMonographDrawer({
 
             <section className="space-y-2.5">
               <h3 className="text-[12px] font-medium text-(--ink)">Data sources</h3>
+              {!isControlledHarnesses && rankEvidence && (
+                <RankEvidenceDetails evidence={rankEvidence} />
+              )}
               <p className="text-[12.5px] leading-relaxed text-(--ink-secondary)">
-                Every source below refreshes daily from its public leaderboard.
+                The daily update checks each feed. The date shows when it last passed validation.
               </p>
               <div className="divide-y divide-(--border) rounded-md border border-(--border) font-mono text-[11px] tabular">
                 {domainSources.map(({ src, role }) => (
@@ -500,6 +516,49 @@ export function EpochMonographDrawer({
                   </div>
                 ))}
               </div>
+              {!isControlledHarnesses && sensitivity.length > 0 && (
+                <details className="border-y border-(--border) py-3 text-[12.5px]">
+                  <summary className="cursor-pointer font-medium text-(--ink)">
+                    How much does each feed affect the ranking?
+                  </summary>
+                  <p className="mt-2 leading-relaxed text-(--ink-secondary)">
+                    We remove one feed at a time and score the affected configurations again,
+                    keeping the calibration and costs fixed. Rank agreement compares configurations
+                    that still qualify. A value of 1 means the order stayed the same.
+                  </p>
+                  <table className="mt-3 w-full text-left text-[11.5px]">
+                    <thead className="text-(--ink-muted)">
+                      <tr>
+                        <th scope="col" className="py-2 font-medium">
+                          Feed removed
+                        </th>
+                        <th scope="col" className="px-2 text-right font-medium">
+                          Still qualify
+                        </th>
+                        <th scope="col" className="text-right font-medium">
+                          Rank agreement
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sensitivity.map((row) => (
+                        <tr key={row.sourceId} className="border-t border-(--border)">
+                          <th scope="row" className="py-2 font-normal">
+                            {sources.find((s) => s.sourceId === row.sourceId)?.label ??
+                              row.sourceId}
+                          </th>
+                          <td className="px-2 text-right font-mono tabular">
+                            {row.retainedConfigs}/{row.affectedConfigs}
+                          </td>
+                          <td className="text-right font-mono tabular">
+                            {row.kendallTau?.toFixed(2) ?? "Unavailable"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </details>
+              )}
             </section>
           </div>
         </Dialog.Popup>

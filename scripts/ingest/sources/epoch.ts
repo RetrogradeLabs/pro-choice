@@ -238,20 +238,6 @@ const EPOCH_FEEDS: readonly EpochFeedSpec[] = [
     sourceUrl: "https://www.vals.ai/benchmarks/proof_bench",
   },
   {
-    csvFile: "arc_agi_2_external.csv",
-    benchmarkId: "epoch_arc_agi_2",
-    domainId: "research",
-    harnessRegime: "native",
-    observedHarness: "Direct API",
-    scoreCol: "Score",
-    scaleFactor: 100,
-    maxScore: 100,
-    stderrCol: null,
-    costCol: "Cost per task",
-    dateCol: null,
-    sourceUrl: "https://arcprize.org/leaderboard",
-  },
-  {
     csvFile: "apex_agents_external.csv",
     benchmarkId: "epoch_apex_agents",
     domainId: "research",
@@ -271,7 +257,7 @@ const EPOCH_FEEDS: readonly EpochFeedSpec[] = [
 
 export const epochAdapter: SourceAdapter = {
   id: "epoch",
-  label: "Epoch AI Benchmark Hub (10 Frontier Benchmarks)",
+  label: "Epoch AI Benchmark Hub",
   license: "CC-BY-4.0",
   sourceUrl: EPOCH_HUB_URL,
   expectedBenchmarks: EPOCH_FEEDS.map((f) => f.benchmarkId),
@@ -279,7 +265,18 @@ export const epochAdapter: SourceAdapter = {
   async fetchLive(nowIso) {
     const zipBuf = await fetchArrayBufferWithSafeAuth(EPOCH_ZIP_URL, undefined, 35_000);
     const wanted = new Set(EPOCH_FEEDS.map((f) => f.csvFile));
+    wanted.add("benchmark_metadata.csv");
     const files = extractZipFiles(zipBuf, wanted);
+    const metadata = Papa.parse<Record<string, string>>(files.get("benchmark_metadata.csv") ?? "", {
+      header: true,
+      skipEmptyLines: true,
+    });
+    if (
+      metadata.errors.length ||
+      !["source_file", "superseded_by"].every((field) => metadata.meta.fields?.includes(field))
+    ) {
+      throw new Error("Epoch benchmark catalog is missing or malformed");
+    }
 
     const observations: RawObservation[] = [];
     const partitionStats: Record<string, PartitionStats> = {};
@@ -288,6 +285,13 @@ export const epochAdapter: SourceAdapter = {
     for (const spec of EPOCH_FEEDS) {
       const st: PartitionStats = { attempted: 0, rejected: 0, excluded: 0 };
       partitionStats[spec.benchmarkId] = st;
+      const replacements = metadata.data
+        .filter((row) => row.source_file === spec.csvFile)
+        .map((row) => row.superseded_by?.trim())
+        .filter(Boolean);
+      if (replacements.length) {
+        st.note = `Epoch lists ${[...new Set(replacements)].toSorted().join(", ")} as a successor to ${spec.csvFile}. Review for the next MAJOR epoch.`;
+      }
 
       const csvText = files.get(spec.csvFile);
       if (!csvText) {

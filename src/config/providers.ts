@@ -153,6 +153,11 @@ export const ALL_PROVIDER_IDS: readonly ProviderId[] = PROVIDERS.map((p) => p.id
 export const RETIRED_PURCHASE_SKUS: Readonly<
   Record<string, { retiredAt: string; reason: string; noticeUrl: string }>
 > = {
+  "deepseek:deepseek-r1-0528": {
+    retiredAt: "2025-08-21",
+    reason: "DeepSeek upgraded deepseek-reasoner to V3.1 thinking mode",
+    noticeUrl: "https://api-docs.deepseek.com/news/news250821",
+  },
   "google:gemini-3-pro": {
     retiredAt: "2026-03-09",
     reason:

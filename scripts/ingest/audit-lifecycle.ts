@@ -6,13 +6,17 @@ import { compareIsoInstants } from "../../src/lib/format.ts";
 import {
   auditBenchmarkLifecycle,
   computeCrossDomainCorrelations,
+  computeSourceSensitivity,
   utcCalendarDayDiff,
 } from "../../src/lib/math/lifecycle.ts";
+import { computeRankEvidence } from "../../src/lib/math/rank-audit.ts";
 import {
   type BenchmarkAudit,
   type HarnessRegime,
   type LifecycleReport,
   LifecycleReportSchema,
+  type PriorLifecycleReport,
+  PriorLifecycleReportSchema,
   type ProChoiceSnapshot,
   ProChoiceSnapshotSchema,
   type ProviderId,
@@ -34,7 +38,7 @@ const DEFAULT_DATA_DIR = path.join(process.cwd(), "data");
 
 export async function computeLifecycleReport(
   snapshot: ProChoiceSnapshot,
-  priorReport: LifecycleReport | null,
+  priorReport: PriorLifecycleReport | null,
   cachedSourcesOverride?: readonly CachedSourceFile[],
   dataDir?: string,
 ): Promise<LifecycleReport> {
@@ -137,14 +141,16 @@ export async function computeLifecycleReport(
     auditedAt: nowIso,
     audits,
     crossDomainTau,
+    sourceSensitivity: computeSourceSensitivity(snapshot.domains, snapshot.sources),
+    rankEvidence: computeRankEvidence(snapshot.domains, cellsByDomain),
   });
 }
 
 // Return null ONLY on ENOENT so transient EIO or corrupt JSON never silently resets retirement streaks
-async function readLifecycleOrNullOnMissing(filePath: string): Promise<LifecycleReport | null> {
+async function readPriorLifecycle(filePath: string): Promise<PriorLifecycleReport | null> {
   try {
     const raw = await fs.readFile(filePath, "utf8");
-    return LifecycleReportSchema.parse(JSON.parse(raw));
+    return PriorLifecycleReportSchema.parse(JSON.parse(raw));
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === "ENOENT") return null;
     throw new Error(`Failed to read or parse lifecycle report ${filePath}`, { cause: err });
@@ -176,12 +182,12 @@ export async function runLifecycleAudit(
     const rawSnapshot = await fs.readFile(path.join(dataDir, "snapshot.json"), "utf8");
     const snapshot = ProChoiceSnapshotSchema.parse(JSON.parse(rawSnapshot));
 
-    const currentLifecycle = await readLifecycleOrNullOnMissing(lifecyclePath);
-    const persistedPrior = await readLifecycleOrNullOnMissing(priorLifecyclePath);
+    const currentLifecycle = await readPriorLifecycle(lifecyclePath);
+    const persistedPrior = await readPriorLifecycle(priorLifecyclePath);
 
     // Preserve the prior UTC day's report across same-day reruns and rebuild missing lifecycle.json from valid persisted prior
-    let priorForStreak: LifecycleReport | null = null;
-    let nextPriorToPersist: LifecycleReport | null = persistedPrior;
+    let priorForStreak: PriorLifecycleReport | null = null;
+    let nextPriorToPersist: PriorLifecycleReport | null = persistedPrior;
 
     if (currentLifecycle) {
       const dayDiff = utcCalendarDayDiff(currentLifecycle.auditedAt, snapshot.generatedAt);
@@ -246,6 +252,30 @@ export async function runLifecycleAudit(
           } | ${a.separability !== null ? `${Math.round(a.separability * 100)}%` : "N/A"} | ${
             a.looKendallTau !== null ? a.looKendallTau.toFixed(2) : "N/A"
           } | ${a.status.toUpperCase()} |`,
+      ),
+      "",
+      "## Agreement on shared benchmarks",
+      "",
+      "Adjacent points on each provider's frontier, compared using only benchmark scores observed for both configurations and their frozen weights.",
+      "",
+      "| Domain | Same order | Reverse order | Tied in either order | No shared benchmark |",
+      "| --- | ---: | ---: | ---: | ---: |",
+      ...report.rankEvidence.map(
+        ({ domainId, frontierSteps: c }) =>
+          `| ${domainId} | ${c.agreed} | ${c.reversed} | ${c.tied} | ${c.noOverlap} |`,
+      ),
+      "",
+      "## Held-out feed results",
+      "",
+      "Each fit excludes the entire target feed before calibration. Kendall tau-b compares eligible predictions with the target benchmark's raw score on the same configurations. The baseline averages standardized scores equally. Both columns require four matched configurations and an order on both sides.",
+      "",
+      "| Benchmark | Feed held out | Matched / observed | Matched providers | Refit index | Equal weight | Both policies matched | Equal family | Quality family |",
+      "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+      ...report.rankEvidence.flatMap(({ heldOutBenchmarks }) =>
+        heldOutBenchmarks.map(
+          (b) =>
+            `| ${b.benchmarkId} | ${b.sourceId} | ${b.matchedConfigs}/${b.testConfigs} | ${b.matchedProviders} | ${b.kendallTau?.toFixed(3) ?? "N/A"} | ${b.equalWeightTau?.toFixed(3) ?? "N/A"} | ${b.familyPolicyComparison?.matchedConfigs ?? "N/A"} | ${b.familyPolicyComparison?.equalFamilyTau?.toFixed(3) ?? "N/A"} | ${b.familyPolicyComparison?.qualityFamilyTau?.toFixed(3) ?? "N/A"} |`,
+        ),
       ),
     ];
 

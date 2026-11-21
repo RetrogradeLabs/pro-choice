@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
-import { BENCHMARKS, DOMAIN_BY_ID, DOMAINS } from "@/config/benchmarks";
+import { BENCHMARK_BY_ID, DOMAIN_BY_ID, DOMAINS } from "@/config/benchmarks";
 import { PROVIDER_BY_ID, WESTERN_PROVIDER_IDS } from "@/config/providers";
-import { formatCost, formatEffort, formatScore } from "@/lib/format";
+import { controlledBoard, controlledBoardName, harnessInterval } from "@/lib/controlled-boards";
+import type { ModelScoreEvidence } from "@/lib/format";
+import {
+  formatCost,
+  formatEffort,
+  formatScore,
+  formatScoreEvidence,
+  modelScoreEvidence,
+} from "@/lib/format";
 import type { HomeDomainSummary } from "@/lib/home-summaries";
 import { buildWeightMapFromAnchors } from "@/lib/math/aggregate";
 import { normalizeHarnessVersion, selectControlledHarnessPicks } from "@/lib/math/harness-pareto";
@@ -179,13 +187,25 @@ function buildOrganizationEntity(): Record<string, unknown> {
   };
 }
 
-function getActiveBenchmarkNames(domainId: DomainId): string[] {
-  return BENCHMARKS.filter(
-    (b) => b.domainId === domainId && b.lifecycleState !== "CANDIDATE" && b.weight > 0,
-  ).map((b) => b.name);
+function getReleaseBenchmark(domain: DomainSnapshot, id: string) {
+  const version = domain.benchmarkVersions[id];
+  const benchmark = BENCHMARK_BY_ID[id];
+  if (benchmark && benchmark.version === version) return benchmark;
+
+  for (const config of [...domain.configs, ...domain.provisionalConfigs]) {
+    const result = config.benchmarks.find((row) => row.benchmarkId === id);
+    if (result) return { name: id, sourceUrl: result.sourceUrl };
+  }
+  return { name: id, sourceUrl: null };
 }
 
 export interface DomainHeadlineStats {
+  topRecommended: boolean | null;
+  headlineEvidence: {
+    budget: ModelScoreEvidence | null;
+    bestValue: ModelScoreEvidence | null;
+    topScore: ModelScoreEvidence | null;
+  };
   topLabel: string | null;
   valueLabel: string | null;
   budgetLabel: string | null;
@@ -200,45 +220,46 @@ export interface DomainHeadlineStats {
     cost: string;
     effort: string | null;
     anchorPrefix: "config" | "harness";
+    evidence: ModelScoreEvidence | null;
   }[];
 }
 
 export function computeDomainHeadlineStats(
   domainId: DomainId,
   snapshot: ProChoiceSnapshot,
+  sliceId = "_all",
 ): DomainHeadlineStats {
   const meta = DOMAIN_BY_ID[domainId];
-  const benchmarkCount = getActiveBenchmarkNames(domainId).length;
 
   if (domainId === "harnesses") {
-    const pooled =
-      snapshot.harnessLeaderboard.slices.find((s) => s.sliceId === "_all") ??
-      snapshot.harnessLeaderboard.slices[0];
-    const entries = pooled?.entries ?? [];
+    const board = controlledBoard(snapshot.harnessLeaderboard, sliceId);
+    const entries = board.selected.entries;
     const frontier = entries
       .filter((e) => e.onFrontier)
       .toSorted((a, b) => b.passRate - a.passRate);
     const picks = selectControlledHarnessPicks(entries);
-    const top = picks.find((p) => p.tag === "Top score" || p.tag === "Top pick")?.entry ?? null;
-    const value = picks.find((p) => p.tag === "Best value")?.entry ?? null;
-    const budget = picks.find((p) => p.tag === "Budget")?.entry ?? null;
+    const top = picks.find((p) => p.tag === "Highest pass rate")?.entry ?? null;
+    const value = picks.find((p) => p.tag === "Cost–score tradeoff")?.entry ?? null;
+    const budget = picks.find((p) => p.tag === "Lowest cost")?.entry ?? null;
     const fmt = (e: NonNullable<typeof top>) =>
-      `${e.name} at ${e.passRate.toFixed(1)}% and ${formatCost(e.costPerTrialUsd, "usd_per_task")}`;
+      `${e.name} at ${e.passRate.toFixed(1)}% (${harnessInterval(e)}) and ${formatCost(e.costPerTrialUsd, "usd_per_task")}`;
 
     return {
       topLabel: top ? fmt(top) : null,
+      topRecommended: null,
+      headlineEvidence: { budget: null, bestValue: null, topScore: null },
       valueLabel: value ? fmt(value) : null,
       budgetLabel: budget ? fmt(budget) : null,
       evaluatedCount: entries.length,
       frontierCount: frontier.length,
-      benchmarkCount: 3,
+      benchmarkCount: 1,
       frontierEntries: frontier.map((e) => {
         const v = normalizeHarnessVersion(e.version);
         return {
           id: e.harnessId,
           name: e.name,
           vendor: e.vendor,
-          metric: `${e.passRate.toFixed(1)}%`,
+          metric: `${e.passRate.toFixed(1)}% (${harnessInterval(e)})`,
           cost: formatCost(e.costPerTrialUsd, "usd_per_task"),
           effort: v
             ? v
@@ -247,6 +268,7 @@ export function computeDomainHeadlineStats(
                 .join(" / ")
             : null,
           anchorPrefix: "harness",
+          evidence: null,
         };
       }),
     };
@@ -274,16 +296,16 @@ export function computeDomainHeadlineStats(
   ).frontier;
   const verdicts = extractVerdictPicks(env, byId, {
     preferDistinctModelSlug: true,
+    epochVersion: dom.epochVersion,
+    eligibleConfigs: eligible,
     weightByBenchmark: weights,
     anchorStats: dom.anchorStats,
     linkJointCov,
   });
 
-  const fmtCfg = (id: string | null) => {
-    if (!id) return null;
-    const cfg = byId.get(id);
+  const fmtCfg = (cfg: EvaluatedConfig | undefined) => {
     if (!cfg) return null;
-    return `${cfg.displayName} at ${formatScore(cfg.score)} and ${formatCost(cfg.effectiveCostUsd, dom.costUnit)}`;
+    return `${cfg.displayName} (${formatEffort(cfg.effort)}) at ${formatScore(cfg.score)} and ${formatCost(cfg.effectiveCostUsd, dom.costUnit)}`;
   };
 
   const frontierSorted = env
@@ -291,13 +313,22 @@ export function computeDomainHeadlineStats(
     .filter((c): c is EvaluatedConfig => c !== undefined && c.effectiveCostUsd !== null)
     .toSorted((a, b) => b.score - a.score);
 
+  const top = frontierSorted[0];
+  const value = verdicts.defaultId ? byId.get(verdicts.defaultId) : undefined;
+  const budget = verdicts.budgetId ? byId.get(verdicts.budgetId) : undefined;
   return {
-    topLabel: fmtCfg(verdicts.maxId),
-    valueLabel: fmtCfg(verdicts.defaultId),
-    budgetLabel: fmtCfg(verdicts.budgetId),
+    topLabel: fmtCfg(top),
+    topRecommended: top ? top.id === verdicts.maxId : null,
+    headlineEvidence: {
+      budget: budget ? modelScoreEvidence(budget) : null,
+      bestValue: value ? modelScoreEvidence(value) : null,
+      topScore: top ? modelScoreEvidence(top) : null,
+    },
+    valueLabel: fmtCfg(value),
+    budgetLabel: fmtCfg(budget),
     evaluatedCount: eligible.length,
     frontierCount: frontierSorted.length,
-    benchmarkCount,
+    benchmarkCount: dom.activeBenchmarkIds.length,
     frontierEntries: frontierSorted.map((cfg) => ({
       id: cfg.id,
       name: cfg.displayName,
@@ -306,6 +337,7 @@ export function computeDomainHeadlineStats(
       cost: formatCost(cfg.effectiveCostUsd, dom.costUnit),
       effort: formatEffort(cfg.effort),
       anchorPrefix: "config",
+      evidence: modelScoreEvidence(cfg),
     })),
   };
 }
@@ -318,13 +350,14 @@ export function buildDomainMetadata(domainId: DomainId, snapshot: ProChoiceSnaps
   const updated = formatUtcDate(snapshot.generatedAt);
 
   const summaryBits: string[] = [];
-  if (stats.topLabel) summaryBits.push(`Top score: ${stats.topLabel}.`);
-  if (stats.valueLabel && stats.valueLabel !== stats.topLabel) {
-    summaryBits.push(`Best value: ${stats.valueLabel}.`);
+  if (domainId === "harnesses" && stats.topLabel)
+    summaryBits.push(`Highest pass rate: ${stats.topLabel}.`);
+  if (domainId === "harnesses" && stats.valueLabel && stats.valueLabel !== stats.topLabel) {
+    summaryBits.push(`Cost–score tradeoff: ${stats.valueLabel}.`);
   }
   const leadSentence =
     domainId === "harnesses"
-      ? `Compare ${stats.evaluatedCount} coding agent harnesses across 8 open control models by pass rate and dollar cost.`
+      ? `Default comparison: ${controlledBoard(snapshot.harnessLeaderboard).scope}. Explore a separate DeepSWE 1.1 board. Each ranks pass rate and cost per run.`
       : `Compare ${stats.evaluatedCount} LLM configurations across ${stats.benchmarkCount} benchmarks by score and real dollar cost.`;
   const description = [leadSentence, ...summaryBits, `Updated ${updated}.`].join(" ").slice(0, 160);
 
@@ -368,7 +401,7 @@ export function buildDomainMetadata(domainId: DomainId, snapshot: ProChoiceSnaps
 
 export function buildHomeMetadata(snapshot: ProChoiceSnapshot): Metadata {
   const updated = formatUtcDate(snapshot.generatedAt);
-  const description = `Compare frontier LLMs and 25 coding agent harnesses across 6 composite indices and 45 live benchmarks by score and real dollar cost. Updated ${updated}.`;
+  const description = `Compare model scores and cost per task, or compare coding agent harnesses by pass rate and cost per run. Updated ${updated}.`;
   const ogImageUrl = `${SITE_URL}/opengraph-image`;
 
   return {
@@ -460,7 +493,10 @@ export function buildHomeJsonLd(
             name: meta.indexTitle,
             description: sum?.tagline ?? meta.description,
             url: domainToCanonicalUrl(meta.id),
-            version: meta.epochVersion,
+            version:
+              meta.id === "harnesses"
+                ? controlledBoard(snapshot.harnessLeaderboard).selected.sourceVersion
+                : snapshot.domains[meta.id].epochVersion,
             dateModified: snapshot.generatedAt,
             license: LICENSE_URL,
             isAccessibleForFree: true,
@@ -490,7 +526,14 @@ export function buildDomainJsonLd(
   const slug = domainToSlug(domainId);
   const canonicalUrl = domainToCanonicalUrl(domainId);
   const stats = computeDomainHeadlineStats(domainId, snapshot);
-  const benchmarkNames = getActiveBenchmarkNames(domainId);
+  const domain = snapshot.domains[domainId];
+  const controlled = domainId === "harnesses";
+  const benchmarkNames = controlled
+    ? [controlledBoard(snapshot.harnessLeaderboard).name]
+    : domain.activeBenchmarkIds.map((id) => getReleaseBenchmark(domain, id).name);
+  const version = controlled
+    ? controlledBoard(snapshot.harnessLeaderboard).selected.sourceVersion
+    : domain.epochVersion;
   const orgId = `${ORG_URL}/#org`;
 
   return {
@@ -518,10 +561,12 @@ export function buildDomainJsonLd(
         "@type": "Dataset",
         "@id": `${canonicalUrl}#dataset`,
         name: `ProChoice ${meta.indexTitle}`,
-        description: `${meta.description} Evaluates ${stats.evaluatedCount} ${domainId === "harnesses" ? "coding harnesses" : "model configurations"} on a shared score and dollar cost Pareto frontier.`,
+        description: controlled
+          ? `Compare ${stats.evaluatedCount} coding harnesses on shared test models by pass rate and cost per run.`
+          : `${meta.description} Evaluates ${stats.evaluatedCount} model configurations by score and cost per task.`,
         url: canonicalUrl,
-        identifier: `${meta.epochVersion}:${snapshot.snapshotHash}`,
-        version: meta.epochVersion,
+        identifier: `${version}:${snapshot.snapshotHash}`,
+        version,
         dateModified: snapshot.generatedAt,
         inLanguage: "en-US",
         isAccessibleForFree: true,
@@ -530,11 +575,11 @@ export function buildDomainJsonLd(
         publisher: { "@id": orgId },
         measurementTechnique:
           domainId === "harnesses"
-            ? "Controlled multi-benchmark pass rate and dollar cost per run merged across FrontierHarness v1.1 and Harness Leaderboard."
+            ? "Task-specific pass rate and cost per run within the named benchmark and control slice."
             : "Equal-1.0 anchor standardization with connected heteroscedastic REML Empirical Bayes pooling and bootstrap Pareto frontier analysis.",
         variableMeasured: [
           domainId === "harnesses" ? "Controlled pass rate (%)" : "Composite benchmark score",
-          meta.costAxisLabel,
+          controlled ? "Cost per run (USD)" : meta.costAxisLabel,
           ...benchmarkNames,
         ],
         distribution: [
@@ -559,7 +604,7 @@ export function buildDomainJsonLd(
           "@type": "ListItem",
           position: idx + 1,
           name: entry.effort ? `${entry.name} (${entry.effort})` : entry.name,
-          description: `${entry.vendor}: ${entry.metric} at ${entry.cost}`,
+          description: `${entry.vendor}: ${entry.metric} at ${entry.cost}${entry.evidence ? ` · ${formatScoreEvidence(entry.evidence)}` : ""}`,
           url: `${canonicalUrl}#${entry.anchorPrefix}-${encodeURIComponent(entry.id)}`,
         })),
       },
@@ -588,7 +633,7 @@ export function renderHomeMarkdown(
     "",
     "## Composite indices",
     "",
-    "| Index | Top score | Secondary pick | URL | Markdown |",
+    "| Index | Highest estimate or harness pass rate | Secondary pick | URL | Markdown |",
     "| :--- | :--- | :--- | :--- | :--- |",
   ];
 
@@ -596,10 +641,10 @@ export function renderHomeMarkdown(
     const sum = summaryById.get(meta.id);
     const slug = domainToSlug(meta.id);
     const top = sum?.topPick
-      ? `${sum.topPick.name}${sum.topPick.effort ? ` (${sum.topPick.effort})` : ""} ${sum.topPick.metricText} @ ${sum.topPick.costText}`
+      ? `${sum.topPick.name}${sum.topPick.effort ? ` (${sum.topPick.effort})` : ""} ${sum.topPick.metricText} @ ${sum.topPick.costText}${sum.topPick.controlInterval ? ` · ${sum.topPick.controlInterval}` : ""}${sum.topPick.evidence ? ` · ${formatScoreEvidence(sum.topPick.evidence)}` : ""}${sum.topRecommended === false ? " · Estimate only" : ""}`
       : "N/A";
     const sec = sum?.secondaryPick
-      ? `${sum.secondaryTag}: ${sum.secondaryPick.name}${sum.secondaryPick.effort ? ` (${sum.secondaryPick.effort})` : ""} ${sum.secondaryPick.metricText} @ ${sum.secondaryPick.costText}`
+      ? `${sum.secondaryTag}: ${sum.secondaryPick.name}${sum.secondaryPick.effort ? ` (${sum.secondaryPick.effort})` : ""} ${sum.secondaryPick.metricText} @ ${sum.secondaryPick.costText}${sum.secondaryPick.controlInterval ? ` · ${sum.secondaryPick.controlInterval}` : ""}${sum.secondaryPick.evidence ? ` · ${formatScoreEvidence(sum.secondaryPick.evidence)}` : ""}`
       : "N/A";
     lines.push(
       `| ${meta.indexTitle} | ${top} | ${sec} | ${SITE_URL}/${slug} | ${SITE_URL}/${slug}.md |`,
@@ -614,35 +659,51 @@ export function renderDomainMarkdown(
   domainId: DomainId,
   snapshot: ProChoiceSnapshot,
   lifecycle: LifecycleReport,
+  sliceId = "_all",
 ): string {
   const meta = DOMAIN_BY_ID[domainId];
   const slug = domainToSlug(domainId);
   const updated = formatUtcDate(snapshot.generatedAt);
-  const stats = computeDomainHeadlineStats(domainId, snapshot);
-  const benchmarks = BENCHMARKS.filter(
-    (b) => b.domainId === domainId && b.lifecycleState !== "CANDIDATE" && b.weight > 0,
-  );
+  const stats = computeDomainHeadlineStats(domainId, snapshot, sliceId);
+  const domain = snapshot.domains[domainId];
+  const controlled = domainId === "harnesses";
+  const panel = controlled ? controlledBoard(snapshot.harnessLeaderboard, sliceId) : null;
+  const selectionQuery =
+    panel && panel.selected.sliceId !== "_all"
+      ? `?m=${encodeURIComponent(panel.selected.sliceId)}`
+      : "";
 
   const lines: string[] = [
     `# ${meta.indexTitle}`,
     "",
     `> ${meta.description}`,
     "",
-    `- Canonical URL: ${SITE_URL}/${slug}`,
-    `- Domain JSON endpoint: ${SITE_URL}/api/v1/domains/${slug}`,
-    `- Epoch version: \`${meta.epochVersion}\``,
+    `- Canonical URL: ${SITE_URL}/${slug}${selectionQuery}`,
+    `- Domain JSON endpoint: ${SITE_URL}/api/v1/domains/${slug}${selectionQuery}`,
+    panel
+      ? `- Selection: ${panel.scope} · ${panel.metric.nTasks} tasks · source version ${panel.selected.sourceVersion}`
+      : `- Epoch version: \`${domain.epochVersion}\``,
     `- Snapshot hash: \`${snapshot.snapshotHash}\``,
     `- Updated: ${updated}`,
-    `- Cost axis: ${meta.costAxisLabel}`,
+    `- Cost axis: ${controlled ? "Cost per run (USD)" : meta.costAxisLabel}`,
     `- Evaluated entries: ${stats.evaluatedCount}`,
     "",
     "## Headline picks",
     "",
   ];
 
-  if (stats.budgetLabel) lines.push(`- Budget: ${stats.budgetLabel}`);
-  if (stats.valueLabel) lines.push(`- Best value: ${stats.valueLabel}`);
-  if (stats.topLabel) lines.push(`- Top score: ${stats.topLabel}`);
+  if (stats.budgetLabel)
+    lines.push(
+      `- Lowest cost: ${stats.budgetLabel}${stats.headlineEvidence.budget ? ` · ${formatScoreEvidence(stats.headlineEvidence.budget)}` : ""}`,
+    );
+  if (stats.valueLabel)
+    lines.push(
+      `- ${controlled ? "Cost–score tradeoff" : "Best value"}: ${stats.valueLabel}${stats.headlineEvidence.bestValue ? ` · ${formatScoreEvidence(stats.headlineEvidence.bestValue)}` : ""}`,
+    );
+  if (stats.topLabel)
+    lines.push(
+      `- ${domainId === "harnesses" ? "Highest pass rate" : stats.topRecommended ? "Top score" : "Highest estimate"}: ${stats.topLabel}${stats.headlineEvidence.topScore ? ` · ${formatScoreEvidence(stats.headlineEvidence.topScore)}` : ""}${stats.topRecommended === false ? " · Estimate only" : ""}`,
+    );
 
   lines.push(
     "",
@@ -656,29 +717,40 @@ export function renderDomainMarkdown(
 
   stats.frontierEntries.forEach((entry, idx) => {
     lines.push(
-      `| ${idx + 1} | ${entry.name} | ${entry.effort ?? "-"} | ${entry.vendor} | ${entry.metric} | ${entry.cost} |`,
+      `| ${idx + 1} | ${entry.name} | ${entry.effort ?? "-"} | ${entry.vendor} | ${entry.metric}${entry.evidence ? ` · ${formatScoreEvidence(entry.evidence)}` : ""} | ${entry.cost} |`,
     );
   });
 
-  if (domainId !== "harnesses" && benchmarks.length > 0) {
+  if (panel) {
+    lines.push(
+      "",
+      "## Controlled benchmarks",
+      "",
+      ...panel.pooled.map(
+        (s) =>
+          `- [${controlledBoardName(s)} · ${s.label}](${SITE_URL}/harnesses?m=${encodeURIComponent(s.sliceId)}) · [scores](${SITE_URL}/api/v1/domains/harnesses?m=${encodeURIComponent(s.sliceId)})`,
+      ),
+    );
+    lines.push(`- Selected source: ${panel.metric.sourceUrl}`);
+    lines.push(
+      "",
+      `[Harness + model](${SITE_URL}/harnesses?tab=stacks) compares complete configurations on ${domain.activeBenchmarkIds.length} benchmarks in epoch \`${domain.epochVersion}\`.`,
+    );
+  } else if (domain.activeBenchmarkIds.length > 0) {
     lines.push("", "## Active benchmarks", "");
     const auditByBm = new Map(
       lifecycle.audits
         .filter((a) => a.domainId === domainId)
         .map((a) => [a.benchmarkId, a.lifecycleState]),
     );
-    for (const bm of benchmarks) {
-      const state = auditByBm.get(bm.id) ?? bm.lifecycleState;
-      lines.push(`- ${bm.name} (${bm.version}, ${state}): ${bm.sourceUrl}`);
+    for (const id of domain.activeBenchmarkIds) {
+      const bm = getReleaseBenchmark(domain, id);
+      const state = auditByBm.get(id);
+      const label = bm.sourceUrl ? `[${bm.name}](${bm.sourceUrl})` : bm.name;
+      lines.push(
+        `- ${label} (${[domain.benchmarkVersions[id], state].filter(Boolean).join(", ")})`,
+      );
     }
-  } else if (domainId === "harnesses") {
-    lines.push(
-      "",
-      "## Controlled benchmark sources",
-      "",
-      "- FrontierHarness Eval v1.1 (22 harnesses across 5 open control models): https://frontierharness.org/",
-      "- Harness Leaderboard (12 harnesses across 4 open control models): https://joelniklaus-harness-leaderboard.hf.space/",
-    );
   }
 
   lines.push("", `Full JSON dataset: ${SITE_URL}/api/v1/snapshot`, "");
@@ -699,7 +771,7 @@ export function renderStaticPageMarkdown(
       "## Endpoints",
       "",
       `- \`GET ${SITE_URL}/api/v1/snapshot\`: Complete typed benchmark snapshot and lifecycle audit report across all six domains.`,
-      `- \`GET ${SITE_URL}/api/v1/domains/{domain}\`: Single-domain headline picks, Pareto frontier, and evaluated configs for \`coding\`, \`writing\`, \`design\`, \`research\`, \`cyber\`, or \`harnesses\`.`,
+      `- \`GET ${SITE_URL}/api/v1/domains/{domain}\`: Headline picks, number of evaluated entries, and Pareto frontier for \`coding\`, \`writing\`, \`design\`, \`research\`, \`cyber\`, or the controlled \`harnesses\` board.`,
       `- \`GET ${SITE_URL}/openapi.json\`: OpenAPI 3.1.0 machine-readable schema with typed responses and RFC 9457 error objects.`,
       `- \`GET ${SITE_URL}/.well-known/api-catalog\`: RFC 9727 API discovery linkset.`,
       "",
@@ -721,7 +793,7 @@ export function renderStaticPageMarkdown(
       "",
       `> Built by ${ORG_NAME} (${ORG_URL}) to rank frontier language models and coding agent harnesses by empirical score and real dollar cost.`,
       "",
-      "ProChoice ingests 18 public benchmark and first-party pricing feeds daily, aligns 45 active benchmarks onto shared domain scales via equal-1.0 anchor standardization and heteroscedastic REML Empirical Bayes pooling, and computes cost-quality Pareto frontiers across six domains: Coding, Writing, Design, Research, Cyber, and Harnesses.",
+      `ProChoice checks ${snapshot.sources.length} benchmark and pricing feeds daily. The model indices compare scores against cost per task. The controlled harness leaderboard compares pass rate and cost per run on shared test models. The Harness + model view ranks complete configurations.`,
       "",
       `- Organization: ${ORG_NAME} (${ORG_URL})`,
       `- Source repository: ${REPO_URL} (MIT)`,
@@ -790,7 +862,7 @@ export function renderLlmsTxt(
   const lines: string[] = [
     `# ${SITE_NAME}`,
     "",
-    `> ${SITE_DESCRIPTION} Updated daily from 18 public benchmark and pricing sources.`,
+    `> ${SITE_DESCRIPTION} Updated daily from ${snapshot.sources.length} benchmark and pricing feeds.`,
     "",
     "## When to use ProChoice",
     "",
@@ -806,7 +878,7 @@ export function renderLlmsTxt(
     const slug = domainToSlug(meta.id);
     const sum = summaryById.get(meta.id);
     const leader = sum?.topPick
-      ? ` Top score: ${sum.topPick.name} at ${sum.topPick.metricText} (${sum.topPick.costText}).`
+      ? ` ${meta.id === "harnesses" ? "Highest pass rate" : "Highest estimate"}: ${sum.topPick.name} at ${sum.topPick.metricText} (${sum.topPick.costText}).${sum.topPick.controlInterval ? ` ${sum.topPick.controlInterval}.` : ""}${sum.topPick.evidence ? ` ${formatScoreEvidence(sum.topPick.evidence)}.` : ""}${sum.topRecommended === false ? " Estimate only." : ""}`
       : "";
     lines.push(`- [${meta.indexTitle}](${SITE_URL}/${slug}.md): ${meta.description}${leader}`);
   }
@@ -905,7 +977,7 @@ export function buildOpenApiSpec(snapshot: ProChoiceSnapshot): Record<string, un
           operationId: "getSnapshotV1",
           summary: "Get the full ProChoice benchmark snapshot and lifecycle audit report",
           description:
-            "Returns the latest validated ProChoice release covering all six composite domains, 25 controlled coding harnesses, source health metadata, and benchmark lifecycle audits.",
+            "Returns the model and harness-stack composites, controlled harness leaderboard, source health, and benchmark lifecycle audits for this release.",
           responses: {
             "200": {
               description: "Validated snapshot and lifecycle JSON payload",
@@ -923,7 +995,7 @@ export function buildOpenApiSpec(snapshot: ProChoiceSnapshot): Record<string, un
       "/api/v1/domains/{domain}": {
         get: {
           operationId: "getDomainLeaderboardV1",
-          summary: "Get headline picks, Pareto frontier, and evaluated configs for one domain",
+          summary: "Get headline picks, evaluated entry count, and Pareto frontier for one domain",
           description:
             "Returns structured benchmark scores, real dollar costs, Pareto frontier leaders, and domain metadata for a single ProChoice composite index.",
           parameters: [
@@ -936,6 +1008,14 @@ export function buildOpenApiSpec(snapshot: ProChoiceSnapshot): Record<string, un
                 type: "string",
                 enum: [...DOMAIN_SLUGS],
               },
+            },
+            {
+              name: "m",
+              in: "query",
+              required: false,
+              description:
+                "Controlled harness slice ID from controlledSlices. Defaults to Terminal-Bench 4.0 across its test models. Valid only for harnesses.",
+              schema: { type: "string" },
             },
           ],
           responses: {
@@ -968,6 +1048,22 @@ export function buildOpenApiSpec(snapshot: ProChoiceSnapshot): Record<string, un
             instance: { type: "string" },
           },
         },
+        ModelScoreEvidence: {
+          type: ["object", "null"],
+          description:
+            "Observed benchmark coverage and approximate marginal 95% model interval. Null for controlled harness pass rates.",
+          required: ["observedBenchmarks", "activeBenchmarks", "sourceCount", "interval95"],
+          properties: {
+            observedBenchmarks: { type: "integer" },
+            activeBenchmarks: { type: "integer" },
+            sourceCount: { type: "integer" },
+            interval95: {
+              type: "object",
+              required: ["lower", "upper"],
+              properties: { lower: { type: "number" }, upper: { type: "number" } },
+            },
+          },
+        },
         FrontierEntrySummary: {
           type: "object",
           required: ["id", "name", "vendor", "metric", "cost"],
@@ -978,6 +1074,7 @@ export function buildOpenApiSpec(snapshot: ProChoiceSnapshot): Record<string, un
             metric: { type: "string" },
             cost: { type: "string" },
             effort: { type: ["string", "null"] },
+            evidence: { $ref: "#/components/schemas/ModelScoreEvidence" },
           },
         },
         DomainResponse: {
@@ -998,14 +1095,76 @@ export function buildOpenApiSpec(snapshot: ProChoiceSnapshot): Record<string, un
             domainId: { type: "string" },
             slug: { type: "string", enum: [...DOMAIN_SLUGS] },
             indexTitle: { type: "string" },
-            epochVersion: { type: "string" },
+            epochVersion: {
+              type: "string",
+              description: "Epoch of the model or harness-stack composite.",
+            },
+            controlledSlice: {
+              type: "object",
+              required: [
+                "id",
+                "instrumentId",
+                "benchmark",
+                "controlModelId",
+                "control",
+                "taskCount",
+                "updatedAt",
+                "sourceUrl",
+              ],
+              properties: {
+                id: { type: "string" },
+                instrumentId: { enum: ["terminal-bench-4.0", "deep-swe"] },
+                benchmark: { type: "string" },
+                controlModelId: { type: ["string", "null"] },
+                control: { type: "string" },
+                taskCount: { type: "integer" },
+                updatedAt: { type: "string", format: "date-time" },
+                sourceUrl: { type: "string", format: "uri" },
+              },
+            },
+            controlledSlices: {
+              type: "array",
+              items: {
+                type: "object",
+                required: ["id", "instrumentId", "benchmark", "controlModelId", "control"],
+                properties: {
+                  id: { type: "string" },
+                  instrumentId: { type: "string" },
+                  benchmark: { type: "string" },
+                  controlModelId: { type: ["string", "null"] },
+                  control: { type: "string" },
+                },
+              },
+            },
+            controlledSourceVersion: {
+              type: "string",
+              description:
+                "Version of the controlled leaderboard returned for the harnesses domain.",
+            },
             generatedAt: { type: "string", format: "date-time" },
             snapshotHash: { type: "string" },
             evaluatedCount: { type: "integer" },
             frontierCount: { type: "integer" },
+            topScoreRecommended: {
+              type: ["boolean", "null"],
+              description:
+                "Whether the highest model estimate qualifies for a top recommendation; null for controlled harnesses.",
+            },
+            headlineEvidence: {
+              type: "object",
+              properties: Object.fromEntries(
+                ["budget", "bestValue", "topScore"].map((key) => [
+                  key,
+                  { $ref: "#/components/schemas/ModelScoreEvidence" },
+                ]),
+              ),
+            },
             headlines: {
               type: "object",
               properties: {
+                lowestCost: { type: ["string", "null"] },
+                costScoreTradeoff: { type: ["string", "null"] },
+                highestPassRate: { type: ["string", "null"] },
                 budget: { type: ["string", "null"] },
                 bestValue: { type: ["string", "null"] },
                 topScore: { type: ["string", "null"] },

@@ -1,6 +1,6 @@
 # ProChoice
 
-Open-source LLM leaderboard and coding agent harness benchmark by [Retrograde Labs](https://inretrograde.io). Compare frontier language models by composite score and real dollar cost across six independent domains, with dominated configurations cut from the chart.
+Open-source LLM leaderboard and coding agent harness benchmark by [Retrograde Labs](https://inretrograde.io). Compare frontier language models by composite score and real dollar cost across six task domains, with dominated configurations cut from the chart.
 
 **Live site:** [prochoice.industries](https://prochoice.industries)
 
@@ -19,16 +19,18 @@ Open-source LLM leaderboard and coding agent harness benchmark by [Retrograde La
 
 ## Live composite indices
 
-Snapshot `43237d0f0a7497fc`, updated `2026-11-21` from 18 live public benchmark and first-party pricing feeds. Default model picks cover the five Western providers shown on initial load; toggle DeepSeek, Moonshot, Alibaba, and Zhipu on [prochoice.industries](https://prochoice.industries) to compare all nine.
+Snapshot `6aa5247f8f563c56`, updated `2026-11-21` from 18 public benchmark and first-party pricing feeds. Default model picks cover the five Western providers shown on initial load; toggle DeepSeek, Moonshot, Alibaba, and Zhipu on [prochoice.industries](https://prochoice.industries) to compare all nine.
 
-| Composite index | Active benchmarks | Budget | Best value | Top score |
+| Composite index | Tests in this view | Lowest cost | Value pick | Highest estimate |
 | :--- | :---: | :--- | :--- | :--- |
-| [Coding](https://prochoice.industries/coding) | 9 | GPT-6 Luna at 30.6, \$0.0051 | GPT-6.2 Sol at 64.2, \$0.41 | Claude Opus 5.5 at 77.5, \$10.0 |
-| [Writing](https://prochoice.industries/writing) | 3 | GPT-6 Luna at 44.4, \$0.0030 | Claude Opus 5.5 at 74.6, \$0.12 | GPT-6.2 Astra at 79.2, \$0.24 |
-| [Design](https://prochoice.industries/design) | 3 | Muse Ember at 58.1, \$0.029 | GPT-6.2 Sol at 72.9, \$2.18 | Claude Fable 5.2 at 81.1, \$24.7 |
-| [Research](https://prochoice.industries/research) | 21 | GPT-6 Luna at 35.0, \$0.0051 | GPT-6.2 Sol at 71.3, \$0.56 | Claude Fable 5.2 at 81.7, \$26.5 |
-| [Cyber](https://prochoice.industries/cyber) | 3 | Gemini 3.7 Flash at 45.3, \$3.49 | GPT-6 Sol at 66.4, \$4.57 | Claude Fable 5.2 at 79.3, \$67.0 |
-| [Harnesses](https://prochoice.industries/harnesses) | 3 | OpenClaw at 38.7%, \$0.39 | Pi at 44.8%, \$0.52 | OpenCode at 48.0%, \$0.57 |
+| [Coding](https://prochoice.industries/coding) | 5 | GPT-6 Luna (Low) at 23.4, \$0.0051 · 1/5 benchmarks · 1 feed · 95% interval 4.3 to 42.5 | No supported pick | Claude Sonnet 5.5 (Max) at 79.5, \$10.0 · 3/5 benchmarks · 3 feeds · 95% interval 69.7 to 89.2 |
+| [Writing](https://prochoice.industries/writing) | 4 | Gemini 3.5 Flash-Lite (Minimal) at 47.8, \$0.013 · 1/4 benchmarks · 1 feed · 95% interval 34.3 to 61.3 | No supported pick | Gemini 3.7 Flash (Medium) at 58.0, \$0.022 · 1/4 benchmarks · 1 feed · 95% interval 44.5 to 71.5 |
+| [Design](https://prochoice.industries/design) | 4 | Grok 4.3 (Low) at 26.7, \$0.014 · 2/4 benchmarks · 2 feeds · 95% interval 13.0 to 40.5 | GPT-6.1 Sol (Max) at 63.5, \$0.27 · 3/4 benchmarks · 3 feeds · 95% interval 47.8 to 79.2 | Claude Sonnet 5.5 (Extra high) at 69.8, \$3.56 · 1/4 benchmarks · 1 feed · 95% interval 60.5 to 79.1 |
+| [Research](https://prochoice.industries/research) | 10 | GPT-6 Luna (Low) at 36.8, \$0.0051 · 3/10 benchmarks · 1 feed · 95% interval 25.2 to 48.4 | No supported pick | GPT-6.2 Astra (Extra high) at 71.3, \$2.52 · 4/10 benchmarks · 1 feed · 95% interval 59.5 to 83.1 |
+| [Cyber](https://prochoice.industries/cyber) | 2 | GPT-6.1 Terra (High) at 53.1, \$3.76 · 1/2 benchmarks · 1 feed · 95% interval 44.7 to 61.6 | No supported pick | Claude Fable 5.2 (High) at 73.6, \$67.0 · 1/2 benchmarks · 1 feed · 95% interval 66.1 to 81.1 |
+| [Harnesses](https://prochoice.industries/harnesses) | 1 | Oh My Pi at 16.8% (95% interval 7.7 to 25.8%), \$1.10 | Codex CLI at 18.2% (95% interval 8.1 to 28.4%), \$1.11 | Hermes Agent at 20.0% (95% interval 9.9 to 30.1%), \$1.34 |
+
+The Harnesses row shows the default Terminal-Bench 4.0 comparison. Its middle entry describes a cost–score tradeoff. Select DeepSWE on the site for the separate repository-task board.
 
 ## Why ProChoice
 
@@ -39,7 +41,7 @@ ProChoice fixes those four gaps directly:
 - **One monotonic frontier per provider.** Models and reasoning efforts that cost more while scoring lower drop off the default chart and move into the Pruned table with exact wasted cost multiples.
 - **Six separated tracks.** Coding, Writing, Design, Research, Cyber, and Harnesses never collapse into one arbitrary overall average. Cross-domain Kendall tau correlations appear in every daily lifecycle audit.
 - **Explicit reasoning effort tiers.** Every configuration resolves to a verified first-party API reasoning effort tier. Scores never copy across effort tiers, and costs never copy across distinct harnesses.
-- **Controlled coding agent harness rankings.** Harnesses run separately across eight fixed open control models by merging FrontierHarness v1.1 and Harness Leaderboard into one 25-harness board covering OpenCode, Pi, Claude Code, Codex, OpenClaw, and 20 more agents.
+- **Controlled coding agent harness results.** Select Terminal-Bench 4.0 or DeepSWE, then a control model. Each comparison uses the selected task set's pass rate, confidence interval and cost per run. The model-plus-harness index separately measures repository implementation and comprehension.
 
 ## Public API and AI agents
 
@@ -65,10 +67,14 @@ Machine-readable discovery also ships at `/.well-known/api-catalog`, `/sitemap.x
 
 ## Methodology
 
+The [model-card review](docs/coverage/model-cards.md), [coding and research audit](docs/coverage/coding-research.md), [writing and design audit](docs/coverage/writing-design.md), and [harness and security audit](docs/coverage/harnesses-security.md) record what each index measures, which sources qualified, and why other results were excluded. The Methodology panel shows how many configurations have scores for each benchmark and how the ranking changes when a feed is removed.
+
+The [Sophon catalog review](docs/coverage/sophon.md) records the search across 630 entries and the decisions about overlapping tasks. The [professional task review](docs/coverage/professional-tasks.md) covers clinical documentation, repository migration, legal retrieval and financial analysis. The [decision policy](docs/coverage/decision-policy.md) separates the highest numerical estimate from an endorsed winner. The [rank audit](docs/coverage/rank-evidence.md) compares predictions with results held out of calibration. The [release review](docs/coverage/release-review.md) records the panel’s decisions and remaining evidence limits.
+
 Every daily pipeline run executes the same deterministic psychometric and economic pipeline from raw cached upstream feeds:
 
 1. **Nine-provider allowlist.** Model leaderboards rank Anthropic, OpenAI, Google, SpaceXAI, Meta, DeepSeek, Moonshot, Alibaba, and Zhipu only, resolved through strict token-bounded aliases in `src/config/aliases.json`.
-2. **All 45 active benchmarks weighted by signal.** Zero shadow candidates sit on the shelf. Each active benchmark receives a frozen data-derived `effectiveWeight` in `[0.10, 1.00]` from empirical reliability and discrimination.
+2. **Task family weights.** In Coding, Writing, Design and Research v3 and the software engineering stack index v2, distinct task families receive equal total weight. The release admits one scored instrument per distinct task and checks dataset lineage for reused cases. Frozen diagnostic quality weights and refits that hold out entire feeds make that policy inspectable. [Weight comparison](docs/coverage/measurement-families.md)
 3. **Equal-1.0 anchor standardization and REML Empirical Bayes pooling.** Raw scores align via provider-balanced anchor standardization, Kolen and Brennan Mean-Sigma overlap linking with joint-jackknife uncertainty, weighted two-way linear Rasch equating, and heteroscedastic REML Empirical Bayes shrinkage with a `B >= 0.50` eligibility floor.
 4. **Homogeneous cost axis and correlated Pareto bootstraps.** Missing task costs for non-retired models with verified first-party public API pricing are estimated on the domain's homogeneous cost axis through joint OLS plus isotonic effort-ladder regression. Log-normal cost uncertainty propagates through 10,000 correlated Monte Carlo draws to estimate frontier membership and knee probabilities.
 5. **Automated saturation retirement.** Daily CI computes Akhtar et al. ICML 2026 saturation indices, Arena-Hard 95% CI pairwise separability, leave-one-out composite rank stability, and 14-day sustained trigger checks inside immutable semantic MAJOR domain epochs under `data/epochs/`.
@@ -96,7 +102,7 @@ bun run verify
 
 `bun run sync` runs three stages in order:
 
-1. `bun run ingest` fetches all 18 mandatory upstream feeds, updates per-benchmark partitions under `data/raw/`, computes Rasch scores, Empirical Bayes shrinkage, monotone effort cost estimates, and bootstrap Pareto probabilities, and writes `data/snapshot.json`, `data/epochs/*.json`, and `data/unmapped.json`.
+1. `bun run ingest` fetches the mandatory upstream feeds, updates per-benchmark partitions under `data/raw/`, computes Rasch scores, Empirical Bayes shrinkage, monotone effort cost estimates, and bootstrap Pareto probabilities, and writes `data/snapshot.json`, `data/epochs/*.json`, and `data/unmapped.json`.
 2. `bun run audit:lifecycle` computes daily saturation indices, pairwise separability, leave-one-out stability, and cross-domain correlations into `data/lifecycle.json`.
 3. `bun run validate:snapshot` verifies schema validity, canonical hash match, immutable MAJOR epoch baselines, full raw-to-release recomputation, and source freshness.
 
@@ -115,9 +121,9 @@ See [`.env.example`](.env.example):
 | :--- | :--- |
 | `src/app/` | Next.js 16 App Router pages, static domain routes, OpenGraph cards, `/api/v1/*`, `/llms.txt`, and `/openapi.json` |
 | `src/components/` | Pareto SVG charts, verdict placards, multi-row tables, harness tabs, and methodology monograph drawer |
-| `src/config/` | Provider allowlist, 45 benchmark definitions, effort defaults, and strict model aliases |
+| `src/config/` | Provider allowlist, benchmark definitions, effort defaults, and strict model aliases |
 | `src/lib/math/` | Anchor standardization, linear Rasch solver, REML Empirical Bayes, isotonic cost regression, and Pareto bootstraps |
-| `scripts/ingest/` | 18 mandatory upstream source adapters, lifecycle saturation auditor, and dual-runtime snapshot validator |
+| `scripts/ingest/` | mandatory upstream source adapters, lifecycle saturation auditor, and dual-runtime snapshot validator |
 | `data/` | Partitioned raw caches, canonical `snapshot.json`, `lifecycle.json`, and append-only MAJOR `epochs/*.json` |
 
 ## Automation
@@ -128,7 +134,7 @@ See [`.env.example`](.env.example):
 ## Licenses and attribution
 
 - **Source code:** [MIT License](LICENSE), Copyright 2026 Retrograde Labs.
-- **Compiled datasets and API outputs:** [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) with upstream attribution to every source benchmark, including FrontierCode, Terminal-Bench, DeepSWE, SWE-bench Pro, LiveBench, SciCode, LMArena, EQ-Bench, DesignArena, Vals AI, Artificial Analysis, Epoch AI, FrontierMath, FrontierHarness, and Harness Leaderboard.
+- **Compiled datasets and API outputs:** [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) with upstream attribution to every source benchmark, including FrontierCode, Terminal-Bench, DeepSWE, SWE-bench Pro, LiveBench, LMArena, EQ-Bench, WritingBench, Surge AI, DesignArena, Vals AI, Artificial Analysis, Epoch AI, FrontierMath, FrontierHarness, and Harness Leaderboard.
 
 ## Contributing
 

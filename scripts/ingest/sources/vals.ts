@@ -1,17 +1,18 @@
 import { BENCHMARK_BY_ID } from "../../../src/config/benchmarks.ts";
 import {
   parseExplicitEffort,
+  parseStrictEffortMetadata,
   resolveExplicitHarness,
   resolveModelSlugFromString,
 } from "../../../src/lib/math/canonicalize.ts";
 import type { DomainId, RawObservation } from "../../../src/lib/schema.ts";
 import {
+  fetchJson,
   fetchText,
   parseIsoDate,
   parseNumeric,
   parsePositive,
   parseStrictPositiveInt,
-  unwrapAstroProps,
 } from "../http.ts";
 import type { PartitionStats, SourceAdapter } from "../types.ts";
 
@@ -21,6 +22,8 @@ interface ValsFeedSpec {
   refusalFallbackKey: string;
   version: string;
   domainId: DomainId;
+  defaultHarness: string;
+  taskKey?: "scratch";
 }
 
 const VALS_FEEDS: readonly ValsFeedSpec[] = [
@@ -30,10 +33,55 @@ const VALS_FEEDS: readonly ValsFeedSpec[] = [
     refusalFallbackKey: "vibe_code_bench",
     version: "1.1",
     domainId: "design_code",
+    defaultHarness: "OpenHands",
+  },
+  {
+    slug: "legal_research",
+    benchmarkId: "vals_legal_research",
+    refusalFallbackKey: "legal_research",
+    version: "1",
+    domainId: "research",
+    defaultHarness: "Vals Legal Research Agent",
+  },
+  {
+    slug: "fabv2-1",
+    benchmarkId: "vals_finance_agent",
+    refusalFallbackKey: "finance_agent_v2_1",
+    version: "2.1",
+    domainId: "research",
+    defaultHarness: "Vals Finance Agent",
+  },
+  {
+    slug: "emb-v1-1",
+    benchmarkId: "vals_excel_modeling",
+    refusalFallbackKey: "emb_v1_1",
+    version: "1.1",
+    domainId: "research",
+    defaultHarness: "Vals Excel Modeling Agent",
+    taskKey: "scratch",
+  },
+  {
+    slug: "medscribe",
+    benchmarkId: "vals_medscribe",
+    refusalFallbackKey: "medscribe",
+    version: "1",
+    domainId: "writing",
+    defaultHarness: "Direct API",
+  },
+  {
+    slug: "code-migration-v1-1",
+    benchmarkId: "vals_code_migration",
+    refusalFallbackKey: "code_migration_v1_1",
+    version: "1.1",
+    domainId: "coding",
+    defaultHarness: "Pi",
   },
 ];
 
 interface ValsRowMetrics {
+  reasoning?: boolean | null;
+  reasoning_effort?: string | null;
+  compute_effort?: string | null;
   accuracy?: number;
   stderr?: number;
   cost_per_test?: number;
@@ -265,7 +313,7 @@ function parseRefusalFallbackModelsJs(
 }
 
 interface ValsBenchmarkView {
-  metadata?: { updated?: string; version?: string };
+  metadata?: { updated?: string; version?: string; benchmark_id?: string; slug?: string };
   tasks?: Record<string, Record<string, ValsRowMetrics>>;
 }
 
@@ -399,14 +447,14 @@ function matchValsHtmlMeta(
     if (only.score === null || Math.abs(only.score - accuracy) <= 0.1) {
       return { kind: "matched", row: only };
     }
-    return { kind: "none" };
+    return { kind: "conflict" };
   }
 
   if (candidates.length > 1) {
     const scored = candidates
       .filter((cand) => cand.score !== null && Math.abs(cand.score - accuracy) <= 0.1)
       .map((cand) => ({ cand, diff: Math.abs(cand.score! - accuracy) }));
-    if (scored.length === 0) return { kind: "none" };
+    if (scored.length === 0) return { kind: "conflict" };
     let minDiff = Number.POSITIVE_INFINITY;
     for (const s of scored) {
       if (s.diff < minDiff) minDiff = s.diff;
@@ -450,7 +498,7 @@ function matchValsHtmlMeta(
 
 export const valsAdapter: SourceAdapter = {
   id: "vals",
-  label: "Vals AI Vibe Code",
+  label: "Vals AI professional task benchmarks",
   license: "Public Benchmarks / Attribution Required",
   sourceUrl: "https://www.vals.ai/benchmarks",
   expectedBenchmarks: VALS_FEEDS.map((f) => f.benchmarkId),
@@ -469,17 +517,26 @@ export const valsAdapter: SourceAdapter = {
       VALS_FEEDS.map(async (spec) => {
         const url = `https://www.vals.ai/benchmarks/${spec.slug}`;
         const html = await fetchText(url);
-        const island = [...html.matchAll(/<astro-island[^>]*props="([^"]*)"/g)]
+        const loaderProps = [...html.matchAll(/<astro-island[^>]*props="([^"]*)"/g)]
           .map((m) => m[1] ?? "")
-          .find((p) => p.includes("benchmarkView"));
-        if (!island) throw new Error(`Vals island missing for ${spec.slug}`);
-
-        const rawObj = JSON.parse(decodeHtmlAttr(island)) as { benchmarkView?: unknown };
-        const bv = unwrapAstroProps(rawObj.benchmarkView) as ValsBenchmarkView | undefined;
-        const overall = bv?.tasks?.overall;
-        if (!overall || typeof overall !== "object") {
-          throw new Error(`Vals overall task table missing for ${spec.slug}`);
-        }
+          .find((p) => p.includes("benchmarkViewUrl"));
+        const bundle = loaderProps && JSON.parse(decodeHtmlAttr(loaderProps)).benchmarkViewUrl;
+        const asset = Array.isArray(bundle) && bundle[0] === 0 ? bundle[1] : null;
+        if (
+          typeof asset !== "string" ||
+          !/^\/_astro\/benchmark_view_[a-zA-Z0-9_.-]+\.json$/.test(asset)
+        )
+          throw new Error(`Vals release URL missing for ${spec.slug}`);
+        const bv = await fetchJson<ValsBenchmarkView>(`https://www.vals.ai${asset}`);
+        const overall = bv.tasks?.overall;
+        const scoredRows = bv.tasks?.[spec.taskKey ?? "overall"];
+        if (
+          !overall ||
+          !scoredRows ||
+          typeof overall !== "object" ||
+          typeof scoredRows !== "object"
+        )
+          throw new Error(`Vals task table missing for ${spec.slug}`);
         const htmlRows = parseValsHtmlTableRows(html);
 
         // Always require Vals' per-benchmark refusal/fallback ledger so page restructuring fails closed instead of admitting fallback rows
@@ -499,7 +556,7 @@ export const valsAdapter: SourceAdapter = {
         const fbJs = await fetchText(`https://www.vals.ai/_astro/${fbMod}`);
         const fallbackModels = parseRefusalFallbackModelsJs(fbJs, spec.refusalFallbackKey);
 
-        return { spec, url, bv, overall, htmlRows, fallbackModels };
+        return { spec, url, bv, overall, scoredRows, htmlRows, fallbackModels };
       }),
     );
 
@@ -519,7 +576,7 @@ export const valsAdapter: SourceAdapter = {
         continue;
       }
 
-      const { url, bv, overall, htmlRows, fallbackModels } = settled.value;
+      const { url, bv, overall, scoredRows, htmlRows, fallbackModels } = settled.value;
       const disqualifiedIds = new Set<string>();
       for (const [fbKey, entry] of Object.entries(fallbackModels)) {
         const fbRec = entry?.benchmarks?.[spec.refusalFallbackKey];
@@ -531,7 +588,12 @@ export const valsAdapter: SourceAdapter = {
       const upstreamVersion =
         typeof bv?.metadata?.version === "string" ? bv.metadata.version.trim() || null : null;
       const expectedVersion = BENCHMARK_BY_ID[spec.benchmarkId]?.version ?? spec.version;
-      if (upstreamVersion === null || upstreamVersion !== expectedVersion) {
+      if (
+        upstreamVersion === null ||
+        upstreamVersion !== expectedVersion ||
+        bv?.metadata?.slug !== spec.slug ||
+        bv.metadata.benchmark_id !== spec.refusalFallbackKey
+      ) {
         st.error = `Vals version drift for ${spec.benchmarkId}: upstream '${String(bv?.metadata?.version ?? "missing")}' !== registered '${expectedVersion}'`;
         if (disqualifiedIds.size > 0) {
           disqualifiedSourceRowIdsByBenchmark[spec.benchmarkId] = [...disqualifiedIds];
@@ -541,7 +603,7 @@ export const valsAdapter: SourceAdapter = {
 
       const claimedBaseKeys = new Set(Object.keys(overall));
 
-      for (const [modelKey, metrics] of Object.entries(overall)) {
+      for (const [modelKey, metrics] of Object.entries(scoredRows)) {
         st.attempted++;
         if (/(?:-range$|\bdaybreak\b)/i.test(modelKey.replace(/_/g, " "))) {
           disqualifiedIds.add(`vals:${spec.slug}:${modelKey}`);
@@ -550,6 +612,7 @@ export const valsAdapter: SourceAdapter = {
         }
         if (!metrics || typeof metrics !== "object") {
           st.rejected++;
+          disqualifiedIds.add(`vals:${spec.slug}:${modelKey}`);
           continue;
         }
         try {
@@ -559,12 +622,17 @@ export const valsAdapter: SourceAdapter = {
             typeof metrics.harness !== "string"
           ) {
             st.rejected++;
+            disqualifiedIds.add(`vals:${spec.slug}:${modelKey}`);
             continue;
           }
           const accuracy = parseNumeric(metrics.accuracy);
-          const stderr = parsePositive(metrics.stderr);
+          // The migration score equally weights 40 repositories across 130 ports. Its published SE
+          // does not specify repository clustering. Use the bound over the 40 parent tasks.
+          const stderr =
+            spec.benchmarkId === "vals_code_migration" ? null : parsePositive(metrics.stderr);
           if (accuracy === null || accuracy < 0 || accuracy > 100) {
             st.rejected++;
+            disqualifiedIds.add(`vals:${spec.slug}:${modelKey}`);
             continue;
           }
 
@@ -575,15 +643,22 @@ export const valsAdapter: SourceAdapter = {
 
           const metricsHarness =
             typeof metrics.harness === "string" ? metrics.harness.trim() || null : null;
+          const headline = parseNumeric(overall[modelKey]?.accuracy);
+          if (headline === null) {
+            st.rejected++;
+            disqualifiedIds.add(`vals:${spec.slug}:${modelKey}`);
+            continue;
+          }
           const htmlMatch = matchValsHtmlMeta(
             modelKey,
-            accuracy,
+            headline,
             metricsHarness,
             htmlRows,
             claimedBaseKeys,
           );
           if (htmlMatch.kind === "ambiguous" || htmlMatch.kind === "conflict") {
             st.rejected++;
+            disqualifiedIds.add(`vals:${spec.slug}:${modelKey}`);
             continue;
           }
           const htmlMeta = htmlMatch.kind === "matched" ? htmlMatch.row : null;
@@ -602,6 +677,7 @@ export const valsAdapter: SourceAdapter = {
             canonicalValsHarness(htmlMeta.harness) !== canonicalValsHarness(metricsHarness)
           ) {
             st.rejected++;
+            disqualifiedIds.add(`vals:${spec.slug}:${modelKey}`);
             continue;
           }
           // Reject unmatched keys that have compact/ISO dated siblings or lack an explicit effort token (preventing partial-HTML effort downgrades)
@@ -614,6 +690,7 @@ export const valsAdapter: SourceAdapter = {
           const keyHasExplicitEffort = parseExplicitEffort(modelKey, true) !== null;
           if (htmlMeta === null && (hasDatedSibling || !keyHasExplicitEffort)) {
             st.rejected++;
+            disqualifiedIds.add(`vals:${spec.slug}:${modelKey}`);
             continue;
           }
           // Prefer verified SKU slug over (MM/YY) display labels; scope legacy DeepSeek Pro display override strictly to deepseek-v4-pro -> "DeepSeek V4"
@@ -649,6 +726,7 @@ export const valsAdapter: SourceAdapter = {
             (rawNameEffort === "none" && displayEffort === "thinking")
           ) {
             st.rejected++;
+            disqualifiedIds.add(`vals:${spec.slug}:${modelKey}`);
             continue;
           }
           const effortSources = [keySuffix, modelKey, htmlMeta?.displayName ?? ""];
@@ -677,33 +755,41 @@ export const valsAdapter: SourceAdapter = {
             rawEffort = rawEffort ? `${rawEffort} ${manualBudgetToken}` : manualBudgetToken;
           }
 
-          const upstreamHarness = htmlMeta?.harness ?? metricsHarness;
-          const canonicalUpstreamHarness = canonicalValsHarness(upstreamHarness);
-          const isCyberBench = spec.benchmarkId === "vals_cyberbench";
-          const isOpenHandsDesign = spec.benchmarkId === "vals_vibe_code";
+          // The chart preview hides run parameters. The versioned benchmark JSON records execution settings.
+          const tokens = [metrics.reasoning_effort, metrics.compute_effort].filter(
+            (v) => v != null,
+          );
+          const levels = tokens.map((v) =>
+            typeof v === "string" ? parseStrictEffortMetadata(v) : null,
+          );
+          const level =
+            levels[0] ??
+            (metrics.reasoning === true ? "thinking" : metrics.reasoning === false ? "none" : null);
+          const label = rawEffort ?? rawNameEffort;
           if (
-            isCyberBench &&
-            canonicalUpstreamHarness !== null &&
-            canonicalUpstreamHarness !== "mini-swe-agent"
+            new Set(levels).size > 1 ||
+            levels.includes(null) ||
+            (metrics.reasoning != null && typeof metrics.reasoning !== "boolean") ||
+            (metrics.reasoning === false && level !== "none") ||
+            (metrics.reasoning === true && level === "none") ||
+            (level &&
+              label &&
+              level !== label &&
+              !(level === "thinking" && label !== "none") &&
+              !(label === "thinking" && level !== "none")) ||
+            (!level && !label)
           ) {
-            st.rejected++;
+            st.excluded++;
+            disqualifiedIds.add(`vals:${spec.slug}:${modelKey}`);
             continue;
           }
-          // Fold documented per-benchmark default harnesses while preserving observedHarness provenance
-          const isDocumentedDefaultHarness = isCyberBench
-            ? true
-            : canonicalUpstreamHarness === null ||
-              canonicalUpstreamHarness === "direct" ||
-              (isOpenHandsDesign && canonicalUpstreamHarness === "openhands");
-          const observedHarness =
-            upstreamHarness ??
-            (isCyberBench
-              ? "mini-SWE-agent"
-              : spec.benchmarkId === "vals_srebench"
-                ? "Vals SRE Runner"
-                : isOpenHandsDesign
-                  ? "OpenHands"
-                  : "Direct API");
+          if (!manualBudgetToken && level && (level !== "thinking" || !label)) rawEffort = level;
+          const upstreamHarness = htmlMeta?.harness ?? metricsHarness;
+          const canonicalUpstreamHarness = canonicalValsHarness(upstreamHarness);
+          const isDocumentedDefaultHarness =
+            canonicalUpstreamHarness === null ||
+            canonicalUpstreamHarness === canonicalValsHarness(spec.defaultHarness);
+          const observedHarness = upstreamHarness ?? spec.defaultHarness;
           const emittedRawHarness = isDocumentedDefaultHarness ? null : canonicalUpstreamHarness;
 
           observations.push({
@@ -717,8 +803,8 @@ export const valsAdapter: SourceAdapter = {
             rawEffort,
             rawHarness: emittedRawHarness,
             observedHarness,
-            harnessRegime: "native",
-            rawScore: Number(accuracy.toFixed(2)),
+            harnessRegime: spec.domainId === "coding" ? "standardized" : "native",
+            rawScore: accuracy,
             seRaw,
             ciHalfWidth,
             ciLower: null,
@@ -731,10 +817,11 @@ export const valsAdapter: SourceAdapter = {
             // Vals metadata.updated is the page update timestamp, not a per-model evaluation date
             evalDate: null,
             publishedDate,
-            sourceUrl: url,
+            sourceUrl: spec.taskKey ? `${url}?task=${spec.taskKey}` : url,
           });
         } catch {
           st.rejected++;
+          disqualifiedIds.add(`vals:${spec.slug}:${modelKey}`);
         }
       }
 

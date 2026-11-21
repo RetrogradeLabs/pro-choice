@@ -1,4 +1,9 @@
 import { BENCHMARK_BY_ID, type BenchmarkMeta } from "../../config/benchmarks.ts";
+import {
+  assertDisjointRoster,
+  datasetPoolsFor,
+  measurementFamilyFor,
+} from "../../config/measurement-families.ts";
 import { compareIsoInstants } from "../format.ts";
 import type {
   AnchorStats,
@@ -10,6 +15,8 @@ import type {
   ReasoningEffort,
   SeModel,
 } from "../schema.ts";
+import type { AggregateWeightPolicy } from "./measurement-families.ts";
+import { allocateFamilyWeights, MIN_BENCHMARK_WEIGHT } from "./measurement-families.ts";
 
 export const DISPLAY_BASE = 50;
 export const DISPLAY_SPREAD = 15;
@@ -310,10 +317,12 @@ export function linkBenchmarkMeanSigma(
     refTheta: number;
   }[],
   minLabs: number,
+  requirePositiveAssociation = false,
 ): {
   mean: number;
   sd: number;
   linked: boolean;
+  minProviderCorrelation?: number;
   linkVarIntercept?: number;
   linkVarSlope?: number;
   linkCovIS?: number;
@@ -326,6 +335,28 @@ export function linkBenchmarkMeanSigma(
 
   const full = computeMeanSigmaParams(overlap);
   if (!full) return { mean: 0, sd: 0, linked: false };
+
+  let minProviderCorrelation = 1;
+  if (requirePositiveAssociation) {
+    for (const leftOut of [undefined, ...distinctLabs]) {
+      const rows = overlap.filter((o) => o.provider !== leftOut);
+      const x = computeLabBalancedStats(
+        rows.map((o) => ({ provider: o.provider, value: o.benchmarkRaw })),
+      );
+      const y = computeLabBalancedStats(
+        rows.map((o) => ({ provider: o.provider, value: o.refTheta })),
+      );
+      if (x.sd <= 1e-6 || y.sd <= 1e-6) return { mean: 0, sd: 0, linked: false };
+      let sum = 0;
+      for (const lab of Map.groupBy(rows, (o) => o.provider).values()) {
+        sum +=
+          lab.reduce((s, o) => s + (o.benchmarkRaw - x.mean) * (o.refTheta - y.mean), 0) /
+          lab.length;
+      }
+      minProviderCorrelation = Math.min(minProviderCorrelation, sum / (x.labCount * x.sd * y.sd));
+    }
+    if (!(minProviderCorrelation > 0)) return { mean: 0, sd: 0, linked: false };
+  }
 
   // Leave-one-out jackknife covariance of (a_i = -mean_i / sd_i, b_i = 1 / sd_i) so Var(z(x)) = Va + 2*Cab*x + Vb*x^2
   const jackA: number[] = [];
@@ -363,6 +394,7 @@ export function linkBenchmarkMeanSigma(
     mean: full.mean,
     sd: full.sd,
     linked: true,
+    ...(requirePositiveAssociation ? { minProviderCorrelation } : {}),
     // Keep full IEEE-754 precision so (varI, varS, covIS) always stays strictly positive semi-definite
     linkVarIntercept: factor * sumAA,
     linkVarSlope: factor * sumBB,
@@ -523,7 +555,6 @@ function invertSquareMatrix(matrix: readonly (readonly number[])[]): number[][] 
   return inv;
 }
 
-export const MIN_BENCHMARK_WEIGHT = 0.1;
 export const UNREPORTED_SE_Z = 1.0;
 
 export function buildWeightMapFromAnchors(
@@ -609,15 +640,11 @@ export function computeBenchmarkQualityWeight(
   bmId: string,
   bmCells: readonly ObservedCell[],
   minLabs: number,
+  useParentSamplingBound = false,
 ): { reliability: number; discrimination: number; effectiveWeight: number } {
   const meta = BENCHMARK_BY_ID[bmId];
   if (!meta || bmCells.length === 0) {
     return { reliability: 0.5, discrimination: 0.25, effectiveWeight: 0.125 };
-  }
-
-  const countByLab = new Map<ProviderId, number>();
-  for (const c of bmCells) {
-    countByLab.set(c.provider, (countByLab.get(c.provider) ?? 0) + 1);
   }
 
   const orientedStats = computeLabBalancedStats(
@@ -627,27 +654,30 @@ export function computeBenchmarkQualityWeight(
 
   let wSeSum = 0;
   let wSeSqSum = 0;
-  let sePresentCount = 0;
-  for (const c of bmCells) {
-    const rawSe = computeMeasurementSe(
-      c.rawScore,
-      c.ciHalfWidth,
-      meta,
-      c.ciLower,
-      c.ciUpper,
-      c.seRaw,
-    );
-    if (rawSe !== null && rawSe > 0) {
-      const labW = 1 / (countByLab.get(c.provider) ?? 1);
-      wSeSum += labW;
-      wSeSqSum += labW * rawSe * rawSe;
-      sePresentCount++;
+  for (const cells of Map.groupBy(bmCells, (c) => c.provider).values()) {
+    let known = 0;
+    let seSqSum = 0;
+    for (const c of cells) {
+      const se = computeMeasurementSe(
+        c.rawScore,
+        c.ciHalfWidth,
+        meta,
+        c.ciLower,
+        c.ciUpper,
+        c.seRaw,
+      );
+      if (se !== null && se > 0) {
+        known++;
+        seSqSum += se * se;
+      }
     }
+    wSeSum += known / cells.length;
+    wSeSqSum += seSqSum / cells.length;
   }
 
   // Exact CTT reliability: Var(true) / Var(obs) = max(0.1, (varObs - E[se^2]) / varObs)
   let reliability = 0.5;
-  if (sePresentCount >= Math.ceil(bmCells.length * 0.5) && wSeSum > 0 && varObs > 1e-12) {
+  if (wSeSum >= orientedStats.labCount * 0.5 && varObs > 1e-12) {
     const meanSeSq = wSeSqSum / wSeSum;
     reliability = Math.min(1, Math.max(0.1, (varObs - meanSeSq) / varObs));
   }
@@ -666,16 +696,10 @@ export function computeBenchmarkQualityWeight(
       akhtarSe: number | null;
     }
   >();
+  const saturationSe = useParentSamplingBound ? computeMeasurementSe : effectiveSeAkhtarCalibration;
   for (const c of bmCells) {
     const oriented = orientScore(bmId, c.rawScore);
-    const akhtarSe = effectiveSeAkhtarCalibration(
-      c.rawScore,
-      c.ciHalfWidth,
-      meta,
-      c.ciLower,
-      c.ciUpper,
-      c.seRaw,
-    );
+    const akhtarSe = saturationSe(c.rawScore, c.ciHalfWidth, meta, c.ciLower, c.ciUpper, c.seRaw);
     const cur = perLabPeak.get(c.provider);
     const beatsTie =
       cur !== undefined &&
@@ -708,7 +732,7 @@ export function computeBenchmarkQualityWeight(
   if (labLeaders.length >= minLabs) {
     const top1 = labLeaders[0]!;
     const topLast = labLeaders[minLabs - 1]!;
-    const se1 = effectiveSeAkhtarCalibration(
+    const se1 = saturationSe(
       top1.rawScore,
       top1.ciHalfWidth,
       meta,
@@ -716,7 +740,7 @@ export function computeBenchmarkQualityWeight(
       top1.ciUpper,
       top1.seRaw,
     );
-    const seLast = effectiveSeAkhtarCalibration(
+    const seLast = saturationSe(
       topLast.rawScore,
       topLast.ciHalfWidth,
       meta,
@@ -1782,7 +1806,7 @@ export function computeConfigPosterior(
     thetaMle,
     fpcTerm,
     measTerm,
-    shrinkageFactor: Number(shrinkageFactor.toFixed(6)),
+    shrinkageFactor,
     theta: Number(theta.toFixed(6)),
     se: Number((DISPLAY_SPREAD * seTheta).toFixed(2)),
     samplingSe: Number(
@@ -1808,7 +1832,18 @@ export function aggregateDomain(
   frozenTauModelSq?: number,
   frozenPriorMean?: number,
   frozenLinkJointCov?: LinkJointCov,
+  weightPolicy: AggregateWeightPolicy = "quality",
 ): DomainAggregationResult {
+  const balanceMeasurementFamilies = weightPolicy !== "quality";
+  if (balanceMeasurementFamilies && !frozenAnchors) {
+    assertDisjointRoster(
+      activeBenchmarkIds.map((benchmarkId) => ({
+        benchmarkId,
+        measurementFamily: measurementFamilyFor(benchmarkId),
+        datasetPools: datasetPoolsFor(benchmarkId),
+      })),
+    );
+  }
   const activeSet = new Set(activeBenchmarkIds);
   const frozenWithheldSet = new Set(frozenWithheldIds ?? []);
   const activeObs = observations.filter((o) => activeSet.has(o.benchmarkId));
@@ -1839,6 +1874,53 @@ export function aggregateDomain(
     const distinctBms = new Set(list.map((c) => c.benchmarkId));
     if (distinctBms.size >= anchorMinCoverage) anchorConfigIds.add(cfgId);
   }
+
+  const quality = activeBenchmarkIds
+    .filter((id) => !frozenWithheldSet.has(id) && !frozenAnchors?.[id])
+    .map((benchmarkId) => ({
+      benchmarkId,
+      ...computeBenchmarkQualityWeight(
+        benchmarkId,
+        obsByBm.get(benchmarkId) ?? [],
+        minLabs,
+        balanceMeasurementFamilies,
+      ),
+    }));
+  if (
+    balanceMeasurementFamilies &&
+    quality.length &&
+    activeBenchmarkIds.some((id) => frozenAnchors?.[id])
+  ) {
+    throw new Error("Cannot allocate family weights across a partially frozen roster");
+  }
+  const familyWeights = balanceMeasurementFamilies
+    ? allocateFamilyWeights(
+        quality.map((q) => ({
+          benchmarkId: q.benchmarkId,
+          measurementFamily: measurementFamilyFor(q.benchmarkId),
+          qualityWeight: q.effectiveWeight,
+        })),
+        weightPolicy,
+      )
+    : null;
+  const calibrationWeight = new Map(
+    quality.map((q) => [
+      q.benchmarkId,
+      {
+        reliability: q.reliability,
+        discrimination: q.discrimination,
+        effectiveWeight: familyWeights?.get(q.benchmarkId) ?? q.effectiveWeight,
+        ...(weightPolicy !== "quality"
+          ? {
+              measurementFamily: measurementFamilyFor(q.benchmarkId),
+              datasetPools: [...datasetPoolsFor(q.benchmarkId)],
+              qualityWeight: q.effectiveWeight,
+              weightPolicy,
+            }
+          : {}),
+      },
+    ]),
+  );
 
   // Classify restricted-range benchmarks by distinct model population breadth (< 40% of the broadest cohort)
   // so multi-effort sweeps never falsely flag broad benchmarks while elite subsets still use Mean-Sigma linking
@@ -1874,14 +1956,15 @@ export function aggregateDomain(
     const anchorCells = bmCells.filter((c) => anchorConfigIds.has(c.configId));
     const anchorLabs = new Set(anchorCells.map((c) => c.provider));
     const anchorModelCount = new Set(anchorCells.map((c) => `${c.provider}:${c.modelSlug}`)).size;
-    const isRangeRestricted = maxAnchorModels >= 35 && anchorModelCount < maxAnchorModels * 0.4;
+    const isRangeRestricted =
+      (balanceMeasurementFamilies || maxAnchorModels >= 35) &&
+      anchorModelCount < maxAnchorModels * 0.4;
 
     if (!isRangeRestricted && anchorCells.length >= minLabs && anchorLabs.size >= minLabs) {
       const stats = computeLabBalancedStats(
         anchorCells.map((c) => ({ provider: c.provider, value: orientScore(bmId, c.rawScore) })),
       );
       if (stats.sd > 1e-6) {
-        const qual = computeBenchmarkQualityWeight(bmId, bmCells, minLabs);
         const bmMeta = BENCHMARK_BY_ID[bmId];
         const popoviciuSe =
           bmMeta &&
@@ -1899,9 +1982,7 @@ export function aggregateDomain(
           anchorLabs: stats.labCount,
           linkedViaMeanSigma: false,
           raschDelta: 0,
-          reliability: qual.reliability,
-          discrimination: qual.discrimination,
-          effectiveWeight: qual.effectiveWeight,
+          ...calibrationWeight.get(bmId)!,
           introducedAt: bmMeta?.introducedAt ?? "2026-01-01",
           invertScore: bmMeta?.invertScore ?? false,
           ...(popoviciuSe !== undefined ? { popoviciuSe } : {}),
@@ -1950,10 +2031,9 @@ export function aggregateDomain(
           refTheta: prelimFit.thetaByConfig.get(c.configId)!,
         }));
 
-      const linked = linkBenchmarkMeanSigma(overlap, minLabs);
+      const linked = linkBenchmarkMeanSigma(overlap, minLabs, balanceMeasurementFamilies);
       if (linked.linked) {
         overlapByLinkedBm.set(bmId, overlap);
-        const qual = computeBenchmarkQualityWeight(bmId, bmCells, minLabs);
         const bmMeta = BENCHMARK_BY_ID[bmId];
         const popoviciuSe =
           bmMeta &&
@@ -1971,15 +2051,16 @@ export function aggregateDomain(
           anchorLabs: new Set(overlap.map((o) => o.provider)).size,
           linkedViaMeanSigma: true,
           raschDelta: 0,
-          reliability: qual.reliability,
-          discrimination: qual.discrimination,
-          effectiveWeight: qual.effectiveWeight,
+          ...calibrationWeight.get(bmId)!,
           introducedAt: bmMeta?.introducedAt ?? "2026-01-01",
           invertScore: bmMeta?.invertScore ?? false,
           ...(popoviciuSe !== undefined ? { popoviciuSe } : {}),
           ...(linked.linkVarIntercept !== undefined
             ? { linkVarIntercept: linked.linkVarIntercept }
             : {}),
+          ...(linked.minProviderCorrelation === undefined
+            ? {}
+            : { linkMinProviderCorrelation: linked.minProviderCorrelation }),
           ...(linked.linkVarSlope !== undefined ? { linkVarSlope: linked.linkVarSlope } : {}),
           ...(linked.linkCovIS !== undefined ? { linkCovIS: linked.linkCovIS } : {}),
         };

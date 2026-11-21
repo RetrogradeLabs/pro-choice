@@ -1,0 +1,21 @@
+# How much evidence supports a model ranking?
+
+A model can lead the Coding index and still lose on a particular programming task. Models are also tested on different sets of benchmarks. The daily audit checks both effects for Coding, Writing, Design and Research. Each comparison keeps model revision and reasoning effort fixed. Counting every published configuration gives heavily evaluated model families more representation. The counts describe the configurations included in this release. [Daily audit](../../data/summary.md) · [Machine-readable results](../../data/lifecycle.json)
+
+## Direct comparisons
+
+For each pair of eligible configurations, take only the benchmarks observed for both. Compare the two means of their standardized scores, using the frozen benchmark weights on that intersection. Benchmark difficulty cancels because both configurations face the same benchmarks. The audit records whether this order agrees with their published composite order, reverses it, produces a tie in either comparison, or has no shared evidence. It also counts these outcomes for adjacent points on each provider's frontier, where a higher score costs more.
+
+A reversal identifies a choice worth inspecting. Its size and measurement uncertainty still matter. The full index uses additional observations and pulls uncertain estimates toward the domain mean. Both can change an ordering legitimately. Sharing one benchmark also need not mean two configurations saw the same individual prompts. The common unit in this comparison is the reported benchmark score. Research on incomplete evaluation matrices shows why the observed subset matters. [Himmi et al., Findings of EMNLP 2024](https://aclanthology.org/2024.findings-emnlp.688/)
+
+## Predicting a feed's results
+
+For each data feed in the domain, remove all its scored cells and benchmark columns before fitting the index. Recompute the anchor sample, means, dispersions, quality weights, links, difficulty offsets, residual variance and shrinkage prior from the remaining feeds. A test configuration contributes to the correlation only when the training data alone meet the regular score coverage and precision gates. Price plays no role in this comparison. A feed can contain several benchmarks, so each receives a separate result.
+
+On the matched configurations, compare the refitted index's scores against the unused raw scores on the target benchmark, oriented so higher is better. Kendall's tau-b counts pairwise order agreement and adjusts for ties. The baseline gives equal weight to every available standardized score on the same training panel and uses the same two-decimal score precision. The audit reports both correlations, the number of matched configurations, the total number with an accepted target score, and the number of providers represented among the matches. With fewer than four matches, or a constant ordering, the correlation is unavailable.
+
+For releases using measurement families, two additional fits compare equal and quality-based family weights. Both omit the same feed. The audit reports a separate matched count because a configuration can meet the precision threshold under only one policy. The two family-policy correlations use only configurations retained by both.
+
+For example, a correlation based on eight matched configurations can describe the order of those eight. It provides little evidence about a newly released model with no direct results on the target. Repeated reasoning efforts from one checkpoint share training history. Errors can also be shared across feeds through common judges, data or model-selection practices. Fold results overlap and should not be counted as independent experiments. A low correlation may reveal a genuinely different skill. Removing such a benchmark solely to make agreement rise would narrow the task definition. [Diversity and stability in multi-task benchmarks, ICML 2024](https://arxiv.org/abs/2405.01719)
+
+The source-removal table answers a separate question. It keeps the published calibration fixed and re-scores configurations after omitting observations. The prediction audit refits the calibration without the target feed. Neither exercise observes scores for models never tested on that benchmark, and neither establishes performance on a user's future task.

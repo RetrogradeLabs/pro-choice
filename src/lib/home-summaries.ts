@@ -1,6 +1,8 @@
 import { DOMAINS } from "../config/benchmarks.ts";
 import { PROVIDER_BY_ID, WESTERN_PROVIDER_IDS } from "../config/providers.ts";
-import { formatCost, formatEffort, formatScore } from "./format.ts";
+import { controlledBoard, harnessInterval } from "./controlled-boards.ts";
+import type { ModelScoreEvidence } from "./format.ts";
+import { formatCost, formatEffort, formatScore, modelScoreEvidence } from "./format.ts";
 import { buildWeightMapFromAnchors } from "./math/aggregate.ts";
 import { normalizeHarnessVersion, selectControlledHarnessPicks } from "./math/harness-pareto.ts";
 import { computeProviderFrontier, extractVerdictPicks } from "./math/pareto.ts";
@@ -25,7 +27,9 @@ export interface HomeDomainPick {
   provider: ProviderId | null;
   vendorLabel: string;
   metricText: string;
+  controlInterval?: string;
   costText: string;
+  evidence: ModelScoreEvidence | null;
 }
 
 export interface HomeDomainSummary {
@@ -36,7 +40,8 @@ export interface HomeDomainSummary {
   frontierCount: number;
   costUnit: CostUnit;
   topPick: HomeDomainPick | null;
-  secondaryTag: "Best value" | "Budget";
+  topRecommended: boolean | null;
+  secondaryTag: "Best value" | "Cost–score tradeoff" | "Lowest cost";
   secondaryPick: HomeDomainPick | null;
   sparkline: readonly HomeSparkPoint[];
 }
@@ -50,6 +55,7 @@ function formatHomePickFromConfig(cfg: EvaluatedConfig, costUnit: CostUnit): Hom
     vendorLabel: PROVIDER_BY_ID[cfg.provider].shortName,
     metricText: formatScore(cfg.score),
     costText: formatCost(cfg.effectiveCostUsd, costUnit),
+    evidence: modelScoreEvidence(cfg),
   };
 }
 
@@ -74,18 +80,9 @@ export function buildHomeSummaries(
   harnessLeaderboard: HarnessLeaderboardSnapshot,
 ): HomeDomainSummary[] {
   const defaultLabs = new Set<string>(WESTERN_PROVIDER_IDS);
-  const pooledSlice =
-    harnessLeaderboard.slices.find((s) => s.sliceId === "_all") ?? harnessLeaderboard.slices[0];
-  const harnessCount = pooledSlice?.entries.length ?? 0;
-
-  const taglines: Record<DomainId, string> = {
-    coding: "Multi-file engineering, CLI recovery, and scientific coding.",
-    writing: "Creative fiction and long-form narrative writing.",
-    design_code: "Web apps, interface design, and visual layouts.",
-    research: "Document analysis, scientific reasoning, and knowledge work.",
-    cyber: "Vulnerability detection, security patching, and attack-defense CTF.",
-    harnesses: "Coding agents compared on fixed test models and full stacks.",
-  };
+  const board = controlledBoard(harnessLeaderboard);
+  const pooledSlice = board.selected;
+  const harnessCount = pooledSlice.entries.length;
 
   return DOMAINS.map((meta) => {
     if (meta.id === "harnesses") {
@@ -94,12 +91,12 @@ export function buildHomeSummaries(
         .filter((e) => e.onFrontier)
         .toSorted((a, b) => a.costPerTrialUsd - b.costPerTrialUsd);
       const harnessPicks = selectControlledHarnessPicks(sliceEntries);
-      const top =
-        harnessPicks.find((p) => p.tag === "Top score" || p.tag === "Top pick")?.entry ?? null;
-      const valuePickEntry = harnessPicks.find((p) => p.tag === "Best value")?.entry ?? null;
-      const budgetPickEntry = harnessPicks.find((p) => p.tag === "Budget")?.entry ?? null;
+      const top = harnessPicks.find((p) => p.tag === "Highest pass rate")?.entry ?? null;
+      const valuePickEntry =
+        harnessPicks.find((p) => p.tag === "Cost–score tradeoff")?.entry ?? null;
+      const budgetPickEntry = harnessPicks.find((p) => p.tag === "Lowest cost")?.entry ?? null;
       const value = valuePickEntry ?? budgetPickEntry;
-      const secondaryTag: "Best value" | "Budget" = valuePickEntry ? "Best value" : "Budget";
+      const secondaryTag = valuePickEntry ? "Cost–score tradeoff" : "Lowest cost";
 
       const toHarnessPick = (h: NonNullable<typeof top>): HomeDomainPick => {
         const v = normalizeHarnessVersion(h.version);
@@ -116,18 +113,21 @@ export function buildHomeSummaries(
           provider: null,
           vendorLabel: h.vendor,
           metricText: `${h.passRate.toFixed(1)}%`,
+          controlInterval: harnessInterval(h),
           costText: formatCost(h.costPerTrialUsd, "usd_per_task"),
+          evidence: null,
         };
       };
 
       return {
         domainId: meta.id,
         label: meta.label,
-        tagline: taglines[meta.id],
+        tagline: `${board.scope}. Switch to DeepSWE 1.1 for repository tasks.`,
         evaluatedCount: harnessCount,
         frontierCount: frontier.length,
         costUnit: meta.costUnit,
         topPick: top ? toHarnessPick(top) : null,
+        topRecommended: null,
         secondaryTag,
         secondaryPick: value && value.harnessId !== top?.harnessId ? toHarnessPick(value) : null,
         sparkline: normalizeSparkline(
@@ -162,11 +162,13 @@ export function buildHomeSummaries(
     // Reuse exact VerdictPlacards statistical gate so Home and domain pages never disagree
     const verdicts = extractVerdictPicks(env, byId, {
       preferDistinctModelSlug: true,
+      epochVersion: dom.epochVersion,
+      eligibleConfigs: eligible,
       weightByBenchmark: weights,
       anchorStats: dom.anchorStats,
       linkJointCov,
     });
-    const topCfg = verdicts.maxId ? (byId.get(verdicts.maxId) ?? null) : null;
+    const topCfg = envConfigs.at(-1);
     const valueCfg = verdicts.defaultId ? (byId.get(verdicts.defaultId) ?? null) : null;
     const budgetCfg = verdicts.budgetId ? (byId.get(verdicts.budgetId) ?? null) : null;
 
@@ -176,17 +178,18 @@ export function buildHomeSummaries(
         : budgetCfg && budgetCfg.id !== topCfg?.id
           ? budgetCfg
           : null;
-    const secondaryTag: "Best value" | "Budget" =
-      valueCfg && secondaryCfg?.id === valueCfg.id ? "Best value" : "Budget";
+    const secondaryTag =
+      valueCfg && secondaryCfg?.id === valueCfg.id ? "Best value" : "Lowest cost";
 
     return {
       domainId: meta.id,
       label: meta.label,
-      tagline: taglines[meta.id],
+      tagline: meta.description,
       evaluatedCount: eligible.length,
       frontierCount: envConfigs.length,
       costUnit: dom.costUnit,
       topPick: topCfg ? formatHomePickFromConfig(topCfg, dom.costUnit) : null,
+      topRecommended: topCfg ? verdicts.maxId === topCfg.id : null,
       secondaryTag,
       secondaryPick: secondaryCfg ? formatHomePickFromConfig(secondaryCfg, dom.costUnit) : null,
       sparkline: normalizeSparkline(

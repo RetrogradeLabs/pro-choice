@@ -9,5 +9,10 @@ export async function GET(request: Request, context: { params: Promise<{ slug: s
     return buildMarkdownResponse(null, `/${rest}`, ifNoneMatch);
   }
 
-  return buildMarkdownResponse(slug.join("/"), null, ifNoneMatch);
+  return buildMarkdownResponse(
+    slug.join("/"),
+    null,
+    ifNoneMatch,
+    new URL(request.url).searchParams.get("m"),
+  );
 }

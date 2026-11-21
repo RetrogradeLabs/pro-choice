@@ -1,10 +1,18 @@
 import Papa from "papaparse";
 import type { RawObservation } from "../../../src/lib/schema.ts";
-import { extractMarkdownTableRows, fetchText, parseIsoDate, parseNumeric } from "../http.ts";
+import {
+  extractMarkdownTableRows,
+  fetchJson,
+  fetchText,
+  parseIsoDate,
+  parseNumeric,
+} from "../http.ts";
 import type { PartitionStats, SourceAdapter } from "../types.ts";
 
 const LECH_MAZUR_URL = "https://raw.githubusercontent.com/lechmazur/writing/main/README.md";
 const EQBENCH_LONGFORM_JS = "https://eqbench.com/creative_writing_longform.js";
+const EQBENCH_LONGFORM_PAGE = "https://eqbench.com/creative_writing_longform.html";
+const WRITINGBENCH_URL = "https://writingbench-writingbench.hf.space";
 
 function parseLatestLechMazurDate(md: string, nowIso: string): string | null {
   const idx = md.search(/##?\s*Recent\s+Updates/i);
@@ -105,10 +113,20 @@ async function fetchLechMazur(
 }
 
 async function fetchEqBenchLongform(): Promise<{ rows: RawObservation[]; stats: PartitionStats }> {
-  const js = await fetchText(EQBENCH_LONGFORM_JS);
+  const [page, js] = await Promise.all([
+    fetchText(EQBENCH_LONGFORM_PAGE),
+    fetchText(EQBENCH_LONGFORM_JS),
+  ]);
+  const version = page.match(/\bv([\d.]+)\s+\d{4}-\d{2}-\d{2}\s+Updates\b/)?.[1];
+  if (
+    version !== "1.11" ||
+    !page.includes("Outputs are evaluated with a scoring rubric by Claude Sonnet 4.6")
+  ) {
+    throw new Error("EQ-Bench Longform protocol or judge changed");
+  }
   const csvMatch = js.match(/leaderboardDataLongformV3\s*=\s*`([\s\S]*?)`/);
   if (!csvMatch?.[1]) {
-    throw new Error("EQ-Bench Longform v3 CSV payload not found");
+    throw new Error("EQ-Bench Longform CSV payload not found");
   }
 
   const parsed = Papa.parse<Record<string, string>>(csvMatch[1].trim(), {
@@ -141,7 +159,7 @@ async function fetchEqBenchLongform(): Promise<{ rows: RawObservation[]; stats: 
       sourceId: "writing-feeds",
       sourceRowId,
       benchmarkId: "eqbench_longform",
-      benchmarkVersion: "3.0",
+      benchmarkVersion: version,
       domainId: "writing",
       rawModelName: modelName,
       rawProvider: null,
@@ -160,24 +178,137 @@ async function fetchEqBenchLongform(): Promise<{ rows: RawObservation[]; stats: 
       measuredOutputTokens: null,
       evalDate: null,
       publishedDate: null,
-      sourceUrl: "https://eqbench.com/creative_writing_longform.html",
+      sourceUrl: EQBENCH_LONGFORM_PAGE,
     });
   }
 
   return { rows: out, stats };
 }
 
+interface GradioComponent {
+  type?: string;
+  props?: { value?: string | { headers?: string[]; data?: unknown[][] } };
+}
+
+async function fetchWritingBench(
+  nowIso: string,
+): Promise<{ rows: RawObservation[]; stats: PartitionStats }> {
+  const page = await fetchJson<{ components: GradioComponent[] }>(`${WRITINGBENCH_URL}/config`);
+  const metadata = page.components
+    .filter((c) => c.type === "markdown")
+    .map((c) => c.props?.value)
+    .filter((v): v is string => typeof v === "string")
+    .join("\n");
+  const judge = metadata.match(/Scored by:\s*([\w.-]+)/i)?.[1];
+  const date = parseIsoDate(metadata.match(/Last Updated:\s*(\d{4}-\d{2}-\d{2})/i)?.[1], nowIso);
+  if (judge !== "Claude-Sonnet-4-5" || !date || !metadata.includes("1,000 real-world queries")) {
+    throw new Error("WritingBench judge, release date or task set changed");
+  }
+  const tables = page.components.filter((c) => c.type === "dataframe").map((c) => c.props?.value);
+  function tableWithHeaders(signature: string): unknown[][] {
+    const matches = tables.filter(
+      (t) => typeof t === "object" && t.headers?.join("|") === signature,
+    );
+    const table = matches[0];
+    if (
+      matches.length !== 1 ||
+      typeof table !== "object" ||
+      !Array.isArray(table.data) ||
+      !table.data.length
+    ) {
+      throw new Error(`Missing or ambiguous WritingBench table: ${signature}`);
+    }
+    return table.data;
+  }
+
+  const roster = tableWithHeaders("Rank|Model|Organization|Overall|Bar");
+  const domains = tableWithHeaders(
+    "Rank|Model|Overall|Academic & Engineering|Finance & Business|Politics & Law|Literature & Arts|Education|Advertising & Marketing",
+  );
+  const byModel = new Map<string, { provider: string; overall: unknown }>();
+  for (const [, model, org, overall] of roster) {
+    if (
+      typeof model !== "string" ||
+      !model.trim() ||
+      typeof org !== "string" ||
+      !org.trim() ||
+      byModel.has(model.trim())
+    )
+      throw new Error("Ambiguous WritingBench model identity");
+    byModel.set(model.trim(), { provider: org.trim(), overall });
+  }
+
+  const rows: RawObservation[] = [];
+  const stats: PartitionStats = { attempted: domains.length, rejected: 0, excluded: 0 };
+  const seen = new Set<string>();
+  for (const [, model, overall, academic] of domains) {
+    if (typeof model !== "string" || seen.has(model.trim()))
+      throw new Error("Invalid or duplicate WritingBench domain row");
+    const name = model.trim();
+    seen.add(name);
+    const identity = byModel.get(name);
+    if (
+      !identity ||
+      typeof overall !== "string" ||
+      !/^\d+(?:\.\d+)?$/.test(overall) ||
+      overall !== identity.overall
+    )
+      throw new Error(`WritingBench domain identity mismatch for ${name}`);
+    const score =
+      typeof academic === "string" && /^\d+(?:\.\d+)?$/.test(academic) ? Number(academic) : null;
+    if (score === null || score > 100) {
+      stats.rejected++;
+      continue;
+    }
+    const provider = identity.provider;
+    const id = `writingbench_academic_engineering:${provider}:${name}`;
+    rows.push({
+      sourceId: "writing-feeds",
+      sourceRowId: id,
+      benchmarkId: "writingbench_academic_engineering",
+      benchmarkVersion: "academic-engineering-sonnet-4.5",
+      domainId: "writing",
+      rawModelName: name.trim(),
+      rawProvider: provider.trim(),
+      rawEffort: null,
+      rawHarness: null,
+      observedHarness: "Direct API",
+      harnessRegime: "native",
+      rawScore: score,
+      ciHalfWidth: null,
+      ciLower: null,
+      ciUpper: null,
+      battleCount: null,
+      measuredCostUsd: null,
+      suiteCostUsd: null,
+      measuredInputTokens: null,
+      measuredOutputTokens: null,
+      evalDate: null,
+      publishedDate: date,
+      sourceUrl: WRITINGBENCH_URL,
+    });
+  }
+  if (seen.size !== byModel.size)
+    throw new Error("WritingBench overall and domain model panels differ");
+  return { rows, stats };
+}
+
 export const writingFeedsAdapter: SourceAdapter = {
   id: "writing-feeds",
-  label: "Lech Mazur & EQ-Bench v3 Longform Writing Feeds",
+  label: "Lech Mazur, EQ-Bench Longform and WritingBench Academic & Engineering",
   license: "MIT / Public Research",
   sourceUrl: "https://github.com/lechmazur/writing",
-  expectedBenchmarks: ["lechmazur_writing", "eqbench_longform"],
+  expectedBenchmarks: [
+    "lechmazur_writing",
+    "eqbench_longform",
+    "writingbench_academic_engineering",
+  ],
   expectsPricing: false,
   async fetchLive(nowIso) {
-    const [lech, eqLong] = await Promise.allSettled([
+    const [lech, eqLong, writingBench] = await Promise.allSettled([
       fetchLechMazur(nowIso),
       fetchEqBenchLongform(),
+      fetchWritingBench(nowIso),
     ]);
     const observations: RawObservation[] = [];
     const partitionStats: Record<string, PartitionStats> = {};
@@ -201,6 +332,7 @@ export const writingFeedsAdapter: SourceAdapter = {
 
     attach("lechmazur_writing", lech);
     attach("eqbench_longform", eqLong);
+    attach("writingbench_academic_engineering", writingBench);
 
     return { observations, pricing: [], partitionStats };
   },

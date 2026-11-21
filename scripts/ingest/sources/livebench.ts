@@ -2,6 +2,7 @@ import Papa from "papaparse";
 import { BENCHMARK_BY_ID } from "../../../src/config/benchmarks.ts";
 import type { DomainId, HarnessRegime, RawObservation } from "../../../src/lib/schema.ts";
 import {
+  fetchJson,
   fetchText,
   parseIsoDate,
   parseNumeric,
@@ -26,9 +27,29 @@ interface LiveBenchCategorySpec {
   domainId: DomainId;
   harnessRegime: HarnessRegime;
   requireCostCsv: boolean;
+  subscore?: "Table join";
 }
 
 const LIVEBENCH_SPECS: readonly LiveBenchCategorySpec[] = [
+  {
+    col: "data_analysis",
+    nqCol: "nq_data_analysis",
+    outCol: "out_data_analysis",
+    benchmarkId: "livebench_table_join",
+    domainId: "research",
+    harnessRegime: "native",
+    requireCostCsv: true,
+    subscore: "Table join",
+  },
+  {
+    col: "design",
+    nqCol: "nq_design",
+    outCol: "out_design",
+    benchmarkId: "livebench_design",
+    domainId: "design_code",
+    harnessRegime: "native",
+    requireCostCsv: true,
+  },
   {
     col: "coding",
     nqCol: "nq_coding",
@@ -57,6 +78,31 @@ const LIVEBENCH_SPECS: readonly LiveBenchCategorySpec[] = [
     requireCostCsv: false,
   },
 ];
+
+async function fetchDataAnalysisBreakdown(url: string) {
+  const data =
+    await fetchJson<
+      Record<
+        string,
+        {
+          parts: { name: string; tasks: number }[];
+          models: Record<string, { scores: Record<string, number | null> }>;
+        }
+      >
+    >(url);
+  const category = data["Data Analysis"];
+  const taskCounts = { "Consecutive events": 47, "Table join": 52, "Table reformat": 51 };
+  const parts = Object.keys(taskCounts) as (keyof typeof taskCounts)[];
+  if (
+    !category?.models ||
+    category.parts?.length !== parts.length ||
+    !parts.every((name) =>
+      category.parts.some((p) => p.name === name && p.tasks === taskCounts[name]),
+    )
+  )
+    throw new Error("LiveBench data analysis subscore roster or task count changed");
+  return category.models;
+}
 
 function extractLiveBenchBundleMetadata(js: string): {
   latestReleaseId: string | null;
@@ -113,7 +159,7 @@ function livebenchCostRowsEqual(a: Record<string, string>, b: Record<string, str
 
 export const livebenchAdapter: SourceAdapter = {
   id: "livebench",
-  label: "LiveBench 2.0 Coding, Research & Data Analysis",
+  label: "LiveBench 2.0 Coding, Research, Data Analysis and Design",
   license: "Apache-2.0",
   sourceUrl: LIVEBENCH_URL,
   expectedBenchmarks: LIVEBENCH_SPECS.map((s) => s.benchmarkId),
@@ -125,10 +171,12 @@ export const livebenchAdapter: SourceAdapter = {
       nowIso,
     );
 
-    const [metaRes, tableRes, costRes] = await Promise.allSettled([
+    const breakdownUrl = `https://livebench.ai/data/${pinnedReleaseId}/breakdown.json`;
+    const [metaRes, tableRes, costRes, breakdownRes] = await Promise.allSettled([
       fetchLiveBenchBundleMeta(),
       fetchText(`https://livebench.ai/data/${pinnedReleaseId}/table.csv`),
       fetchText(`https://livebench.ai/data/${pinnedReleaseId}/cost.csv`),
+      fetchDataAnalysisBreakdown(breakdownUrl),
     ]);
 
     const partitionStats: Record<string, PartitionStats> = Object.fromEntries(
@@ -151,6 +199,8 @@ export const livebenchAdapter: SourceAdapter = {
     }
 
     const { latestReleaseId, modelsByKey } = metaRes.value;
+    if (breakdownRes.status === "rejected")
+      partitionStats.livebench_table_join!.error = String(breakdownRes.reason);
     const newerReleaseNote =
       latestReleaseId && latestReleaseId > pinnedReleaseId
         ? `Pinned to ${pinnedReleaseId}; newer upstream LiveBench release ${latestReleaseId} available`
@@ -195,6 +245,7 @@ export const livebenchAdapter: SourceAdapter = {
     }
 
     const observations: RawObservation[] = [];
+    const disputedSubscores = new Set<string>();
 
     for (const row of parsedTable.data) {
       const modelKey = row.model?.trim();
@@ -219,18 +270,49 @@ export const livebenchAdapter: SourceAdapter = {
         const scoreVal = parseNumeric(rawCell);
         if (costConflict || scoreVal === null || scoreVal < 0 || scoreVal > 100) {
           st.rejected++;
+          if (spec.subscore)
+            disputedSubscores.add(`livebench:${pinnedReleaseId}:${spec.subscore}:${modelKey}`);
           continue;
         }
 
         const totalCost = parsePositive(costRow?.[spec.col]);
         const nq = parseStrictPositiveInt(costRow?.[spec.nqCol]);
+        if (
+          spec.benchmarkId === "livebench_design" &&
+          nq !== BENCHMARK_BY_ID.livebench_design?.sampleSize
+        ) {
+          st.rejected++;
+          continue;
+        }
         const totalOut = parsePositive(costRow?.[spec.outCol]);
+        let score = scoreVal;
+        if (spec.subscore) {
+          if (breakdownRes.status !== "fulfilled") continue;
+          const parts = breakdownRes.value[modelKey]?.scores;
+          const scores = [
+            parts?.["Consecutive events"],
+            parts?.["Table join"],
+            parts?.["Table reformat"],
+          ];
+          if (
+            nq !== 150 ||
+            !scores.every(
+              (v): v is number => typeof v === "number" && Number.isFinite(v) && v >= 0 && v <= 100,
+            ) ||
+            Math.abs(scores.reduce((sum, v) => sum + v, 0) / 3 - scoreVal) > 0.10001
+          ) {
+            st.rejected++;
+            disputedSubscores.add(`livebench:${pinnedReleaseId}:${spec.subscore}:${modelKey}`);
+            continue;
+          }
+          score = scores[1]!;
+        }
         const perTaskCost =
           totalCost !== null && nq !== null ? Number((totalCost / nq).toFixed(6)) : null;
 
         observations.push({
           sourceId: "livebench",
-          sourceRowId: `livebench:${pinnedReleaseId}:${spec.col}:${modelKey}`,
+          sourceRowId: `livebench:${pinnedReleaseId}:${spec.subscore ?? spec.col}:${modelKey}`,
           benchmarkId: spec.benchmarkId,
           benchmarkVersion: pinnedReleaseId,
           domainId: spec.domainId,
@@ -238,20 +320,21 @@ export const livebenchAdapter: SourceAdapter = {
           rawProvider: meta.organization,
           rawEffort: meta.effort,
           rawHarness: null,
-          observedHarness: "Direct API",
+          observedHarness: spec.benchmarkId === "livebench_design" ? "LiveBench 2.0" : "Direct API",
           harnessRegime: spec.harnessRegime,
-          rawScore: Number(scoreVal.toFixed(2)),
+          rawScore: Number(score.toFixed(2)),
           ciHalfWidth: null,
           ciLower: null,
           ciUpper: null,
-          battleCount: nq,
-          measuredCostUsd: perTaskCost,
+          battleCount: spec.subscore ? null : nq,
+          measuredCostUsd: spec.subscore ? null : perTaskCost,
           suiteCostUsd: null,
           measuredInputTokens: null,
-          measuredOutputTokens: totalOut !== null && nq !== null ? Math.round(totalOut / nq) : null,
+          measuredOutputTokens:
+            !spec.subscore && totalOut !== null && nq !== null ? Math.round(totalOut / nq) : null,
           evalDate: null,
           publishedDate,
-          sourceUrl: LIVEBENCH_URL,
+          sourceUrl: spec.subscore ? breakdownUrl : LIVEBENCH_URL,
         });
       }
     }
@@ -260,6 +343,11 @@ export const livebenchAdapter: SourceAdapter = {
       for (const s of LIVEBENCH_SPECS) partitionStats[s.benchmarkId]!.note = newerReleaseNote;
     }
 
-    return { observations, pricing: [], partitionStats };
+    return {
+      observations,
+      pricing: [],
+      partitionStats,
+      disqualifiedSourceRowIdsByBenchmark: { livebench_table_join: [...disputedSubscores] },
+    };
   },
 };

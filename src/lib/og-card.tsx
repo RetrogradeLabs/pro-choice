@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 import { DOMAIN_BY_ID, DOMAINS } from "@/config/benchmarks";
+import { controlledBoard } from "@/lib/controlled-boards";
+import { formatScoreEvidence } from "@/lib/format";
 import { buildHomeSummaries } from "@/lib/home-summaries";
 import type { DomainId, ProChoiceSnapshot } from "@/lib/schema";
 import { computeDomainHeadlineStats, formatUtcDate, SITE_NAME } from "@/lib/seo";
@@ -152,8 +154,20 @@ export function renderHomeOgImage(snapshot: ProChoiceSnapshot): ImageResponse {
                   overflow: "hidden",
                 }}
               >
-                {sum?.topPick ? `${sum.topPick.name} · ${sum.topPick.costText}` : meta.label}
+                {sum?.topPick
+                  ? `${sum.topPick.name} · ${sum.topPick.effort ?? ""} · ${sum.topPick.costText}`
+                  : meta.label}
               </div>
+              {sum?.topPick?.controlInterval && (
+                <div
+                  style={{ fontSize: 12, color: "#55534e" }}
+                >{`Terminal-Bench 4.0 · ${sum.topPick.controlInterval}`}</div>
+              )}
+              {sum?.topPick?.evidence && (
+                <div style={{ fontSize: 12, color: "#55534e" }}>
+                  {`${formatScoreEvidence(sum.topPick.evidence)}${sum.topRecommended === false ? " · Estimate only" : ""}`}
+                </div>
+              )}
             </div>
           );
         })}
@@ -171,10 +185,30 @@ export function renderDomainOgImage(
   const stats = computeDomainHeadlineStats(domainId, snapshot);
   const updated = formatUtcDate(snapshot.generatedAt);
   const cards = [
-    { tag: "Budget", text: stats.budgetLabel, accent: false },
-    { tag: "Best value", text: stats.valueLabel, accent: true },
-    { tag: "Top score", text: stats.topLabel, accent: false },
-  ].filter((c): c is { tag: string; text: string; accent: boolean } => c.text !== null);
+    {
+      tag: "Lowest cost",
+      text: stats.budgetLabel,
+      evidence: stats.headlineEvidence.budget,
+      accent: false,
+    },
+    {
+      tag: domainId === "harnesses" ? "Cost–score tradeoff" : "Best value",
+      text: stats.valueLabel,
+      evidence: stats.headlineEvidence.bestValue,
+      accent: domainId !== "harnesses",
+    },
+    {
+      tag:
+        domainId === "harnesses"
+          ? "Highest pass rate"
+          : stats.topRecommended
+            ? "Top score"
+            : "Highest estimate · estimate only",
+      text: stats.topLabel,
+      evidence: stats.headlineEvidence.topScore,
+      accent: false,
+    },
+  ].filter((c) => c.text !== null);
 
   return new ImageResponse(
     <div
@@ -193,7 +227,11 @@ export function renderDomainOgImage(
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <ChoiceForkLogo />
         <div style={{ display: "flex", fontSize: "16px", color: "#68655e" }}>
-          {SITE_NAME} · {meta.epochVersion} · Updated {updated}
+          {SITE_NAME} ·{" "}
+          {domainId === "harnesses"
+            ? controlledBoard(snapshot.harnessLeaderboard).selected.sourceVersion
+            : snapshot.domains[domainId].epochVersion}{" "}
+          · Updated {updated}
         </div>
       </div>
 
@@ -217,7 +255,9 @@ export function renderDomainOgImage(
             maxWidth: "960px",
           }}
         >
-          {meta.description}
+          {domainId === "harnesses"
+            ? controlledBoard(snapshot.harnessLeaderboard).scope
+            : meta.description}
         </div>
       </div>
 
@@ -260,6 +300,11 @@ export function renderDomainOgImage(
             >
               {card.text}
             </div>
+            {card.evidence && (
+              <div style={{ fontSize: 14, color: "#55534e" }}>
+                {formatScoreEvidence(card.evidence)}
+              </div>
+            )}
           </div>
         ))}
       </div>

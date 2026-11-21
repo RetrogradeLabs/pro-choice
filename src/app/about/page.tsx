@@ -15,7 +15,7 @@ import {
 export const metadata: Metadata = {
   title: "About ProChoice",
   description:
-    "How Retrograde Labs compiles daily LLM and coding agent harness Pareto frontiers across 45 active benchmarks and 18 live public sources.",
+    "How ProChoice selects benchmarks, combines scores, and compares model quality against task cost.",
   alternates: {
     canonical: `${SITE_URL}/about`,
   },
@@ -38,30 +38,34 @@ export default async function AboutPage() {
           hiding real task cost, mixing reasoning effort tiers, or burying coding-agent harness
           effects inside model scores. ProChoice solves that by placing models on a shared composite
           scale per domain and plotting score directly against real dollar cost per task. Models
-          that cost more while scoring lower are removed from the default frontier so teams can pick
-          the strongest option for a real budget in seconds.
+          that cost more while scoring lower are removed from the default frontier so readers can
+          compare the cost of moving to a higher estimated score.
         </p>
       </section>
 
       <section className="space-y-3">
         <h2 className="font-display text-[22px] font-normal text-(--ink)">Methodology in brief</h2>
         <p>
-          Each day, ProChoice ingests 18 mandatory public benchmark and first-party pricing feeds
-          covering 9 model providers: Anthropic, OpenAI, Google, SpaceXAI, Meta, DeepSeek, Moonshot,
-          Alibaba, and Zhipu. All 45 active benchmarks contribute directly to their domain composite
-          with zero shadow candidates. Scores are aligned via equal-1.0 anchor standardization and
-          pooled with heteroscedastic REML Empirical Bayes using cross-benchmark joint-jackknife
-          linking uncertainty. Missing task costs for non-retired models with verified first-party
-          API pricing are estimated on each domain&apos;s homogeneous cost axis with active-set
-          monotone effort regression and propagated through bootstrap Pareto probabilities.
+          Each day, ProChoice checks {snapshot.sources.length} benchmark and pricing feeds covering
+          9 model providers: Anthropic, OpenAI, Google, SpaceXAI, Meta, DeepSeek, Moonshot, Alibaba,
+          and Zhipu. This release tracks{" "}
+          {Object.values(snapshot.domains).reduce((n, d) => n + d.activeBenchmarkIds.length, 0)}{" "}
+          active benchmarks. Coding, Writing, Design and Research give each task family equal total
+          weight. An overall recommendation requires direct results from multiple feeds and a lead
+          over every eligible alternative on shared tests. Scores are aligned via provider-balanced
+          anchor standardization and pooled with heteroscedastic REML Empirical Bayes using
+          cross-benchmark joint-jackknife linking uncertainty. Missing task costs for non-retired
+          models with verified first-party API pricing are estimated on each domain&apos;s
+          homogeneous cost axis with active-set monotone effort regression and propagated through
+          bootstrap Pareto probabilities.
         </p>
         <p>
           Controlled coding-agent harness evaluations live in their own{" "}
           <Link href="/harnesses" className="underline underline-offset-4 hover:text-(--ink)">
             Harnesses Composite Index
           </Link>
-          , combining FrontierHarness v1.1 and Harness Leaderboard into one 25-harness board across
-          8 open control models so harness design and model choice are never conflated.
+          , where Terminal-Bench 4.0 and DeepSWE 1.1 each have their own pass-rate and cost
+          comparisons. Select a test model within either benchmark.
         </p>
       </section>
 

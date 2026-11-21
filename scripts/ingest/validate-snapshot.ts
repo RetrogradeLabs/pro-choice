@@ -30,6 +30,8 @@ import {
   HarnessLeaderboardSnapshotSchema,
   type LifecycleReport,
   LifecycleReportSchema,
+  type PriorLifecycleReport,
+  PriorLifecycleReportSchema,
   ProChoiceSnapshotSchema,
   type ProviderId,
   UnmappedRecordSchema,
@@ -56,7 +58,7 @@ const FUTURE_CLOCK_SKEW_MS = 60_000;
 export interface ValidateSnapshotOptions {
   dataDir?: string;
   lifecycleOverride?: LifecycleReport;
-  priorLifecycleOverride?: LifecycleReport | null;
+  priorLifecycleOverride?: PriorLifecycleReport | null;
 }
 
 export async function validateSnapshot(options: ValidateSnapshotOptions = {}): Promise<void> {
@@ -796,7 +798,7 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
   }
 
   // Load independent prior-day lifecycle baseline and verify its own streak fields before trusting continuity
-  let independentPrior: LifecycleReport | null = null;
+  let independentPrior: PriorLifecycleReport | null = null;
   const ignoreLocalPrior = process.env.IGNORE_LOCAL_PRIOR_LIFECYCLE === "1";
   const requirePrior = process.env.REQUIRE_PRIOR_LIFECYCLE === "1";
   const priorPath = process.env.PRIOR_LIFECYCLE_PATH ?? path.join(dataDir, "lifecycle.prev.json");
@@ -821,8 +823,8 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
         !process.env.PRIOR_LIFECYCLE_PATH && options.priorLifecycleOverride !== undefined
           ? options.priorLifecycleOverride === null
             ? null
-            : LifecycleReportSchema.parse(options.priorLifecycleOverride)
-          : LifecycleReportSchema.parse(JSON.parse(await fs.readFile(priorPath, "utf8")));
+            : PriorLifecycleReportSchema.parse(options.priorLifecycleOverride)
+          : PriorLifecycleReportSchema.parse(JSON.parse(await fs.readFile(priorPath, "utf8")));
       if (parsedPrior === null) {
         if (requirePrior) {
           failures.push(`Required prior lifecycle baseline ${priorPath} is missing`);
@@ -862,7 +864,7 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
           ) {
             const persistedPrevPath = path.join(dataDir, "lifecycle.prev.json");
             try {
-              const persistedPrev = LifecycleReportSchema.parse(
+              const persistedPrev = PriorLifecycleReportSchema.parse(
                 JSON.parse(await fs.readFile(persistedPrevPath, "utf8")),
               );
               if (JSON.stringify(persistedPrev) !== JSON.stringify(parsedPrior)) {
@@ -938,6 +940,17 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
     JSON.stringify(lifecycle.crossDomainTau) !== JSON.stringify(recomputedLifecycle.crossDomainTau)
   ) {
     failures.push("Lifecycle crossDomainTau does not match recomputed domain correlations");
+  }
+  if (
+    JSON.stringify(lifecycle.sourceSensitivity) !==
+    JSON.stringify(recomputedLifecycle.sourceSensitivity)
+  ) {
+    failures.push("Lifecycle sourceSensitivity does not match recomputed feed omissions");
+  }
+  if (JSON.stringify(lifecycle.rankEvidence) !== JSON.stringify(recomputedLifecycle.rankEvidence)) {
+    failures.push(
+      "Lifecycle rankEvidence does not match the shared-benchmark and held-out comparisons",
+    );
   }
 
   if (failures.length > 0) {

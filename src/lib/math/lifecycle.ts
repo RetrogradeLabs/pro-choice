@@ -1,4 +1,5 @@
-import { type BenchmarkMeta, DOMAIN_BY_ID } from "../../config/benchmarks.ts";
+import type { BenchmarkMeta } from "../../config/benchmarks.ts";
+import { DOMAIN_BY_ID } from "../../config/benchmarks.ts";
 import type {
   AnchorStats,
   BenchmarkAudit,
@@ -10,8 +11,16 @@ import type {
   HarnessRegime,
   LinkJointCov,
   ProviderId,
+  SourceHealth,
+  SourceSensitivity,
 } from "../schema.ts";
-import { compareAscii, computeConfigPosterior, computeMeasurementSe } from "./aggregate.ts";
+import { DomainIdSchema, HarnessRegimeSchema } from "../schema.ts";
+import {
+  compareAscii,
+  computeConfigPosterior,
+  computeMeasurementSe,
+  MIN_FRONTIER_SHRINKAGE,
+} from "./aggregate.ts";
 
 export const SUSTAINED_RETIRE_DAYS = 14;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -740,6 +749,90 @@ export function auditBenchmarkLifecycle(input: BenchmarkAuditInput): BenchmarkAu
     status,
     reasons,
   };
+}
+
+export function computeSourceSensitivity(
+  domains: Readonly<Record<DomainId, DomainSnapshot>>,
+  sources: readonly SourceHealth[] = [],
+): SourceSensitivity[] {
+  const ownerByBenchmark = new Map<string, string>();
+  const recordOwner = (benchmarkId: string, sourceId: string) => {
+    const previous = ownerByBenchmark.get(benchmarkId);
+    if (previous !== undefined && previous !== sourceId)
+      throw new Error(`Conflicting sources for ${benchmarkId}: ${previous} and ${sourceId}`);
+    ownerByBenchmark.set(benchmarkId, sourceId);
+  };
+  const activeIds = new Set(Object.values(domains).flatMap((domain) => domain.activeBenchmarkIds));
+  for (const domain of Object.values(domains)) {
+    for (const config of [...domain.configs, ...domain.provisionalConfigs]) {
+      for (const score of config.benchmarks) recordOwner(score.benchmarkId, score.sourceId);
+    }
+  }
+  // A frozen benchmark can have no scores today. Its feed still appears in the same snapshot.
+  for (const source of sources) {
+    for (const { benchmarkId } of source.subFeeds) {
+      if (activeIds.has(benchmarkId)) recordOwner(benchmarkId, source.sourceId);
+    }
+  }
+
+  const results: SourceSensitivity[] = [];
+  for (const domainId of DomainIdSchema.options) {
+    const domain = domains[domainId];
+    for (const regime of HarnessRegimeSchema.options) {
+      const meta = domain.regimeMeta[regime];
+      if (!meta) continue;
+      const active = meta.activeBenchmarkIds.filter(
+        (id) => !meta.withheldBenchmarkIds.includes(id),
+      );
+      const bySource = Map.groupBy(active, (id) => {
+        const owner = ownerByBenchmark.get(id);
+        if (!owner) throw new Error(`Missing source for ${domain.epochVersion}/${regime}/${id}`);
+        return owner;
+      });
+      const eligible = domain.configs.filter(
+        (cfg) => cfg.harnessRegime === regime && cfg.eligibleForFrontier,
+      );
+
+      for (const [sourceId, benchmarkIds] of bySource) {
+        const remaining = active.filter((id) => !benchmarkIds.includes(id));
+        const before: number[] = [];
+        const after: number[] = [];
+        let affectedConfigs = 0;
+        for (const cfg of eligible) {
+          const retained = cfg.benchmarks.filter((bm) => bm.sourceId !== sourceId);
+          if (retained.length === cfg.benchmarks.length) continue;
+          affectedConfigs++;
+          if (retained.length < meta.coverageFloor) continue;
+          const posterior = computeConfigPosterior(
+            retained,
+            domain.anchorStats,
+            regime,
+            remaining,
+            [],
+            meta.calibrationTauResidSq,
+            meta.priorMean,
+            meta.tauModelSq,
+            undefined,
+            meta.linkJointCov,
+          );
+          if (!posterior?.exactSeRecomputable || posterior.shrinkageFactor < MIN_FRONTIER_SHRINKAGE)
+            continue;
+          before.push(cfg.score);
+          after.push(posterior.score);
+        }
+        results.push({
+          domainId,
+          harnessRegime: regime,
+          sourceId,
+          benchmarkIds,
+          affectedConfigs,
+          retainedConfigs: after.length,
+          kendallTau: kendallTauB(before, after),
+        });
+      }
+    }
+  }
+  return results;
 }
 
 // Empirical pairwise Kendall tau across all active domain-regime tracks

@@ -13,16 +13,19 @@ import type {
 import {
   extractRscText,
   fetchText,
+  observationsMatchExact,
   parseBalancedJson,
   parseIsoDate,
   parseNumeric,
   parsePositive,
+  parseStrictNonNegativeInt,
 } from "../http.ts";
 import type { PartitionStats, SourceAdapter } from "../types.ts";
 
 const AA_MODELS_URL = "https://artificialanalysis.ai/leaderboards/models";
 const AA_BRIEFCASE_URL = "https://artificialanalysis.ai/evaluations/aa-briefcase";
 const AA_GDPVAL_URL = "https://artificialanalysis.ai/evaluations/gdpval-aa";
+const AA_CODE2VIDEO_URL = "https://artificialanalysis.ai/evaluations/code2video-aa";
 const AA_CODING_AGENTS_URL = "https://artificialanalysis.ai/agents/coding-agents";
 
 const MAX_ARENA_CI = 25;
@@ -77,6 +80,16 @@ interface AaLeaderboardModel {
 }
 
 interface AaEvalModel {
+  canonicalEvalTokenCounts?: {
+    code2video?: {
+      input?: number;
+      answer?: number;
+      reasoning?: number;
+      cacheableInput?: number | null;
+    };
+  };
+  price1mInputTokens?: number;
+  price1mOutputTokens?: number;
   id?: string;
   name?: string;
   suffix?: string | null;
@@ -103,7 +116,28 @@ interface AaEvalModel {
   } | null;
 }
 
+function code2VideoCost(row: AaEvalModel): number | null {
+  const usage = row.canonicalEvalTokenCounts?.code2video;
+  const inputPrice = parsePositive(row.price1mInputTokens);
+  const outputPrice = parsePositive(row.price1mOutputTokens);
+  if (!usage || usage.cacheableInput !== null || inputPrice === null || outputPrice === null)
+    return null;
+  const input = parseStrictNonNegativeInt(usage.input);
+  const answer = parseStrictNonNegativeInt(usage.answer);
+  const reasoning = parseStrictNonNegativeInt(usage.reasoning);
+  if (input === null || answer === null || reasoning === null) return null;
+  return parsePositive(
+    (input * inputPrice + (answer + reasoning) * outputPrice) / (114 * 1_000_000),
+  );
+}
+
 interface BoundedScoreSpec {
+  page?: {
+    key: "itbenchSre" | "gatedAllPass";
+    collection: "initialModels" | "models";
+    protocol: string;
+    catalogName: string;
+  };
   aaKey: string;
   benchmarkId: string;
   version: string;
@@ -131,16 +165,22 @@ const AA_BOUNDED_SPECS: readonly BoundedScoreSpec[] = [
     domainId: "coding",
     harnessRegime: "standardized",
     observedHarness: "mini-SWE-agent",
-    sourceUrl: AA_MODELS_URL,
+    sourceUrl: "https://artificialanalysis.ai/evaluations/terminalbench-4-0",
   },
   {
-    aaKey: "scicode",
-    benchmarkId: "scicode_aa",
-    version: "1.0",
+    aaKey: "itbench-aa",
+    page: {
+      key: "itbenchSre",
+      collection: "initialModels",
+      protocol: "59 Kubernetes incident tasks",
+      catalogName: "ITBench-AA",
+    },
+    benchmarkId: "itbench_aa",
+    version: "59-sre",
     domainId: "coding",
     harnessRegime: "standardized",
-    observedHarness: "Direct API",
-    sourceUrl: AA_MODELS_URL,
+    observedHarness: "Stirrup",
+    sourceUrl: "https://artificialanalysis.ai/evaluations/itbench-aa",
   },
   {
     aaKey: "mlcr-aa",
@@ -149,7 +189,7 @@ const AA_BOUNDED_SPECS: readonly BoundedScoreSpec[] = [
     domainId: "research",
     harnessRegime: "native",
     observedHarness: "Direct API",
-    sourceUrl: AA_MODELS_URL,
+    sourceUrl: "https://artificialanalysis.ai/evaluations/mlcr-aa",
   },
   {
     aaKey: "omniscience-accuracy",
@@ -158,7 +198,7 @@ const AA_BOUNDED_SPECS: readonly BoundedScoreSpec[] = [
     domainId: "research",
     harnessRegime: "native",
     observedHarness: "Direct API",
-    sourceUrl: AA_MODELS_URL,
+    sourceUrl: "https://artificialanalysis.ai/evaluations/omniscience",
   },
   {
     aaKey: "gdp-pdf",
@@ -167,7 +207,7 @@ const AA_BOUNDED_SPECS: readonly BoundedScoreSpec[] = [
     domainId: "research",
     harnessRegime: "native",
     observedHarness: "Direct API",
-    sourceUrl: AA_MODELS_URL,
+    sourceUrl: "https://artificialanalysis.ai/evaluations/gdp-pdf",
   },
   {
     aaKey: "hle-diamond",
@@ -176,7 +216,7 @@ const AA_BOUNDED_SPECS: readonly BoundedScoreSpec[] = [
     domainId: "research",
     harnessRegime: "native",
     observedHarness: "Direct API",
-    sourceUrl: AA_MODELS_URL,
+    sourceUrl: "https://artificialanalysis.ai/evaluations/hle-diamond",
   },
   {
     aaKey: "critpt-v2-hard",
@@ -185,7 +225,7 @@ const AA_BOUNDED_SPECS: readonly BoundedScoreSpec[] = [
     domainId: "research",
     harnessRegime: "native",
     observedHarness: "Stirrup",
-    sourceUrl: AA_MODELS_URL,
+    sourceUrl: "https://artificialanalysis.ai/evaluations/critpt-v2",
   },
   {
     aaKey: "terminal-bench-science",
@@ -206,13 +246,28 @@ const AA_BOUNDED_SPECS: readonly BoundedScoreSpec[] = [
     sourceUrl: "https://artificialanalysis.ai/evaluations/aa-analyst-agent",
   },
   {
+    aaKey: "harvey-lab-aa",
+    page: {
+      key: "gatedAllPass",
+      collection: "models",
+      protocol: "Harvey LAB-AA v1.1 Benchmark",
+      catalogName: "Harvey LAB-AA v1.1",
+    },
+    benchmarkId: "harvey_lab_aa",
+    version: "1.1",
+    domainId: "research",
+    harnessRegime: "native",
+    observedHarness: "Stirrup",
+    sourceUrl: "https://artificialanalysis.ai/evaluations/harvey-lab-aa",
+  },
+  {
     aaKey: "mka",
     benchmarkId: "aa_mka",
     version: "1.0",
     domainId: "research",
     harnessRegime: "native",
-    observedHarness: "Direct API",
-    sourceUrl: AA_MODELS_URL,
+    observedHarness: "Stirrup",
+    sourceUrl: "https://artificialanalysis.ai/evaluations/mka",
   },
   {
     aaKey: "vials-aa",
@@ -220,8 +275,8 @@ const AA_BOUNDED_SPECS: readonly BoundedScoreSpec[] = [
     version: "1.0",
     domainId: "research",
     harnessRegime: "native",
-    observedHarness: "Direct API",
-    sourceUrl: AA_MODELS_URL,
+    observedHarness: "Stirrup",
+    sourceUrl: "https://artificialanalysis.ai/evaluations/vials-aa",
   },
 ];
 
@@ -494,9 +549,10 @@ export const artificialAnalysisAdapter: SourceAdapter = {
   expectedBenchmarks: [
     "frontiercode_2_0",
     "terminalbench_4_0",
-    "scicode_aa",
+    "itbench_aa",
     "aa_briefcase",
     "gdpval_aa",
+    "code2video_aa",
     "mlcr_aa",
     "aa_omniscience",
     "gdp_pdf",
@@ -504,6 +560,7 @@ export const artificialAnalysisAdapter: SourceAdapter = {
     "critpt_v2_hard",
     "terminalbench_science_aa",
     "aa_analyst_agent",
+    "harvey_lab_aa",
     "aa_mka",
     "aa_vials",
     "aa_agent_frontiercode",
@@ -511,12 +568,16 @@ export const artificialAnalysisAdapter: SourceAdapter = {
   ],
   expectsPricing: false,
   async fetchLive(nowIso) {
-    const [modelsRes, briefcaseRes, gdpvalRes, codingAgentsRes] = await Promise.allSettled([
-      fetchText(AA_MODELS_URL, { rejectRedirects: false }),
-      fetchText(AA_BRIEFCASE_URL, { rejectRedirects: false }),
-      fetchText(AA_GDPVAL_URL, { rejectRedirects: false }),
-      fetchText(AA_CODING_AGENTS_URL, { rejectRedirects: false }),
-    ]);
+    const detailSpecs = AA_BOUNDED_SPECS.filter((s) => s.page);
+    const [modelsRes, briefcaseRes, gdpvalRes, codingAgentsRes, code2VideoRes, ...detailResponses] =
+      await Promise.allSettled([
+        fetchText(AA_MODELS_URL, { rejectRedirects: false }),
+        fetchText(AA_BRIEFCASE_URL, { rejectRedirects: false }),
+        fetchText(AA_GDPVAL_URL, { rejectRedirects: false }),
+        fetchText(AA_CODING_AGENTS_URL, { rejectRedirects: false }),
+        fetchText(AA_CODE2VIDEO_URL, { rejectRedirects: false }),
+        ...detailSpecs.map((s) => fetchText(s.sourceUrl, { rejectRedirects: false })),
+      ]);
 
     const partitionStats: Record<string, PartitionStats> = {};
     const ensureStat = (bmId: string): PartitionStats => {
@@ -526,29 +587,69 @@ export const artificialAnalysisAdapter: SourceAdapter = {
       return partitionStats[bmId]!;
     };
 
-    type MergedEvalRow = Omit<AaEvalModel, "briefcaseBreakdown" | "gdpvalBreakdown"> & {
-      briefcaseBreakdown?: AccumulatedInterval | null;
-      gdpvalBreakdown?: AccumulatedInterval | null;
-      rowConflict?: boolean;
+    type EloBenchmark = "aa_briefcase" | "gdpval_aa" | "code2video_aa";
+    type MergedEvalRow = AaEvalModel & {
+      taskCost: number | null;
+      score: number | null;
+      interval: AccumulatedInterval | null;
+      rowConflict: boolean;
     };
+    const metrics = {
+      aa_briefcase: {
+        scoreKey: "briefcaseElo",
+        intervalKey: "briefcaseBreakdown",
+        sourceUrl: AA_BRIEFCASE_URL,
+        version: "1.1",
+        harness: "Stirrup",
+        domain: "research",
+      },
+      gdpval_aa: {
+        scoreKey: "gdpval",
+        intervalKey: "gdpvalBreakdown",
+        sourceUrl: AA_GDPVAL_URL,
+        version: "2.1",
+        harness: "Stirrup",
+        domain: "research",
+      },
+      code2video_aa: {
+        scoreKey: "code2videoElo",
+        intervalKey: "code2videoBreakdown",
+        sourceUrl: AA_CODE2VIDEO_URL,
+        version: "114-briefs-argon",
+        harness: "HyperFrames HTML",
+        domain: "design_code",
+      },
+    } as const;
 
     const observations: RawObservation[] = [];
     const evalIdentityById = new Map<string, VerifiedEvalIdentity>();
+    const disqualifiedRows = new Map<string, Set<string>>();
+    const disqualify = (benchmarkId: string, rowId: string) => {
+      const ids = disqualifiedRows.get(benchmarkId) ?? new Set<string>();
+      ids.add(`aa:${benchmarkId}:${rowId}`);
+      disqualifiedRows.set(benchmarkId, ids);
+    };
     const evalIdsByPage = new Map<string, Set<string>>();
-    const briefcaseRows: MergedEvalRow[] = [];
-    const gdpvalRows: MergedEvalRow[] = [];
+    const rowsByMetric: Record<EloBenchmark, MergedEvalRow[]> = {
+      aa_briefcase: [],
+      gdpval_aa: [],
+      code2video_aa: [],
+    };
 
     // Keep Elo eval rows isolated per page while detecting same-page and cross-page conflicts order-independently
-    const ingestEvalPage = (
-      res: PromiseSettledResult<string>,
-      bmId: "aa_briefcase" | "gdpval_aa",
-      targetRows: MergedEvalRow[],
-    ): number => {
+    const ingestEvalPage = (res: PromiseSettledResult<string>, bmId: EloBenchmark): number => {
       const st = ensureStat(bmId);
       const pageIds = new Set<string>();
       evalIdsByPage.set(bmId, pageIds);
       if (res.status !== "fulfilled") {
         st.error = res.reason instanceof Error ? res.reason.message : String(res.reason);
+        return 0;
+      }
+      if (
+        bmId === "code2video_aa" &&
+        (!res.value.includes("114 design briefs") || !res.value.includes("Gemini 4 Argon judge"))
+      ) {
+        st.error = "Code2Video task set or judge changed";
         return 0;
       }
       let rsc: string;
@@ -574,6 +675,7 @@ export const artificialAnalysisAdapter: SourceAdapter = {
           ev.effort !== null &&
           (typeof ev.effort !== "object" || hasMalformedOptionalString(ev.effort.slug));
         if (hasMalformedOptionalString(ev.suffix) || malformedEffortObj) {
+          disqualify(bmId, evId);
           mergeIdentityRecord(
             evalIdentityById,
             evId,
@@ -590,21 +692,27 @@ export const artificialAnalysisAdapter: SourceAdapter = {
         pageIds.add(evId);
 
         const prevRow = pageRowById.get(evId);
-        const topBcElo = parseNumeric(ev.briefcaseElo);
-        const breakdownBcElo = parseNumeric(ev.briefcaseBreakdown?.elo);
-        const prevBcElo = parseNumeric(prevRow?.briefcaseElo ?? prevRow?.briefcaseBreakdown?.elo);
-        const nextBcElo = topBcElo ?? breakdownBcElo;
-        const prevGvElo = parseNumeric(prevRow?.gdpval);
-        const nextGvElo = parseNumeric(ev.gdpval);
-        const bcInterval = mergeIntervalBounds(prevRow?.briefcaseBreakdown, ev.briefcaseBreakdown);
-        const gvInterval = mergeIntervalBounds(prevRow?.gdpvalBreakdown, ev.gdpvalBreakdown);
+        const { scoreKey, intervalKey } = metrics[bmId];
+        const reportedScore = parseNumeric(ev[scoreKey]);
+        const details = ev[intervalKey];
+        const intervalScore = details && "elo" in details ? parseNumeric(details.elo) : null;
+        const score = reportedScore ?? intervalScore;
+        const interval = mergeIntervalBounds(prevRow?.interval, details);
+        const invalidReportedScore = ev[scoreKey] != null && reportedScore === null;
+        const taskCost = bmId === "code2video_aa" ? code2VideoCost(ev) : null;
+        const invalidInterval =
+          details != null &&
+          ((details.lower95ci != null && parseNumeric(details.lower95ci) === null) ||
+            (details.upper95ci != null && parseNumeric(details.upper95ci) === null) ||
+            ("elo" in details && details.elo != null && intervalScore === null));
         const metricConflict =
+          numericDisagrees(prevRow?.taskCost ?? null, taskCost) ||
+          invalidReportedScore ||
+          invalidInterval ||
           Boolean(prevRow?.rowConflict) ||
-          numericDisagrees(topBcElo, breakdownBcElo) ||
-          numericDisagrees(prevBcElo, nextBcElo) ||
-          numericDisagrees(prevGvElo, nextGvElo) ||
-          bcInterval.conflict ||
-          gvInterval.conflict;
+          numericDisagrees(reportedScore, intervalScore) ||
+          numericDisagrees(prevRow?.score ?? null, score) ||
+          interval.conflict;
 
         const resolvedCreator = ev.creator?.name ? ev.creator : prevRow?.creator;
         pageRowById.set(evId, {
@@ -614,10 +722,9 @@ export const artificialAnalysisAdapter: SourceAdapter = {
           suffix: cleanString(ev.suffix) ?? prevRow?.suffix ?? null,
           ...(resolvedCreator ? { creator: resolvedCreator } : {}),
           effort: ev.effort?.slug ? ev.effort : (prevRow?.effort ?? null),
-          briefcaseElo: nextBcElo ?? prevBcElo ?? null,
-          briefcaseBreakdown: bcInterval.chosen,
-          gdpval: nextGvElo ?? prevGvElo ?? null,
-          gdpvalBreakdown: gvInterval.chosen,
+          score: score ?? prevRow?.score ?? null,
+          interval: interval.chosen,
+          taskCost: taskCost ?? prevRow?.taskCost ?? null,
           rowConflict: metricConflict,
         });
 
@@ -634,7 +741,7 @@ export const artificialAnalysisAdapter: SourceAdapter = {
         }
       }
       for (const mergedRow of pageRowById.values()) {
-        targetRows.push(mergedRow);
+        rowsByMetric[bmId].push(mergedRow);
       }
       const parsedCount = pageRowById.size;
       if (parsedCount === 0) {
@@ -643,8 +750,9 @@ export const artificialAnalysisAdapter: SourceAdapter = {
       return parsedCount;
     };
 
-    const briefcaseCount = ingestEvalPage(briefcaseRes, "aa_briefcase", briefcaseRows);
-    const gdpvalCount = ingestEvalPage(gdpvalRes, "gdpval_aa", gdpvalRows);
+    const briefcaseCount = ingestEvalPage(briefcaseRes, "aa_briefcase");
+    const gdpvalCount = ingestEvalPage(gdpvalRes, "gdpval_aa");
+    ingestEvalPage(code2VideoRes, "code2video_aa");
 
     const evalOrCyberJoinedIds = new Set<string>([
       ...(evalIdsByPage.get("aa_briefcase") ?? []),
@@ -653,15 +761,104 @@ export const artificialAnalysisAdapter: SourceAdapter = {
 
     let leaderboardModels: AaLeaderboardModel[] = [];
     let modelsParseError: string | null = null;
+    const verifiedCatalog = new Set<string>();
+    const compatibleSummary = new Set<string>();
     if (modelsRes.status === "fulfilled") {
       try {
         const modelsRsc = extractRscText(modelsRes.value);
+        const catalog = extractModelArrayByKey(modelsRsc, "generalEvaluations") as Array<{
+          shortName?: unknown;
+          href?: unknown;
+          deprecated?: unknown;
+        } | null>;
+        for (const spec of detailSpecs) {
+          const entries = catalog.filter(
+            (entry) => entry?.href === new URL(spec.sourceUrl).pathname,
+          );
+          if (
+            entries.length === 1 &&
+            entries[0]?.deprecated === false &&
+            entries[0].shortName === spec.page?.catalogName
+          )
+            verifiedCatalog.add(spec.benchmarkId);
+        }
         leaderboardModels = extractModelArrayByKey(
           modelsRsc,
           "initialModels",
         ) as AaLeaderboardModel[];
       } catch (err) {
         modelsParseError = err instanceof Error ? err.message : String(err);
+      }
+      const byId = new Map(leaderboardModels.filter((row) => row?.id).map((row) => [row.id, row]));
+      for (const [i, spec] of detailSpecs.entries()) {
+        const page = spec.page!;
+        const result = detailResponses[i];
+        const st = ensureStat(spec.benchmarkId);
+        if (result?.status !== "fulfilled" || !result.value.includes(page.protocol)) {
+          st.error = `Missing or changed ${spec.aaKey} evaluation page`;
+          continue;
+        }
+        try {
+          const rows = extractModelArrayByKey(
+            extractRscText(result.value),
+            page.collection,
+          ) as Array<AaEvalModel & { itbenchSre?: number; gatedAllPass?: number }>;
+          if (!rows.length) throw new Error(`No ${page.collection} rows for ${spec.aaKey}`);
+          let overlap = 0;
+          let disagrees = false;
+          const detailIds = new Set<string>();
+          evalIdsByPage.set(spec.benchmarkId, detailIds);
+          for (const detail of rows) {
+            const id = cleanString(detail?.id);
+            const name = cleanString(detail?.name);
+            const score = parseNumeric(detail?.[page.key]);
+            if (!id || !name || score === null || score < 0 || score > 1) {
+              if (id) disqualify(spec.benchmarkId, id);
+              st.attempted++;
+              st.rejected++;
+              continue;
+            }
+            const repeated = detailIds.has(id);
+            detailIds.add(id);
+            const creator = cleanString(detail.creator?.name);
+            const malformedEffort =
+              detail.effort != null &&
+              (typeof detail.effort !== "object" || hasMalformedOptionalString(detail.effort.slug));
+            mergeIdentityRecord(
+              evalIdentityById,
+              id,
+              name,
+              creator,
+              detail.suffix,
+              detail.effort?.slug,
+              malformedEffort || hasMalformedOptionalString(detail.suffix),
+            );
+            let model = byId.get(id);
+            if (!model) {
+              model = { id, name, suffix: detail.suffix ?? null, effort: detail.effort ?? null };
+              if (creator) model.modelCreatorName = creator;
+              leaderboardModels.push(model);
+              byId.set(id, model);
+            }
+            model.scores ??= {};
+            const previous = parseNumeric(model.scores[spec.aaKey]);
+            if (
+              (model.scores[spec.aaKey] != null && previous === null) ||
+              numericDisagrees(previous, score, 1e-9)
+            ) {
+              disagrees = true;
+              disqualify(spec.benchmarkId, id);
+              st.attempted++;
+              st.rejected++;
+            }
+            if (!repeated && previous !== null) overlap++;
+            model.scores[spec.aaKey] = score;
+          }
+          if (verifiedCatalog.has(spec.benchmarkId) && overlap > 0 && !disagrees)
+            compatibleSummary.add(spec.benchmarkId);
+        } catch (error) {
+          st.error = error instanceof Error ? error.message : String(error);
+        }
       }
       for (const m of leaderboardModels) {
         if (!m || typeof m !== "object") continue;
@@ -759,19 +956,34 @@ export const artificialAnalysisAdapter: SourceAdapter = {
             if (rawVal === undefined || rawVal === null) continue;
             const st = ensureStat(spec.benchmarkId);
             st.attempted++;
+            if (
+              spec.page &&
+              !partitionStats[spec.benchmarkId]?.error &&
+              !evalIdsByPage.get(spec.benchmarkId)?.has(rowId) &&
+              !compatibleSummary.has(spec.benchmarkId)
+            ) {
+              disqualify(spec.benchmarkId, rowId);
+              st.excluded++;
+              continue;
+            }
             if (ident?.gatedDaybreak) {
+              disqualify(spec.benchmarkId, rowId);
               st.excluded++;
               continue;
             }
             if (!hasVerifiedEffortProvenance) {
+              if (!evalPartialOutage || ident?.conflict || lbEffCheck.conflict)
+                disqualify(spec.benchmarkId, rowId);
               st.rejected++;
               continue;
             }
             const fraction = parseNumeric(rawVal);
             if (fraction === null || fraction < 0 || fraction > 1) {
+              disqualify(spec.benchmarkId, rowId);
               st.rejected++;
               continue;
             }
+            if (partitionStats[spec.benchmarkId]?.error) continue;
             const pct = Number((fraction * 100).toFixed(2));
             observations.push({
               sourceId: "artificial-analysis",
@@ -797,7 +1009,10 @@ export const artificialAnalysisAdapter: SourceAdapter = {
               measuredOutputTokens: null,
               evalDate: null,
               publishedDate: null,
-              sourceUrl: spec.sourceUrl,
+              sourceUrl:
+                spec.page && !evalIdsByPage.get(spec.benchmarkId)?.has(rowId)
+                  ? AA_MODELS_URL
+                  : spec.sourceUrl,
             });
           }
         }
@@ -815,127 +1030,87 @@ export const artificialAnalysisAdapter: SourceAdapter = {
       }
     }
 
-    // Emit Briefcase and GDPVal Elo scores strictly from each page's own interval and unified conflict-checked identity
-    for (const ev of briefcaseRows) {
-      const evId = cleanString(ev.id);
-      const evName = cleanString(ev.name);
-      if (!evId || !evName) continue;
-      const bc = ev.briefcaseBreakdown;
-      const bcElo = parseNumeric(ev.briefcaseElo ?? bc?.elo);
-      if (bcElo === null) continue;
+    for (const bmId of ["aa_briefcase", "gdpval_aa", "code2video_aa"] as const) {
+      const metric = metrics[bmId];
+      for (const ev of rowsByMetric[bmId]) {
+        const evId = cleanString(ev.id);
+        const evName = cleanString(ev.name);
+        if (!evId) continue;
+        if (!evName) {
+          disqualify(bmId, evId);
+          continue;
+        }
+        const interval = ev.interval;
+        const score = ev.score;
+        if (score === null) {
+          if (ev.rowConflict) disqualify(bmId, evId);
+          continue;
+        }
 
-      const st = ensureStat("aa_briefcase");
-      st.attempted++;
-      const ident = evalIdentityById.get(evId);
-      if (ident?.gatedDaybreak) {
-        st.excluded++;
-        continue;
+        const st = ensureStat(bmId);
+        st.attempted++;
+        const ident = evalIdentityById.get(evId);
+        if (ident?.gatedDaybreak) {
+          disqualify(bmId, evId);
+          st.excluded++;
+          continue;
+        }
+        if (ev.rowConflict || ident?.conflict) {
+          disqualify(bmId, evId);
+          st.rejected++;
+          continue;
+        }
+        const low = parseNumeric(interval?.lower95ci);
+        const high = parseNumeric(interval?.upper95ci);
+        if (
+          !interval?.hasComplete ||
+          low === null ||
+          high === null ||
+          high <= low ||
+          score < low ||
+          score > high
+        ) {
+          disqualify(bmId, evId);
+          st.rejected++;
+          continue;
+        }
+        const rawCiHalf = (high - low) / 2;
+        if (rawCiHalf > MAX_ARENA_CI) {
+          disqualify(bmId, evId);
+          st.excluded++;
+          continue;
+        }
+        const fallbackRouting =
+          (ident?.fallbackRouting ?? false) ||
+          isAaFallbackRoutingLabel(evName, ev.suffix, ev.effort?.slug);
+        observations.push({
+          sourceId: "artificial-analysis",
+          sourceRowId: `aa:${bmId}:${evId}`,
+          benchmarkId: bmId,
+          benchmarkVersion: metric.version,
+          domainId: metric.domain,
+          rawModelName: evName,
+          rawProvider: cleanString(ev.creator?.name),
+          rawEffort: emitEffortForId(evId, ev.suffix, ev.effort?.slug),
+          rawHarness: null,
+          observedHarness: metric.harness,
+          harnessRegime: "native",
+          rawScore: Number(score.toFixed(2)),
+          ciHalfWidth: Number(rawCiHalf.toFixed(4)),
+          ciLower: Number(low.toFixed(4)),
+          ciUpper: Number(high.toFixed(4)),
+          battleCount: null,
+          measuredCostUsd: ev.taskCost,
+          ...(ev.taskCost !== null ? { measuredCostEstimated: true } : {}),
+          ...(fallbackRouting ? { fallbackRouting: true } : {}),
+          suiteCostUsd: null,
+          measuredInputTokens: null,
+          measuredOutputTokens: null,
+          evalDate: null,
+          publishedDate: null,
+          sourceUrl: metric.sourceUrl,
+        });
       }
-      if (ev.rowConflict || ident?.conflict) {
-        st.rejected++;
-        continue;
-      }
-      const bcLow = parseNumeric(bc?.lower95ci);
-      const bcHigh = parseNumeric(bc?.upper95ci);
-      if (!bc?.hasComplete || bcLow === null || bcHigh === null || bcHigh <= bcLow) {
-        st.rejected++;
-        continue;
-      }
-      const rawCiHalf = (bcHigh - bcLow) / 2;
-      if (rawCiHalf > MAX_ARENA_CI) {
-        st.excluded++;
-        continue;
-      }
-      const fallbackRouting =
-        (ident?.fallbackRouting ?? false) ||
-        isAaFallbackRoutingLabel(evName, ev.suffix, ev.effort?.slug);
-      observations.push({
-        sourceId: "artificial-analysis",
-        sourceRowId: `aa:aa_briefcase:${evId}`,
-        benchmarkId: "aa_briefcase",
-        benchmarkVersion: "1.1",
-        domainId: "research",
-        rawModelName: evName,
-        rawProvider: cleanString(ev.creator?.name),
-        rawEffort: emitEffortForId(evId, ev.suffix, ev.effort?.slug),
-        rawHarness: null,
-        observedHarness: "Stirrup",
-        harnessRegime: "native",
-        rawScore: Number(bcElo.toFixed(2)),
-        ciHalfWidth: Number(rawCiHalf.toFixed(4)),
-        ciLower: Number(bcLow.toFixed(4)),
-        ciUpper: Number(bcHigh.toFixed(4)),
-        battleCount: null,
-        measuredCostUsd: null,
-        ...(fallbackRouting ? { fallbackRouting: true } : {}),
-        suiteCostUsd: null,
-        measuredInputTokens: null,
-        measuredOutputTokens: null,
-        evalDate: null,
-        publishedDate: null,
-        sourceUrl: AA_BRIEFCASE_URL,
-      });
-    }
-
-    for (const ev of gdpvalRows) {
-      const evId = cleanString(ev.id);
-      const evName = cleanString(ev.name);
-      if (!evId || !evName) continue;
-      const gv = ev.gdpvalBreakdown;
-      const gvElo = parseNumeric(ev.gdpval);
-      if (gvElo === null) continue;
-
-      const st = ensureStat("gdpval_aa");
-      st.attempted++;
-      const ident = evalIdentityById.get(evId);
-      if (ident?.gatedDaybreak) {
-        st.excluded++;
-        continue;
-      }
-      if (ev.rowConflict || ident?.conflict) {
-        st.rejected++;
-        continue;
-      }
-      const gvLow = parseNumeric(gv?.lower95ci);
-      const gvHigh = parseNumeric(gv?.upper95ci);
-      if (!gv?.hasComplete || gvLow === null || gvHigh === null || gvHigh <= gvLow) {
-        st.rejected++;
-        continue;
-      }
-      const rawCiHalf = (gvHigh - gvLow) / 2;
-      if (rawCiHalf > MAX_ARENA_CI) {
-        st.excluded++;
-        continue;
-      }
-      const fallbackRouting =
-        (ident?.fallbackRouting ?? false) ||
-        isAaFallbackRoutingLabel(evName, ev.suffix, ev.effort?.slug);
-      observations.push({
-        sourceId: "artificial-analysis",
-        sourceRowId: `aa:gdpval_aa:${evId}`,
-        benchmarkId: "gdpval_aa",
-        benchmarkVersion: "2.1",
-        domainId: "research",
-        rawModelName: evName,
-        rawProvider: cleanString(ev.creator?.name),
-        rawEffort: emitEffortForId(evId, ev.suffix, ev.effort?.slug),
-        rawHarness: null,
-        observedHarness: "Stirrup",
-        harnessRegime: "native",
-        rawScore: Number(gvElo.toFixed(2)),
-        ciHalfWidth: Number(rawCiHalf.toFixed(4)),
-        ciLower: Number(gvLow.toFixed(4)),
-        ciUpper: Number(gvHigh.toFixed(4)),
-        battleCount: null,
-        measuredCostUsd: null,
-        ...(fallbackRouting ? { fallbackRouting: true } : {}),
-        suiteCostUsd: null,
-        measuredInputTokens: null,
-        measuredOutputTokens: null,
-        evalDate: null,
-        publishedDate: null,
-        sourceUrl: AA_GDPVAL_URL,
-      });
     }
 
     // Emit independent AA Coding Agent sub-evals (FrontierCode 2.0 & SWE-Atlas-QnA, excluding TB 4.1 to avoid double-counting)
@@ -992,10 +1167,12 @@ export const artificialAnalysisAdapter: SourceAdapter = {
               const st = ensureStat(spec.benchmarkId);
               st.attempted++;
               if (isGated) {
+                disqualify(spec.benchmarkId, rowId);
                 st.excluded++;
                 continue;
               }
               if (reward < 0 || reward > 1) {
+                disqualify(spec.benchmarkId, rowId);
                 st.rejected++;
                 continue;
               }
@@ -1035,10 +1212,32 @@ export const artificialAnalysisAdapter: SourceAdapter = {
       }
     }
 
+    // AA model UUIDs are shared across evaluation tables, including partitions temporarily offline.
+    const modelMetrics = [...AA_BOUNDED_SPECS.map((s) => s.benchmarkId), ...Object.keys(metrics)];
+    for (const [id, identity] of evalIdentityById) {
+      if (identity.conflict || identity.gatedDaybreak) {
+        for (const metric of modelMetrics) disqualify(metric, id);
+      }
+    }
+
+    const distinct = new Map<string, RawObservation>();
+    for (const obs of observations) {
+      const old = distinct.get(obs.sourceRowId);
+      if (old && !observationsMatchExact(old, obs)) {
+        disqualify(obs.benchmarkId, obs.sourceRowId.slice(`aa:${obs.benchmarkId}:`.length));
+        ensureStat(obs.benchmarkId).rejected++;
+      }
+      distinct.set(obs.sourceRowId, obs);
+    }
     return {
-      observations,
+      observations: [...distinct.values()].filter(
+        (obs) => !disqualifiedRows.get(obs.benchmarkId)?.has(obs.sourceRowId),
+      ),
       pricing: [],
       partitionStats,
+      disqualifiedSourceRowIdsByBenchmark: Object.fromEntries(
+        [...disqualifiedRows].map(([id, rows]) => [id, [...rows].toSorted()]),
+      ),
     };
   },
 };

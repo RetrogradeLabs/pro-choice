@@ -3,8 +3,8 @@
     "sourceId": "pricing",
     "label": "First-Party API Pricing (LiteLLM Verified SKUs)",
     "status": "ok",
-    "fetchedAt": "2026-11-21T06:39:49.514Z",
-    "lastHealthyAt": "2026-11-21T06:39:49.514Z",
+    "fetchedAt": "2026-11-21T09:31:21.239Z",
+    "lastHealthyAt": "2026-11-21T09:31:21.239Z",
     "staleDays": 0,
     "rowCount": 71,
     "license": "MIT / Public API",
@@ -18,7 +18,7 @@
       "rejectedCount": 0,
       "consecutiveDropDays": 0,
       "lastLowCountDate": null,
-      "lastHealthyAt": "2026-11-21T06:39:49.514Z",
+      "lastHealthyAt": "2026-11-21T09:31:21.239Z",
       "message": null
     }
   },

@@ -15,6 +15,9 @@ function stripDrawerOnlyFields(domain: DomainSnapshot): DomainSnapshot {
   return {
     ...domain,
     provisionalConfigs: [],
+    ...(domain.observedBenchmarks
+      ? { observedBenchmarks: domain.observedBenchmarks.map((b) => ({ ...b, rows: [] })) }
+      : {}),
   };
 }
 

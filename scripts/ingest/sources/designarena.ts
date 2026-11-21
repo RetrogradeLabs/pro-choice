@@ -20,8 +20,13 @@ interface DesignArenaFeedSpec {
   observedHarness: string;
 }
 
-// Keep strictly DesignArena's primary Website Arena (24k+ battles with exact Bradley-Terry SEs) to avoid intra-platform duplication
 const DESIGNARENA_FEEDS: readonly DesignArenaFeedSpec[] = [
+  {
+    benchmarkId: "designarena_svg",
+    arenaType: "models",
+    category: "svg",
+    observedHarness: "Direct API",
+  },
   {
     benchmarkId: "designarena_website",
     arenaType: "models",
@@ -40,6 +45,8 @@ interface DesignArenaRow {
 
 interface DesignArenaApiResponse {
   success?: boolean;
+  arenaType?: string;
+  category?: string;
   data?: DesignArenaRow[];
 }
 
@@ -56,7 +63,7 @@ function parseStrictPositiveSe(val: unknown): number | null {
 
 export const designarenaAdapter: SourceAdapter = {
   id: "designarena",
-  label: "DesignArena Website Arena",
+  label: "DesignArena Website and SVG Arenas",
   license: "Public Leaderboard / Attribution Required",
   sourceUrl: DESIGNARENA_URL,
   expectedBenchmarks: DESIGNARENA_FEEDS.map((f) => f.benchmarkId),
@@ -66,6 +73,13 @@ export const designarenaAdapter: SourceAdapter = {
       DESIGNARENA_FEEDS.map(async (spec) => {
         const url = `https://www.designarena.ai/api/leaderboard?arenaType=${spec.arenaType}&category=${spec.category}`;
         const json = await fetchJson<DesignArenaApiResponse>(url, { timeoutMs: 20_000 });
+        if (
+          json.success !== true ||
+          json.arenaType !== spec.arenaType ||
+          json.category !== spec.category
+        ) {
+          throw new Error(`DesignArena returned the wrong partition for ${spec.category}`);
+        }
         if (!Array.isArray(json.data) || json.data.length === 0) {
           throw new Error(`DesignArena ${spec.category} returned 0 rows`);
         }
@@ -163,7 +177,7 @@ export const designarenaAdapter: SourceAdapter = {
             measuredOutputTokens: null,
             evalDate: null,
             publishedDate: null,
-            sourceUrl: DESIGNARENA_URL,
+            sourceUrl: `https://www.designarena.ai/api/leaderboard?arenaType=${spec.arenaType}&category=${spec.category}`,
           };
           const grp = candidatesByRowId.get(rowId) ?? [];
           grp.push(obs);

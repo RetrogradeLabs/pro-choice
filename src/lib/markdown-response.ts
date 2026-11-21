@@ -31,6 +31,7 @@ export async function buildMarkdownResponse(
   slug: string | null,
   notFoundPath: string | null,
   ifNoneMatch: string | null,
+  controlledSliceId: string | null = null,
 ): Promise<Response> {
   if (notFoundPath !== null) {
     return new Response(renderNotFoundMarkdown(notFoundPath), {
@@ -66,7 +67,16 @@ export async function buildMarkdownResponse(
           },
         });
       }
-      body = renderDomainMarkdown(domainId, snapshot, lifecycle);
+      if (
+        controlledSliceId !== null &&
+        (domainId !== "harnesses" ||
+          !snapshot.harnessLeaderboard.slices.some((s) => s.sliceId === controlledSliceId))
+      )
+        return new Response(
+          "Unknown controlled harness slice. Use an ID from /api/v1/domains/harnesses.",
+          { status: 400, headers: { "Content-Type": "text/markdown; charset=utf-8" } },
+        );
+      body = renderDomainMarkdown(domainId, snapshot, lifecycle, controlledSliceId ?? "_all");
     }
 
     const etag = `"${crypto.createHash("sha256").update(body).digest("hex").slice(0, 24)}"`;

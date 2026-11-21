@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { DOMAIN_BY_ID } from "@/config/benchmarks";
 import { API_COMMON_HEADERS, methodNotAllowedProblem, problemJson } from "@/lib/api-response";
+import { controlledBoard, controlledBoardName } from "@/lib/controlled-boards";
 import { loadRelease } from "@/lib/data";
 import { computeDomainHeadlineStats, DOMAIN_SLUGS, domainToSlug, parseDomainSlug } from "@/lib/seo";
 
@@ -33,21 +34,69 @@ export async function GET(request: Request, context: { params: Promise<{ domain:
   try {
     const { snapshot } = await loadRelease();
     const meta = DOMAIN_BY_ID[domainId];
-    const stats = computeDomainHeadlineStats(domainId, snapshot);
+    const requested = new URL(request.url).searchParams.get("m");
+    if (
+      requested !== null &&
+      (domainId !== "harnesses" ||
+        !snapshot.harnessLeaderboard.slices.some((s) => s.sliceId === requested))
+    )
+      return problemJson({
+        status: 400,
+        code: "invalid_control_slice",
+        detail: "The requested controlled harness slice is unavailable.",
+        title: "Invalid control selection",
+        resolution: "Use an ID from controlledSlices on /api/v1/domains/harnesses.",
+        instance: `/api/v1/domains/${rawSlug}`,
+      });
+    const board =
+      domainId === "harnesses"
+        ? controlledBoard(snapshot.harnessLeaderboard, requested ?? "_all")
+        : null;
+    const stats = computeDomainHeadlineStats(domainId, snapshot, requested ?? "_all");
     const payload = {
       domainId,
       slug: domainToSlug(domainId),
       indexTitle: meta.indexTitle,
-      epochVersion: meta.epochVersion,
+      epochVersion: snapshot.domains[domainId].epochVersion,
+      ...(board
+        ? {
+            controlledSourceVersion: board.selected.sourceVersion,
+            controlledSlice: {
+              id: board.selected.sliceId,
+              instrumentId: board.selected.instrumentId,
+              benchmark: board.name,
+              controlModelId: board.selected.controlModelId,
+              control: board.selected.label,
+              taskCount: board.metric.nTasks,
+              updatedAt: board.selected.upstreamGeneratedAt,
+              sourceUrl: board.metric.sourceUrl,
+            },
+            controlledSlices: snapshot.harnessLeaderboard.slices.map((s) => ({
+              id: s.sliceId,
+              instrumentId: s.instrumentId,
+              benchmark: controlledBoardName(s),
+              controlModelId: s.controlModelId,
+              control: s.label,
+            })),
+          }
+        : {}),
       generatedAt: snapshot.generatedAt,
       snapshotHash: snapshot.snapshotHash,
       evaluatedCount: stats.evaluatedCount,
       frontierCount: stats.frontierCount,
-      headlines: {
-        budget: stats.budgetLabel,
-        bestValue: stats.valueLabel,
-        topScore: stats.topLabel,
-      },
+      headlines: board
+        ? {
+            lowestCost: stats.budgetLabel,
+            costScoreTradeoff: stats.valueLabel,
+            highestPassRate: stats.topLabel,
+          }
+        : {
+            budget: stats.budgetLabel,
+            bestValue: stats.valueLabel,
+            topScore: stats.topLabel,
+          },
+      topScoreRecommended: stats.topRecommended,
+      headlineEvidence: stats.headlineEvidence,
       frontier: stats.frontierEntries.map((e) => ({
         id: e.id,
         name: e.name,
@@ -55,6 +104,7 @@ export async function GET(request: Request, context: { params: Promise<{ domain:
         metric: e.metric,
         cost: e.cost,
         effort: e.effort,
+        evidence: e.evidence,
       })),
     };
 

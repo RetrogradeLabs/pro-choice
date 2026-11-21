@@ -34,7 +34,9 @@ export function proxy(request: NextRequest) {
     } else {
       destPath = `/api/markdown/not-found/${cleaned}`;
     }
-    return NextResponse.rewrite(new URL(destPath, request.url));
+    const destination = new URL(request.url);
+    destination.pathname = destPath;
+    return NextResponse.rewrite(destination);
   }
 
   const response = NextResponse.next();
