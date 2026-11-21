@@ -9,11 +9,11 @@ Open-source LLM leaderboard and coding agent harness benchmark by [Retrograde La
 [![Code License: MIT](https://img.shields.io/badge/code-MIT-111111.svg)](LICENSE)
 [![Data License: CC BY 4.0](https://img.shields.io/badge/data-CC%20BY%204.0-4a4742.svg)](https://creativecommons.org/licenses/by/4.0/)
 
-<a href="https://prochoice.industries/coding">
+<a href="https://prochoice.industries">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/prochoice-coding-dark.png" />
-    <source media="(prefers-color-scheme: light)" srcset="docs/assets/prochoice-coding-light.png" />
-    <img alt="ProChoice Coding Composite Index showing score versus real dollar task cost Pareto frontiers across AI providers" src="docs/assets/prochoice-coding-light.png" width="100%" />
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/index-matrix-dark.svg" />
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/index-matrix-light.svg" />
+    <img alt="ProChoice index matrix comparing Coding, Writing, Design, Research, Cyber, and Harnesses by score and real dollar cost" src="docs/assets/index-matrix-light.svg" width="100%" />
   </picture>
 </a>
 
