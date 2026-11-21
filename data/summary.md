@@ -1,8 +1,8 @@
 # ProChoice Daily Ingestion Summary
 
-- Generated at: 2026-11-21T21:16:16.186Z
-- Snapshot hash: `43c4e78f820fecef`
-- Unmapped allowlisted records: 684
+- Generated at: 2026-11-21T21:52:40.844Z
+- Snapshot hash: `c3e22fefbda2644a`
+- Unmapped allowlisted records: 693
 
 ## Mandatory Source Health
 | Source | Status | Rows | Stale Days | Note |
@@ -36,10 +36,10 @@
 | Harnesses | harnesses-v2.0.0 | 110 | 14 | 18 |
 
 ## Longitudinal Epoch Linking
-- coding-v2.0.0/standardized vs coding-v1.0.0.json: Verified Mean-Sigma link (n=189, labs=9, r=0.939)
+- coding-v2.0.0/standardized vs coding-v1.0.0.json: Verified Mean-Sigma link (n=189, labs=9, r=0.938)
 - writing-v2.0.0/native vs writing-v1.0.0.json: Verified Mean-Sigma link (n=129, labs=9, r=0.988)
 - design-code-v2.0.0/native vs design-code-v1.0.0.json: Verified Mean-Sigma link (n=130, labs=9, r=0.976)
-- research-v2.0.0/native vs research-v1.0.0.json: Verified Mean-Sigma link (n=205, labs=9, r=0.926)
+- research-v2.0.0/native vs research-v1.0.0.json: Verified Mean-Sigma link (n=205, labs=9, r=0.925)
 - cyber-v2.0.0/native vs cyber-v1.0.0.json: Verified Mean-Sigma link (n=33, labs=9, r=0.999)
 - harnesses-v2.0.0/native vs harnesses-v1.0.0.json: Verified Mean-Sigma link (n=124, labs=9, r=0.957)
 
@@ -53,9 +53,9 @@
 | frontiercode_2_0 | coding | ACTIVE | 9 | 0.35 | 47% | 0.96 | WARNING |
 | terminalbench_4_0 | coding | ACTIVE | 9 | 0.84 | 47% | 0.94 | WARNING |
 | scicode_aa | coding | ACTIVE | 9 | 0.90 | 0% | 0.97 | WARNING |
-| epoch_mirrorcode | coding | ACTIVE | 9 | 0.00 | 25% | 0.96 | WARNING |
+| epoch_mirrorcode | coding | ACTIVE | 8 | 0.00 | 29% | 0.96 | WARNING |
 | epoch_ale_bench | coding | ACTIVE | 9 | N/A | N/A | 0.96 | WARNING |
-| epoch_frontierswe | coding | ACTIVE | 8 | 0.10 | 54% | 1.00 | HEALTHY |
+| epoch_frontierswe | coding | ACTIVE | 7 | 0.06 | 57% | 1.00 | HEALTHY |
 | epoch_cursorbench | coding | ACTIVE | 5 | N/A | N/A | 0.99 | WARNING |
 | lmarena_agent | coding | ACTIVE | 9 | 0.00 | 81% | 0.96 | HEALTHY |
 | surge_sudo_l7 | coding | ACTIVE | 8 | 0.08 | 54% | 0.99 | HEALTHY |

@@ -74,6 +74,14 @@
   {
     "sourceId": "epoch",
     "benchmarkId": "epoch_ale_bench",
+    "rawModelName": "kimi-k3_max",
+    "rawProvider": "Moonshot",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:kimi-k3_max"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_ale_bench",
     "rawModelName": "gpt-5.2-codex",
     "rawProvider": "OpenAI",
     "rawHarness": null,
@@ -102,6 +110,14 @@
     "rawProvider": "Anthropic",
     "rawHarness": null,
     "reason": "manual_token_budget_distinct_from_effort:16K"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_ale_bench",
+    "rawModelName": "glm-5.2_max",
+    "rawProvider": "Z.ai (Zhipu AI)",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-5.2_max"
   },
   {
     "sourceId": "epoch",
@@ -601,6 +617,38 @@
   },
   {
     "sourceId": "epoch",
+    "benchmarkId": "epoch_frontierswe",
+    "rawModelName": "glm-5.3_max",
+    "rawProvider": "Z.ai (Zhipu AI)",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-5.3_max"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontierswe",
+    "rawModelName": "kimi-k3_max",
+    "rawProvider": "Moonshot",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:kimi-k3_max"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_mirrorcode",
+    "rawModelName": "glm-5.2_max",
+    "rawProvider": "Z.ai (Zhipu AI)",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-5.2_max"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_mirrorcode",
+    "rawModelName": "kimi-k3_max",
+    "rawProvider": "Moonshot",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:kimi-k3_max"
+  },
+  {
+    "sourceId": "epoch",
     "benchmarkId": "epoch_simpleqa_verified",
     "rawModelName": "gpt-4o-mini-2024-07-18",
     "rawProvider": "OpenAI",
@@ -666,6 +714,14 @@
   {
     "sourceId": "epoch",
     "benchmarkId": "epoch_simpleqa_verified",
+    "rawModelName": "glm-5.3_max",
+    "rawProvider": "Z.ai (Zhipu AI)",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-5.3_max"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_simpleqa_verified",
     "rawModelName": "qwen3.5-plus",
     "rawProvider": "Alibaba",
     "rawHarness": null,
@@ -678,6 +734,22 @@
     "rawProvider": "Alibaba",
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:Qwen3-235B-A22B-Thinking-2507"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_simpleqa_verified",
+    "rawModelName": "kimi-k3_max",
+    "rawProvider": "Moonshot",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:kimi-k3_max"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_simpleqa_verified",
+    "rawModelName": "glm-5.2_max",
+    "rawProvider": "Z.ai (Zhipu AI)",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-5.2_max"
   },
   {
     "sourceId": "epoch",

@@ -3,8 +3,8 @@
     "sourceId": "harness-leaderboard",
     "label": "Harness Leaderboard (TB 2.1 + DeepSWE)",
     "status": "ok",
-    "fetchedAt": "2026-11-21T21:16:16.186Z",
-    "lastHealthyAt": "2026-11-21T21:16:16.186Z",
+    "fetchedAt": "2026-11-21T21:52:40.844Z",
+    "lastHealthyAt": "2026-11-21T21:52:40.844Z",
     "staleDays": 0,
     "rowCount": 65,
     "license": "Apache-2.0",
@@ -18,7 +18,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-21T21:16:16.186Z",
+        "lastHealthyAt": "2026-11-21T21:52:40.844Z",
         "message": null
       }
     ],
@@ -29,7 +29,7 @@
     "pricing": [],
     "harnessLeaderboard": {
       "sourceVersion": "0.1.11",
-      "upstreamGeneratedAt": "2026-11-21T21:14:41Z",
+      "upstreamGeneratedAt": "2026-11-21T21:51:42Z",
       "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard",
       "slices": [
         {
