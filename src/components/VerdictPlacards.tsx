@@ -172,7 +172,7 @@ export function VerdictPlacards({
             {item.accent ? (
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-(--interactive)"
+                className="pointer-events-none absolute inset-x-0 top-0 h-0.5 bg-(--interactive)"
               />
             ) : null}
 
@@ -202,7 +202,7 @@ export function VerdictPlacards({
                 </button>
               </h2>
 
-              <p className="mt-1 min-h-[16px] font-mono text-[11px] text-(--ink-faint)">
+              <p className="mt-1 min-h-4 font-mono text-[11px] text-(--ink-faint)">
                 {subtitleParts.join(" · ")}
               </p>
             </div>

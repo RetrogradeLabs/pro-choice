@@ -283,7 +283,7 @@ export function HarnessesControlledView({
                 {item.accent ? (
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-(--interactive)"
+                    className="pointer-events-none absolute inset-x-0 top-0 h-0.5 bg-(--interactive)"
                   />
                 ) : null}
 
@@ -349,14 +349,14 @@ export function HarnessesControlledView({
           className="relative w-full border-b border-(--border) bg-(--bg)"
           onPointerLeave={() => setHoveredId(null)}
         >
-          <div className="relative h-[400px] w-full">
+          <div className="relative h-100 w-full">
             <svg
               viewBox={`0 0 ${width} ${CHART_HEIGHT}`}
               height={CHART_HEIGHT}
               preserveAspectRatio="xMidYMid meet"
               onPointerMove={handleSvgPointerMove}
               onPointerUp={handleSvgPointerUp}
-              className="block h-[400px] w-full select-none"
+              className="block h-100 w-full select-none"
             >
               <title>Coding-agent harness pass rate versus cost per run</title>
               <defs>
@@ -606,7 +606,7 @@ export function HarnessesControlledView({
           const firstColPct = 22 + (3 - presentCols.length) * 7.5;
           return (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[880px] table-fixed border-collapse text-left text-[12.5px] tabular">
+              <table className="w-full min-w-220 table-fixed border-collapse text-left text-[12.5px] tabular">
                 <colgroup>
                   <col style={{ width: `${firstColPct}%` }} />
                   <col style={{ width: "11%" }} />

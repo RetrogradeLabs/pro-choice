@@ -76,12 +76,12 @@ export function HomeView({ summaries, onSelectDomain }: HomeViewProps) {
           No Nonsense LLM Leaderboards &amp; Rankings
         </h1>
 
-        <p className="mt-4 max-w-[960px] text-[15px] leading-[1.65] text-pretty text-(--ink-muted)">
-          ProChoice compares AI models by score and real dollar cost across six domains.{" "}
+        <p className="mt-4 max-w-240 text-[15px] leading-[1.65] text-pretty text-(--ink-muted)">
+          ProChoice compares AI models by score and real dollar cost across six composite indices.{" "}
           <strong className="font-medium text-(--ink)">
             Models that cost more while scoring lower are left off the chart
           </strong>
-          , so you can quickly pick the best model for your task and budget.
+          , so you can always pick the model that performs best for your task and fits your budget.
         </p>
       </section>
 
@@ -139,7 +139,7 @@ export function HomeView({ summaries, onSelectDomain }: HomeViewProps) {
                     {sum.topPick ? (
                       <div className="flex items-center justify-between gap-3">
                         <span className="flex min-w-0 items-center gap-1.5">
-                          <span className="w-[72px] shrink-0 text-[10.5px] text-(--ink-faint)">
+                          <span className="w-18 shrink-0 text-[10.5px] text-(--ink-faint)">
                             Top score
                           </span>
                           {sum.topPick.provider ? (
@@ -168,7 +168,7 @@ export function HomeView({ summaries, onSelectDomain }: HomeViewProps) {
                     {sum.secondaryPick && sum.secondaryPick.id !== sum.topPick?.id ? (
                       <div className="flex items-center justify-between gap-3">
                         <span className="flex min-w-0 items-center gap-1.5">
-                          <span className="w-[72px] shrink-0 text-[10.5px] text-(--ink-faint)">
+                          <span className="w-18 shrink-0 text-[10.5px] text-(--ink-faint)">
                             {sum.secondaryTag}
                           </span>
                           {sum.secondaryPick.provider ? (
@@ -204,21 +204,20 @@ export function HomeView({ summaries, onSelectDomain }: HomeViewProps) {
       <section aria-label="How ProChoice works" className="px-5 py-8 sm:px-9 lg:px-11 lg:py-9">
         <div className="grid grid-cols-1 gap-6 text-[13px] leading-[1.65] text-(--ink-muted) sm:grid-cols-2 lg:gap-10">
           <p className="text-pretty">
-            Each composite index combines live public benchmarks across nine model providers on one
-            anchored scale using heteroscedastic REML Empirical Bayes pooling, paired with real
-            dollar task cost from verified first-party API pricing. All 45 active benchmarks feed
-            directly into their domain index with zero shadow candidates, while 25 coding agent
-            harnesses are benchmarked separately across eight fixed open control models.
+            Each composite index combines 45 active public benchmarks across nine model providers on
+            one shared score scale, paired with real dollar task cost from verified first-party API
+            pricing. Coding agent harnesses are tested separately across eight fixed open models so
+            harness quality and model quality stay distinct.
           </p>
           <p className="text-pretty">
-            Snapshots rebuild daily from 18 public feeds with deterministic raw-to-release
-            verification. Read the full methodology on{" "}
+            Rankings update daily from 18 live public benchmark and pricing sources. Read how scores
+            and costs are computed on{" "}
             <Link href="/about" className="text-(--ink) underline underline-offset-4">
               About
             </Link>
-            , query live JSON or Markdown via the{" "}
+            , query the live JSON or Markdown endpoints via{" "}
             <Link href="/docs" className="text-(--ink) underline underline-offset-4">
-              Public API docs
+              API docs
             </Link>{" "}
             and{" "}
             <Link
@@ -228,7 +227,7 @@ export function HomeView({ summaries, onSelectDomain }: HomeViewProps) {
             >
               llms.txt
             </Link>
-            , or follow{" "}
+            , or visit{" "}
             <a
               href="https://github.com/RetrogradeLabs"
               target="_blank"

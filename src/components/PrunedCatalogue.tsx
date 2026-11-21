@@ -121,7 +121,7 @@ export function PrunedCatalogue({
           </div>
         ) : (
           <div className="overflow-x-auto border-t border-(--border)">
-            <table className="w-full min-w-[680px] table-fixed border-collapse text-left text-[12.5px] tabular">
+            <table className="w-full min-w-170 table-fixed border-collapse text-left text-[12.5px] tabular">
               <colgroup>
                 <col className="w-[33%]" />
                 <col className="w-[10%]" />

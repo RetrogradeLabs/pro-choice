@@ -813,9 +813,9 @@ export function ProChoiceGallery({
         </nav>
       </header>
 
-      <div className="mx-auto flex max-w-[1260px] flex-col lg:flex-row">
+      <div className="mx-auto flex max-w-315 flex-col lg:flex-row">
         {/* Desktop left sticky navigation rail aligned with page top padding and footer baseline */}
-        <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-[200px] lg:shrink-0 lg:flex-col lg:justify-between lg:px-6 lg:pt-24 lg:pb-0">
+        <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-50 lg:shrink-0 lg:flex-col lg:justify-between lg:px-6 lg:pt-24 lg:pb-0">
           <div>
             <Link
               href="/"
@@ -860,7 +860,7 @@ export function ProChoiceGallery({
                         layoutId="sidebar-active-indicator"
                         aria-hidden="true"
                         transition={prefersReducedMotion ? { duration: 0 } : TAB_SPRING}
-                        className="absolute inset-y-0.5 left-0 w-[2px] rounded-full bg-(--ink)"
+                        className="absolute inset-y-0.5 left-0 w-0.5 rounded-full bg-(--ink)"
                       />
                     ) : null}
                     <span>{d.shortLabel}</span>
@@ -870,7 +870,7 @@ export function ProChoiceGallery({
             </nav>
           </div>
 
-          <div className="flex h-[66px] items-center">
+          <div className="flex h-16.5 items-center">
             <button
               type="button"
               aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
@@ -998,7 +998,7 @@ export function ProChoiceGallery({
                   {activeDomainId === "harnesses" ? (
                     <div className="px-5 pb-6 sm:px-9 lg:px-11 lg:pb-7">
                       {isControlledHarnesses ? (
-                        <div className="no-scrollbar flex min-h-[32px] flex-nowrap items-center gap-1 overflow-x-auto text-[12px] sm:flex-wrap">
+                        <div className="no-scrollbar flex min-h-8 flex-nowrap items-center gap-1 overflow-x-auto text-[12px] sm:flex-wrap">
                           <span className="mr-1 shrink-0 font-mono text-[11px] text-(--ink-faint)">
                             Test model
                           </span>
@@ -1096,7 +1096,7 @@ export function ProChoiceGallery({
                             </div>
                           ))}
                         </div>
-                        <div className="flex h-[420px] items-center justify-center border-y border-(--border) bg-(--bg) px-5 sm:px-9 lg:px-11">
+                        <div className="flex h-105 items-center justify-center border-y border-(--border) bg-(--bg) px-5 sm:px-9 lg:px-11">
                           <svg
                             width="260"
                             height="92"
@@ -1193,7 +1193,7 @@ export function ProChoiceGallery({
             )}
           </motion.div>
 
-          <footer className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-(--border) px-5 py-6 text-[12px] leading-[18px] text-(--ink-faint) sm:px-9 lg:h-[67px] lg:py-0 lg:px-11">
+          <footer className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-(--border) px-5 py-6 text-[12px] leading-4.5 text-(--ink-faint) sm:px-9 lg:h-16.75 lg:py-0 lg:px-11">
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
               <span className="font-mono text-[11px] tabular">
                 Updated {formatUtcDate(activeMeta.generatedAt)}

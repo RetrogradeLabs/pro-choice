@@ -4,7 +4,7 @@ import { domainToPathname } from "@/lib/seo";
 
 export default function NotFound() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-[720px] flex-col justify-center px-6 py-24 text-(--ink)">
+    <main className="mx-auto flex min-h-screen max-w-180 flex-col justify-center px-6 py-24 text-(--ink)">
       <p className="font-mono text-[12px] text-(--ink-faint)">404</p>
       <h1 className="mt-2 font-display text-[34px] leading-tight font-normal tracking-tight">
         Index not found

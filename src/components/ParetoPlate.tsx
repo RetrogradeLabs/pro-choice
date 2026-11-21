@@ -695,12 +695,12 @@ export function ParetoPlate({
           onHoverConfig(focusedNode?.kind === "frontier" ? focusedNode.id : null);
         }}
       >
-        <div className="relative h-[420px] w-full">
+        <div className="relative h-105 w-full">
           <svg
             viewBox={`0 0 ${width} ${CHART_HEIGHT}`}
             height={CHART_HEIGHT}
             preserveAspectRatio="xMidYMid meet"
-            className="block h-[420px] w-full touch-pan-y select-none"
+            className="block h-105 w-full touch-pan-y select-none"
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
@@ -1119,7 +1119,7 @@ export function ParetoPlate({
                   animate={{ opacity: 1, scale: 1 }}
                   {...(prefersReducedMotion ? {} : { exit: { opacity: 0, scale: 0.97 } })}
                   transition={{ duration: 0.11, ease: EASE }}
-                  className="inline-flex max-w-[380px] items-center gap-1.5 whitespace-nowrap rounded-md border border-(--border-strong) bg-(--surface)/95 px-2.5 py-1 text-[12px] shadow-(--shadow-button) backdrop-blur-sm"
+                  className="inline-flex max-w-95 items-center gap-1.5 whitespace-nowrap rounded-md border border-(--border-strong) bg-(--surface)/95 px-2.5 py-1 text-[12px] shadow-(--shadow-button) backdrop-blur-sm"
                 >
                   <ProviderMarkerIcon provider={activeHoveredNode.provider} size={9} />
                   {isHarnessDomain && activeHoveredHarness ? (

@@ -13,7 +13,7 @@ interface InfoPageShellProps {
 export function InfoPageShell({ title, subtitle, updatedDate, children }: InfoPageShellProps) {
   return (
     <div className="min-h-screen bg-(--bg) text-(--ink)">
-      <div className="mx-auto flex min-h-screen max-w-[960px] flex-col border-x border-(--border) bg-(--bg)">
+      <div className="mx-auto flex min-h-screen max-w-240 flex-col border-x border-(--border) bg-(--bg)">
         <header className="flex flex-wrap items-center justify-between gap-4 border-b border-(--border) px-6 py-5 sm:px-10">
           <Link
             href="/"
@@ -65,9 +65,7 @@ export function InfoPageShell({ title, subtitle, updatedDate, children }: InfoPa
           <h1 className="font-display text-[32px] leading-[1.12] font-normal tracking-tight text-(--ink) sm:text-[38px]">
             {title}
           </h1>
-          <p className="mt-3 max-w-[740px] text-[15px] leading-[1.65] text-(--ink-muted)">
-            {subtitle}
-          </p>
+          <p className="mt-3 max-w-185 text-[15px] leading-[1.65] text-(--ink-muted)">{subtitle}</p>
 
           <div className="mt-10 space-y-10 text-[14.5px] leading-[1.7] text-(--ink-secondary)">
             {children}

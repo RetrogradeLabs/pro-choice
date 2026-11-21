@@ -83,7 +83,7 @@ export function FrontierCatalogue({
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] table-fixed border-collapse text-left text-[12.5px] tabular">
+          <table className="w-full min-w-190 table-fixed border-collapse text-left text-[12.5px] tabular">
             <colgroup>
               <col className="w-[40%]" />
               <col className="w-[14%]" />
