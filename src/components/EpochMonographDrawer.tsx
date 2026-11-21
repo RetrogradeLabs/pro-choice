@@ -108,6 +108,21 @@ export function EpochMonographDrawer({
       ? domain.anchorStats[`${benchmarkId}::standardized`]
       : domain.anchorStats[benchmarkId];
 
+  const seKindByBenchmark = new Map<string, "measured" | "bound" | "unreported">();
+  for (const cfg of [...domain.configs, ...provisionalConfigs]) {
+    if (cfg.harnessRegime !== activeRegime) continue;
+    for (const bm of cfg.benchmarks) {
+      const prev = seKindByBenchmark.get(bm.benchmarkId);
+      if (bm.seModel === "upstream_ci" || bm.seModel === "upstream_se") {
+        seKindByBenchmark.set(bm.benchmarkId, "measured");
+      } else if (bm.seModel === "popoviciu_upper_bound") {
+        if (prev !== "measured") seKindByBenchmark.set(bm.benchmarkId, "bound");
+      } else if (prev === undefined) {
+        seKindByBenchmark.set(bm.benchmarkId, "unreported");
+      }
+    }
+  }
+
   const activeSourceIds = new Set(
     isControlledHarnesses
       ? ["frontier-harness", "harness-leaderboard"]
@@ -199,10 +214,13 @@ export function EpochMonographDrawer({
                   </p>
                   <p>
                     A model&apos;s score starts from the weighted average of its converted benchmark
-                    scores, with higher weight on benchmarks that have smaller error bars and
-                    clearer separation among top providers. Models tested on fewer benchmarks are
-                    pulled modestly toward the domain average so one lucky score cannot outrank a
-                    model proven across many benchmarks.
+                    scores. Benchmarks with smaller error bars, clearer separation among top
+                    providers, broader model coverage, and distinct task families receive higher
+                    weight, while correlated benchmarks in the same task family or from the same
+                    publisher share weight so no single niche skews the ranking. Each configuration
+                    is then denoised toward the domain average strictly for measurement and linking
+                    uncertainty so noisy single-benchmark runs are tempered without penalizing newly
+                    released models for benchmarks that have not yet evaluated them.
                   </p>
                   <p>
                     {domain.domainId === "writing"
@@ -270,9 +288,11 @@ export function EpochMonographDrawer({
                           Crowd-arena filter
                         </span>
                         <span className="font-medium text-(--ink)">
-                          {domain.domainId === "design_code"
-                            ? "<= 25 Elo · >= 300 votes, or >= 1,000 without SE"
-                            : "<= 25 Elo · >= 300 votes"}
+                          {domain.domainId === "coding"
+                            ? "<= 60 index CI · >= 300 sessions"
+                            : domain.domainId === "design_code"
+                              ? "<= 25 Elo · >= 300 votes, or >= 350 without SE"
+                              : "<= 25 Elo · >= 300 votes"}
                         </span>
                       </div>
                     ) : null}
@@ -289,8 +309,12 @@ export function EpochMonographDrawer({
                   </h3>
                   <p className="text-[12.5px] leading-relaxed text-(--ink-secondary)">
                     Every benchmark below counts directly toward this domain&apos;s score. Weight
-                    ranges from 0.10 to 1.00 based on measurement precision and how clearly the
-                    benchmark separates top providers.
+                    ranges from 0.10 to 1.00 based on measurement precision, separation among top
+                    providers, and task-family and source independence estimated from
+                    provider-balanced overlap correlations, falling back to conservative priors when
+                    fewer than six configurations overlap. Precision displays a bound suffix when
+                    upstream error bars are absent and Bhatia-Davis bounded task error estimates
+                    stand in.
                   </p>
 
                   <div className="space-y-2.5">
@@ -355,7 +379,16 @@ export function EpochMonographDrawer({
                                   Precision
                                 </span>
                                 <span className="text-(--ink)">
-                                  {Math.round(anchor.reliability * 100)}%
+                                  {(() => {
+                                    const seKind = seKindByBenchmark.get(bm.id);
+                                    if (seKind === "measured") {
+                                      return `${Math.round(anchor.reliability * 100)}%`;
+                                    }
+                                    if (seKind === "bound") {
+                                      return `${Math.round(anchor.reliability * 100)}% bound`;
+                                    }
+                                    return "Unreported";
+                                  })()}
                                 </span>
                               </div>
                               <div>
@@ -428,7 +461,7 @@ export function EpochMonographDrawer({
                                   : domain.domainId === "harnesses"
                                     ? "No measured harness cost"
                                     : "No task cost"
-                              : cfg.shrinkageFactor < 0.5
+                              : !cfg.eligibleForFrontier
                                 ? "High uncertainty"
                                 : "Excluded";
                         return (

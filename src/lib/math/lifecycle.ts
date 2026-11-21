@@ -11,7 +11,12 @@ import type {
   LinkJointCov,
   ProviderId,
 } from "../schema.ts";
-import { compareAscii, computeConfigPosterior, computeMeasurementSe } from "./aggregate.ts";
+import {
+  compareAscii,
+  computeConfigPosterior,
+  computeMeasurementSe,
+  MIN_FRONTIER_SHRINKAGE,
+} from "./aggregate.ts";
 
 export const SUSTAINED_RETIRE_DAYS = 14;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -235,6 +240,24 @@ export interface BenchmarkAuditInput {
   nowIso: string;
 }
 
+function hasUpstreamSe(
+  leader:
+    | {
+        ciLower: number | null;
+        ciUpper: number | null;
+        seRaw: number | null;
+        ciHalfWidth: number | null;
+      }
+    | undefined,
+): boolean {
+  return Boolean(
+    leader &&
+      ((leader.ciLower !== null && leader.ciUpper !== null && leader.ciUpper > leader.ciLower) ||
+        (leader.seRaw !== null && leader.seRaw > 0) ||
+        (leader.ciHalfWidth !== null && leader.ciHalfWidth > 0)),
+  );
+}
+
 export function auditBenchmarkLifecycle(input: BenchmarkAuditInput): BenchmarkAudit {
   const { meta, harnessRegime, coverageFloor, domainConfigs, anchorStats, nowIso } = input;
   const minLabs = DOMAIN_BY_ID[meta.domainId].minLabsForSaturation;
@@ -424,6 +447,7 @@ export function auditBenchmarkLifecycle(input: BenchmarkAuditInput): BenchmarkAu
   const itemResids: number[] = [];
   const restThetas: number[] = [];
   let pairedWithTargetCount = 0;
+  let looDroppedEligibleCount = 0;
 
   const deltaFor = (benchmarkId: string): number => {
     const key = harnessRegime === "standardized" ? `${benchmarkId}::standardized` : benchmarkId;
@@ -460,10 +484,15 @@ export function auditBenchmarkLifecycle(input: BenchmarkAuditInput): BenchmarkAu
       input.tauModelSq !== undefined;
 
     for (const cfg of regimeConfigs) {
-      if (cfg.coverageCount < coverageFloor) continue;
+      if (canComputeEbPosterior ? !cfg.eligibleForFrontier : cfg.coverageCount < coverageFloor) {
+        continue;
+      }
       const target = cfg.benchmarks.find((b) => b.benchmarkId === meta.id);
       const restBenchmarks = cfg.benchmarks.filter((b) => b.benchmarkId !== meta.id);
-      if (restBenchmarks.length === 0) continue;
+      if (restBenchmarks.length < coverageFloor) {
+        if (target && cfg.eligibleForFrontier) looDroppedEligibleCount++;
+        continue;
+      }
 
       let fullTheta: number;
       let restTheta: number;
@@ -480,7 +509,10 @@ export function auditBenchmarkLifecycle(input: BenchmarkAuditInput): BenchmarkAu
           undefined,
           input.linkJointCov,
         );
-        if (!restPost) continue;
+        if (!restPost || restPost.infoReliability < MIN_FRONTIER_SHRINKAGE) {
+          if (target && cfg.eligibleForFrontier) looDroppedEligibleCount++;
+          continue;
+        }
         fullTheta = cfg.theta;
         restTheta = restPost.theta;
       } else {
@@ -526,18 +558,19 @@ export function auditBenchmarkLifecycle(input: BenchmarkAuditInput): BenchmarkAu
   if (meta.lifecycleState === "CANDIDATE") {
     const enoughLabs = coveredLabsCount >= minLabs;
     const unsaturated = rawSaturationIndex !== null && rawSaturationIndex < 0.55;
-    const belowCeiling = !(
-      meta.boundedMax === 100 &&
-      rawTop5Median !== null &&
-      rawTop5Median >= 90
-    );
+    const orientedTop5Median =
+      meta.boundedMax !== null && meta.boundedMax > 0 && rawTop5Median !== null
+        ? ((meta.invertScore ? meta.boundedMax - rawTop5Median : rawTop5Median) / meta.boundedMax) *
+          100
+        : null;
+    const belowCeiling = !(orientedTop5Median !== null && orientedTop5Median >= 90);
     const separable = rawSeparability !== null && rawSeparability >= 0.5;
     const fresh = upstreamLagDays !== null && upstreamLagDays <= 90;
 
     if (!enoughLabs) reasons.push(`Needs ${minLabs} distinct labs; has ${coveredLabsCount}`);
     if (!unsaturated) reasons.push("Saturation index missing or >= 0.55");
     if (!belowCeiling) {
-      reasons.push(`Top-${minLabs} median ${top5Median?.toFixed(1)}% >= 90% ceiling`);
+      reasons.push(`Top-${minLabs} median ${orientedTop5Median?.toFixed(1)}% >= 90% ceiling`);
     }
     if (!separable) {
       reasons.push(
@@ -573,6 +606,7 @@ export function auditBenchmarkLifecycle(input: BenchmarkAuditInput): BenchmarkAu
       separability,
       looKendallTau,
       looCohortCount,
+      looDroppedEligibleCount,
       itemRestTau,
       ageMonths,
       upstreamLagDays,
@@ -600,6 +634,7 @@ export function auditBenchmarkLifecycle(input: BenchmarkAuditInput): BenchmarkAu
       separability,
       looKendallTau,
       looCohortCount,
+      looDroppedEligibleCount,
       itemRestTau,
       ageMonths,
       upstreamLagDays,
@@ -618,9 +653,42 @@ export function auditBenchmarkLifecycle(input: BenchmarkAuditInput): BenchmarkAu
     reasons.push("Uncertainty / separability unavailable");
   }
 
+  const top1Leader = topK[0];
+  const topLastLeader = topK[minLabs - 1];
+  const endpointsHaveMeasuredSe =
+    top1Leader !== undefined &&
+    topLastLeader !== undefined &&
+    hasUpstreamSe(top1Leader) &&
+    hasUpstreamSe(topLastLeader);
+  const leadersHaveMeasuredSe = topK.length > 0 && topK.every((leader) => hasUpstreamSe(leader));
+  const top1CeilingFrac =
+    meta.boundedMax !== null && meta.boundedMax > 0 && top1Leader !== undefined
+      ? (meta.invertScore ? meta.boundedMax - top1Leader.rawScore : top1Leader.rawScore) /
+        meta.boundedMax
+      : null;
+  const nearBoundedCeiling =
+    meta.boundedMax === null || (top1CeilingFrac !== null && top1CeilingFrac >= 0.85);
+  const isSmallNPopoviciuForSat =
+    !endpointsHaveMeasuredSe &&
+    meta.boundedMax !== null &&
+    meta.sampleSize !== null &&
+    meta.sampleSize < 250;
+  const isSmallNPopoviciuForSep =
+    !leadersHaveMeasuredSe &&
+    meta.boundedMax !== null &&
+    meta.sampleSize !== null &&
+    meta.sampleSize < 250;
+
   if (rawSaturationIndex !== null && rawSaturationIndex >= 0.7) {
-    hardTrigger = true;
-    reasons.push(`Akhtar saturation index ${(saturationIndex ?? 0).toFixed(2)} >= 0.70`);
+    if (!isSmallNPopoviciuForSat || nearBoundedCeiling) {
+      hardTrigger = true;
+      reasons.push(`Akhtar saturation index ${(saturationIndex ?? 0).toFixed(2)} >= 0.70`);
+    } else {
+      warnTrigger = true;
+      reasons.push(
+        `High small-N Popoviciu uncertainty (S=${(saturationIndex ?? 0).toFixed(2)}, top-1 below 85% ceiling)`,
+      );
+    }
   } else if (rawSaturationIndex !== null && rawSaturationIndex >= 0.5) {
     warnTrigger = true;
     reasons.push(
@@ -628,28 +696,48 @@ export function auditBenchmarkLifecycle(input: BenchmarkAuditInput): BenchmarkAu
     );
   }
 
-  if (
-    meta.boundedMax === 100 &&
-    rawTop5Median !== null &&
-    rawTop5Median >= 90 &&
+  const top5CeilingPct =
+    meta.boundedMax !== null && meta.boundedMax > 0 && rawTop5Median !== null
+      ? ((meta.invertScore ? meta.boundedMax - rawTop5Median : rawTop5Median) / meta.boundedMax) *
+        100
+      : null;
+  if (top5CeilingPct !== null && top5CeilingPct >= 95) {
+    hardTrigger = true;
+    reasons.push(`Top-${minLabs} median ${top5CeilingPct.toFixed(1)}% >= 95% ceiling exhausted`);
+  } else if (
+    top5CeilingPct !== null &&
+    top5CeilingPct >= 90 &&
     rawRNorm !== null &&
     rawRNorm < 2.0
   ) {
     hardTrigger = true;
-    reasons.push(`Top-${minLabs} median ${(top5Median ?? 0).toFixed(1)}% with collapsed spread`);
+    reasons.push(`Top-${minLabs} median ${top5CeilingPct.toFixed(1)}% with collapsed spread`);
   }
 
-  // Require concurrent saturation pressure (>= 0.50) before low pairwise separability initiates hard retirement
+  // Require genuine saturation pressure (measured SE, large N, or >= 85% ceiling) before low separability triggers retirement
   if (rawSeparability !== null && rawSeparability < 0.35) {
-    if (rawSaturationIndex !== null && rawSaturationIndex >= 0.5) {
+    if (
+      rawSaturationIndex !== null &&
+      rawSaturationIndex >= 0.5 &&
+      (!isSmallNPopoviciuForSep || nearBoundedCeiling)
+    ) {
       hardTrigger = true;
       reasons.push(
         `Pairwise 95% separability ${((separability ?? 0) * 100).toFixed(0)}% < 35% with saturation pressure`,
       );
+    } else if (
+      rawSaturationIndex !== null &&
+      rawSaturationIndex >= 0.5 &&
+      isSmallNPopoviciuForSep
+    ) {
+      warnTrigger = true;
+      reasons.push(
+        `Pairwise 95% separability ${((separability ?? 0) * 100).toFixed(0)}% < 35% (small-N Popoviciu bound below 85% ceiling)`,
+      );
     } else {
       warnTrigger = true;
       reasons.push(
-        `Pairwise 95% separability ${((separability ?? 0) * 100).toFixed(0)}% < 35% (small-N variance)`,
+        `Pairwise 95% separability ${((separability ?? 0) * 100).toFixed(0)}% < 35% (low spread without saturation pressure)`,
       );
     }
   } else if (rawSeparability !== null && rawSeparability < 0.5) {
@@ -732,6 +820,7 @@ export function auditBenchmarkLifecycle(input: BenchmarkAuditInput): BenchmarkAu
     separability,
     looKendallTau,
     looCohortCount,
+    looDroppedEligibleCount,
     itemRestTau,
     ageMonths,
     upstreamLagDays,

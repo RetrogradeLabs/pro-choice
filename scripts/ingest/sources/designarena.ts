@@ -10,7 +10,7 @@ import type { PartitionStats, SourceAdapter } from "../types.ts";
 
 const DESIGNARENA_URL = "https://designarena.ai/leaderboard";
 const MIN_BATTLES = 300;
-const MIN_UNREPORTED_SE_BATTLES = 1000;
+const MIN_UNREPORTED_SE_BATTLES = 350;
 const MAX_CI_ELO = 25;
 
 interface DesignArenaFeedSpec {
@@ -20,12 +20,30 @@ interface DesignArenaFeedSpec {
   observedHarness: string;
 }
 
-// Keep strictly DesignArena's primary Website Arena (24k+ battles with exact Bradley-Terry SEs) to avoid intra-platform duplication
+// Four completely disjoint visual generation arenas (distinct prompts and battle pools per modality)
 const DESIGNARENA_FEEDS: readonly DesignArenaFeedSpec[] = [
   {
     benchmarkId: "designarena_website",
     arenaType: "models",
     category: "website",
+    observedHarness: "Direct API",
+  },
+  {
+    benchmarkId: "designarena_svg",
+    arenaType: "models",
+    category: "svg",
+    observedHarness: "Direct API",
+  },
+  {
+    benchmarkId: "designarena_3d",
+    arenaType: "models",
+    category: "3d",
+    observedHarness: "Direct API",
+  },
+  {
+    benchmarkId: "designarena_gamedev",
+    arenaType: "models",
+    category: "gamedev",
     observedHarness: "Direct API",
   },
 ];
@@ -56,7 +74,7 @@ function parseStrictPositiveSe(val: unknown): number | null {
 
 export const designarenaAdapter: SourceAdapter = {
   id: "designarena",
-  label: "DesignArena Website Arena",
+  label: "DesignArena Visual Arenas (Website, SVG, 3D, GameDev)",
   license: "Public Leaderboard / Attribution Required",
   sourceUrl: DESIGNARENA_URL,
   expectedBenchmarks: DESIGNARENA_FEEDS.map((f) => f.benchmarkId),
@@ -66,6 +84,9 @@ export const designarenaAdapter: SourceAdapter = {
       DESIGNARENA_FEEDS.map(async (spec) => {
         const url = `https://www.designarena.ai/api/leaderboard?arenaType=${spec.arenaType}&category=${spec.category}`;
         const json = await fetchJson<DesignArenaApiResponse>(url, { timeoutMs: 20_000 });
+        if (json.success !== true) {
+          throw new Error(`DesignArena ${spec.category} returned success=${String(json.success)}`);
+        }
         if (!Array.isArray(json.data) || json.data.length === 0) {
           throw new Error(`DesignArena ${spec.category} returned 0 rows`);
         }
@@ -130,7 +151,7 @@ export const designarenaAdapter: SourceAdapter = {
             seRaw = Number(upstreamBtSe.toFixed(6));
             ciHalfWidth = Number(rawCiHalf.toFixed(4));
           } else {
-            // Require >= 1,000 battles when upstream omits btStdErr and leave SE unreported (never invent Elo SE)
+            // Require >= 350 battles when upstream omits btStdErr and leave SE unreported (never invent Elo SE)
             if (battles < MIN_UNREPORTED_SE_BATTLES) {
               st.excluded++;
               continue;

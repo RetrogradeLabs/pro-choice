@@ -3,8 +3,8 @@
     "sourceId": "cwe-bench",
     "label": "Collinear CWE-bench v2 (250 Public + Held-Out)",
     "status": "ok",
-    "fetchedAt": "2026-11-21T06:39:49.514Z",
-    "lastHealthyAt": "2026-11-21T06:39:49.514Z",
+    "fetchedAt": "2026-11-21T20:47:49.660Z",
+    "lastHealthyAt": "2026-11-21T20:47:49.660Z",
     "staleDays": 0,
     "rowCount": 20,
     "license": "Apache-2.0",
@@ -18,7 +18,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-21T06:39:49.514Z",
+        "lastHealthyAt": "2026-11-21T20:47:49.660Z",
         "message": null
       }
     ],

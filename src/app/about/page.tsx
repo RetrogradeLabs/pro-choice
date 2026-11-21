@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { InfoPageShell } from "@/components/InfoPageShell";
+import { BENCHMARKS } from "@/config/benchmarks";
 import { loadCachedRelease } from "@/lib/release-cache";
 import {
   CODE_LICENSE_URL,
@@ -14,8 +15,7 @@ import {
 
 export const metadata: Metadata = {
   title: "About ProChoice",
-  description:
-    "How Retrograde Labs compiles daily LLM and coding agent harness Pareto frontiers across 45 active benchmarks and 18 live public sources.",
+  description: `How Retrograde Labs compiles daily LLM and coding agent harness Pareto frontiers across ${BENCHMARKS.length} active benchmarks and 17 live public sources.`,
   alternates: {
     canonical: `${SITE_URL}/about`,
   },
@@ -46,14 +46,17 @@ export default async function AboutPage() {
       <section className="space-y-3">
         <h2 className="font-display text-[22px] font-normal text-(--ink)">Methodology in brief</h2>
         <p>
-          Each day, ProChoice ingests 18 mandatory public benchmark and first-party pricing feeds
+          Each day, ProChoice ingests 17 mandatory public benchmark and first-party pricing feeds
           covering 9 model providers: Anthropic, OpenAI, Google, SpaceXAI, Meta, DeepSeek, Moonshot,
-          Alibaba, and Zhipu. All 45 active benchmarks contribute directly to their domain composite
-          with zero shadow candidates. Scores are aligned via equal-1.0 anchor standardization and
-          pooled with heteroscedastic REML Empirical Bayes using cross-benchmark joint-jackknife
-          linking uncertainty. Missing task costs for non-retired models with verified first-party
-          API pricing are estimated on each domain&apos;s homogeneous cost axis with active-set
-          monotone effort regression and propagated through bootstrap Pareto probabilities.
+          Alibaba, and Zhipu. All {BENCHMARKS.length} active benchmarks are strictly disjoint within
+          each domain and contribute directly to their domain composite with zero shadow candidates.
+          Scores align via provider-balanced anchor standardization, empirical reliability, frontier
+          discrimination, anchor breadth, and construct-family redundancy weights, and
+          measurement-only heteroscedastic REML Empirical Bayes denoising with cross-benchmark
+          joint-jackknife linking uncertainty. Missing task costs for non-retired models with
+          verified first-party API pricing are estimated on each domain&apos;s homogeneous cost axis
+          with active-set monotone effort regression and propagated through bootstrap Pareto
+          probabilities.
         </p>
         <p>
           Controlled coding-agent harness evaluations live in their own{" "}

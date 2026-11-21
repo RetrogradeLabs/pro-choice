@@ -1,9 +1,16 @@
 import Papa from "papaparse";
 import type { RawObservation } from "../../../src/lib/schema.ts";
-import { extractMarkdownTableRows, fetchText, parseIsoDate, parseNumeric } from "../http.ts";
+import {
+  extractMarkdownTableRows,
+  fetchText,
+  observationsMatchExact,
+  parseIsoDate,
+  parseNumeric,
+} from "../http.ts";
 import type { PartitionStats, SourceAdapter } from "../types.ts";
 
 const LECH_MAZUR_URL = "https://raw.githubusercontent.com/lechmazur/writing/main/README.md";
+const EQBENCH_CREATIVE_JS = "https://eqbench.com/creative_writing.js";
 const EQBENCH_LONGFORM_JS = "https://eqbench.com/creative_writing_longform.js";
 
 function parseLatestLechMazurDate(md: string, nowIso: string): string | null {
@@ -37,21 +44,16 @@ function parseBootstrapInterval(
 
 async function fetchLechMazur(
   nowIso: string,
-): Promise<{ rows: RawObservation[]; stats: PartitionStats }> {
+): Promise<{ rows: RawObservation[]; stats: PartitionStats; disqualifiedIds: string[] }> {
   const md = await fetchText(LECH_MAZUR_URL);
   const tableRows = extractMarkdownTableRows(md);
   const out: RawObservation[] = [];
   const stats: PartitionStats = { attempted: 0, rejected: 0, excluded: 0 };
-  const nameCounts = new Map<string, number>();
-  for (const row of tableRows) {
-    if (!("comparison_score" in row)) continue;
-    const n = (row.model ?? "").replace(/\*\*/g, "").trim();
-    if (n) nameCounts.set(n, (nameCounts.get(n) ?? 0) + 1);
-  }
 
   // Lech Mazur README changelog documents adding DeepSeek V4 Pro high on August 20, 2026 (0813 GA endpoint)
   const hasAug20DeepSeekV4Pro = /August\s+20,\s+2026:[^\n]*DeepSeek\s+V4\s+Pro\s+high/i.test(md);
   const latestPublishedDate = parseLatestLechMazurDate(md, nowIso);
+  const candidatesByRowId = new Map<string, RawObservation[]>();
 
   for (const row of tableRows) {
     if (!("comparison_score" in row)) continue;
@@ -59,7 +61,13 @@ async function fetchLechMazur(
     const modelName = (row.model ?? "").replace(/\*\*/g, "").trim();
     const score = parseNumeric(row.comparison_score);
     const ci = parseBootstrapInterval(row["95_bootstrap_interval"]);
-    if (!modelName || score === null || ci === null) {
+    if (
+      !modelName ||
+      score === null ||
+      ci === null ||
+      score < ci.low - 0.01 ||
+      score > ci.high + 0.01
+    ) {
       stats.rejected++;
       continue;
     }
@@ -70,11 +78,8 @@ async function fetchLechMazur(
       ? "DeepSeek V4 Pro (high, 2026-08-13)"
       : modelName;
 
-    const sourceRowId =
-      (nameCounts.get(modelName) ?? 0) > 1
-        ? `lechmazur:${modelName}@${score.toFixed(3)}:${ci.low.toFixed(4)}:${ci.high.toFixed(4)}`
-        : `lechmazur:${modelName}`;
-    out.push({
+    const sourceRowId = `lechmazur:${modelName}`;
+    const obs: RawObservation = {
       sourceId: "writing-feeds",
       sourceRowId,
       benchmarkId: "lechmazur_writing",
@@ -98,17 +103,35 @@ async function fetchLechMazur(
       evalDate: null,
       publishedDate: latestPublishedDate,
       sourceUrl: "https://github.com/lechmazur/writing",
-    });
+    };
+    const list = candidatesByRowId.get(sourceRowId) ?? [];
+    list.push(obs);
+    candidatesByRowId.set(sourceRowId, list);
   }
 
-  return { rows: out, stats };
+  const disqualifiedIds: string[] = [];
+  for (const [rowId, list] of candidatesByRowId.entries()) {
+    const first = list[0]!;
+    if (list.length > 1 && !list.every((cand) => observationsMatchExact(first, cand))) {
+      stats.rejected += list.length;
+      disqualifiedIds.push(rowId);
+      continue;
+    }
+    out.push(first);
+  }
+
+  return { rows: out, stats, disqualifiedIds };
 }
 
-async function fetchEqBenchLongform(): Promise<{ rows: RawObservation[]; stats: PartitionStats }> {
-  const js = await fetchText(EQBENCH_LONGFORM_JS);
-  const csvMatch = js.match(/leaderboardDataLongformV3\s*=\s*`([\s\S]*?)`/);
+async function fetchEqBenchCreativeWriting(): Promise<{
+  rows: RawObservation[];
+  stats: PartitionStats;
+  disqualifiedIds: string[];
+}> {
+  const js = await fetchText(EQBENCH_CREATIVE_JS);
+  const csvMatch = js.match(/leaderboardDataCreativeWritingV3\s*=\s*`([\s\S]*?)`/);
   if (!csvMatch?.[1]) {
-    throw new Error("EQ-Bench Longform v3 CSV payload not found");
+    throw new Error("EQ-Bench Creative Writing v3 CSV payload not found");
   }
 
   const parsed = Papa.parse<Record<string, string>>(csvMatch[1].trim(), {
@@ -118,11 +141,82 @@ async function fetchEqBenchLongform(): Promise<{ rows: RawObservation[]; stats: 
 
   const out: RawObservation[] = [];
   const stats: PartitionStats = { attempted: 0, rejected: 0, excluded: 0 };
-  const eqNameCounts = new Map<string, number>();
+  const candidatesByRowId = new Map<string, RawObservation[]>();
+
   for (const row of parsed.data) {
-    const n = (row.model_name ?? "").replace(/^\*/, "").trim();
-    if (n) eqNameCounts.set(n, (eqNameCounts.get(n) ?? 0) + 1);
+    stats.attempted++;
+    const modelName = (row.model_name ?? "").replace(/^\*/, "").trim();
+    // Ingest EQ-Bench's 0-20 creative writing rubric score (not the un-intervaled Elo column)
+    const score = parseNumeric(row.creative_writing_score);
+    if (!modelName || score === null || score < 0 || score > 20) {
+      stats.rejected++;
+      continue;
+    }
+
+    const sourceRowId = `eqbench:creative:${modelName}`;
+    const obs: RawObservation = {
+      sourceId: "writing-feeds",
+      sourceRowId,
+      benchmarkId: "eqbench_creative_writing",
+      benchmarkVersion: "3.0",
+      domainId: "writing",
+      rawModelName: modelName,
+      rawProvider: null,
+      rawEffort: null,
+      rawHarness: null,
+      observedHarness: "Direct API",
+      harnessRegime: "native",
+      rawScore: Number(score.toFixed(2)),
+      ciHalfWidth: null,
+      ciLower: null,
+      ciUpper: null,
+      battleCount: null,
+      measuredCostUsd: null,
+      suiteCostUsd: null,
+      measuredInputTokens: null,
+      measuredOutputTokens: null,
+      evalDate: null,
+      publishedDate: null,
+      sourceUrl: "https://eqbench.com/creative_writing.html",
+    };
+    const list = candidatesByRowId.get(sourceRowId) ?? [];
+    list.push(obs);
+    candidatesByRowId.set(sourceRowId, list);
   }
+
+  const disqualifiedIds: string[] = [];
+  for (const [rowId, list] of candidatesByRowId.entries()) {
+    const first = list[0]!;
+    if (list.length > 1 && !list.every((cand) => observationsMatchExact(first, cand))) {
+      stats.rejected += list.length;
+      disqualifiedIds.push(rowId);
+      continue;
+    }
+    out.push(first);
+  }
+
+  return { rows: out, stats, disqualifiedIds };
+}
+
+async function fetchEqBenchLongformWriting(): Promise<{
+  rows: RawObservation[];
+  stats: PartitionStats;
+  disqualifiedIds: string[];
+}> {
+  const js = await fetchText(EQBENCH_LONGFORM_JS);
+  const csvMatch = js.match(/leaderboardDataLongformV3\s*=\s*`([\s\S]*?)`/);
+  if (!csvMatch?.[1]) {
+    throw new Error("EQ-Bench Longform Writing v3 CSV payload not found");
+  }
+
+  const parsed = Papa.parse<Record<string, string>>(csvMatch[1].trim(), {
+    header: true,
+    skipEmptyLines: true,
+  });
+
+  const out: RawObservation[] = [];
+  const stats: PartitionStats = { attempted: 0, rejected: 0, excluded: 0 };
+  const candidatesByRowId = new Map<string, RawObservation[]>();
 
   for (const row of parsed.data) {
     stats.attempted++;
@@ -133,14 +227,11 @@ async function fetchEqBenchLongform(): Promise<{ rows: RawObservation[]; stats: 
       continue;
     }
 
-    const sourceRowId =
-      (eqNameCounts.get(modelName) ?? 0) > 1
-        ? `eqbench:longform:${modelName}@${score.toFixed(2)}`
-        : `eqbench:longform:${modelName}`;
-    out.push({
+    const sourceRowId = `eqbench:longform:${modelName}`;
+    const obs: RawObservation = {
       sourceId: "writing-feeds",
       sourceRowId,
-      benchmarkId: "eqbench_longform",
+      benchmarkId: "eqbench_longform_writing",
       benchmarkVersion: "3.0",
       domainId: "writing",
       rawModelName: modelName,
@@ -161,34 +252,57 @@ async function fetchEqBenchLongform(): Promise<{ rows: RawObservation[]; stats: 
       evalDate: null,
       publishedDate: null,
       sourceUrl: "https://eqbench.com/creative_writing_longform.html",
-    });
+    };
+    const list = candidatesByRowId.get(sourceRowId) ?? [];
+    list.push(obs);
+    candidatesByRowId.set(sourceRowId, list);
   }
 
-  return { rows: out, stats };
+  const disqualifiedIds: string[] = [];
+  for (const [rowId, list] of candidatesByRowId.entries()) {
+    const first = list[0]!;
+    if (list.length > 1 && !list.every((cand) => observationsMatchExact(first, cand))) {
+      stats.rejected += list.length;
+      disqualifiedIds.push(rowId);
+      continue;
+    }
+    out.push(first);
+  }
+
+  return { rows: out, stats, disqualifiedIds };
 }
 
 export const writingFeedsAdapter: SourceAdapter = {
   id: "writing-feeds",
-  label: "Lech Mazur & EQ-Bench v3 Longform Writing Feeds",
+  label: "Lech Mazur & EQ-Bench v3 Creative and Longform Writing Feeds",
   license: "MIT / Public Research",
   sourceUrl: "https://github.com/lechmazur/writing",
-  expectedBenchmarks: ["lechmazur_writing", "eqbench_longform"],
+  expectedBenchmarks: ["lechmazur_writing", "eqbench_creative_writing", "eqbench_longform_writing"],
   expectsPricing: false,
   async fetchLive(nowIso) {
-    const [lech, eqLong] = await Promise.allSettled([
+    const [lech, eqCreative, eqLongform] = await Promise.allSettled([
       fetchLechMazur(nowIso),
-      fetchEqBenchLongform(),
+      fetchEqBenchCreativeWriting(),
+      fetchEqBenchLongformWriting(),
     ]);
     const observations: RawObservation[] = [];
     const partitionStats: Record<string, PartitionStats> = {};
+    const disqualifiedByBenchmark: Record<string, string[]> = {};
 
     const attach = (
       id: string,
-      res: PromiseSettledResult<{ rows: RawObservation[]; stats: PartitionStats }>,
+      res: PromiseSettledResult<{
+        rows: RawObservation[];
+        stats: PartitionStats;
+        disqualifiedIds?: string[];
+      }>,
     ) => {
       if (res.status === "fulfilled") {
         observations.push(...res.value.rows);
         partitionStats[id] = res.value.stats;
+        if (res.value.disqualifiedIds && res.value.disqualifiedIds.length > 0) {
+          disqualifiedByBenchmark[id] = res.value.disqualifiedIds;
+        }
       } else {
         partitionStats[id] = {
           attempted: 0,
@@ -200,8 +314,16 @@ export const writingFeedsAdapter: SourceAdapter = {
     };
 
     attach("lechmazur_writing", lech);
-    attach("eqbench_longform", eqLong);
+    attach("eqbench_creative_writing", eqCreative);
+    attach("eqbench_longform_writing", eqLongform);
 
-    return { observations, pricing: [], partitionStats };
+    return {
+      observations,
+      pricing: [],
+      partitionStats,
+      ...(Object.keys(disqualifiedByBenchmark).length > 0
+        ? { disqualifiedSourceRowIdsByBenchmark: disqualifiedByBenchmark }
+        : {}),
+    };
   },
 };

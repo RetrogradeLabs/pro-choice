@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { InfoPageShell } from "@/components/InfoPageShell";
+import { BENCHMARKS } from "@/config/benchmarks";
 import { loadCachedRelease } from "@/lib/release-cache";
 import { formatUtcDate, SITE_URL } from "@/lib/seo";
 
@@ -30,7 +31,7 @@ export default async function DocsPage() {
         <h2 className="font-display text-[22px] font-normal text-(--ink)">REST API v1 endpoints</h2>
         <p>
           All API routes are public, require no API key or OAuth token, and serve read-only
-          benchmark data compiled daily from 18 public sources under CC BY 4.0.
+          benchmark data compiled daily from 17 public sources under CC BY 4.0.
         </p>
         <div className="overflow-x-auto border border-(--border) bg-(--surface)">
           <table className="w-full border-collapse text-left text-[13px]">
@@ -46,8 +47,8 @@ export default async function DocsPage() {
                 <td className="px-4 py-2.5 font-mono text-(--ink)">GET /api/v1/snapshot</td>
                 <td className="px-4 py-2.5 font-mono text-(--ink-muted)">application/json</td>
                 <td className="px-4 py-2.5">
-                  Full snapshot across all 6 domains, 25 controlled harnesses, source health, and 45
-                  lifecycle audits.
+                  Full snapshot across all 6 domains, 25 controlled harnesses, source health, and{" "}
+                  {BENCHMARKS.length} lifecycle audits.
                 </td>
               </tr>
               <tr className="border-b border-(--border)">

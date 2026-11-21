@@ -30,30 +30,12 @@ interface LiveBenchCategorySpec {
 
 const LIVEBENCH_SPECS: readonly LiveBenchCategorySpec[] = [
   {
-    col: "coding",
-    nqCol: "nq_coding",
-    outCol: "out_coding",
-    benchmarkId: "livebench_coding",
+    col: "long_agentic",
+    nqCol: "nq_long_agentic",
+    outCol: "out_long_agentic",
+    benchmarkId: "livebench_long_agentic",
     domainId: "coding",
     harnessRegime: "standardized",
-    requireCostCsv: false,
-  },
-  {
-    col: "research",
-    nqCol: "nq_research",
-    outCol: "out_research",
-    benchmarkId: "livebench_research",
-    domainId: "research",
-    harnessRegime: "native",
-    requireCostCsv: false,
-  },
-  {
-    col: "data_analysis",
-    nqCol: "nq_data_analysis",
-    outCol: "out_data_analysis",
-    benchmarkId: "livebench_data_analysis",
-    domainId: "research",
-    harnessRegime: "native",
     requireCostCsv: false,
   },
 ];
@@ -113,13 +95,13 @@ function livebenchCostRowsEqual(a: Record<string, string>, b: Record<string, str
 
 export const livebenchAdapter: SourceAdapter = {
   id: "livebench",
-  label: "LiveBench 2.0 Coding, Research & Data Analysis",
+  label: "LiveBench 2.0 Long-Agentic",
   license: "Apache-2.0",
   sourceUrl: LIVEBENCH_URL,
   expectedBenchmarks: LIVEBENCH_SPECS.map((s) => s.benchmarkId),
   expectsPricing: false,
   async fetchLive(nowIso) {
-    const pinnedReleaseId = BENCHMARK_BY_ID.livebench_coding?.version ?? "20261106";
+    const pinnedReleaseId = BENCHMARK_BY_ID.livebench_long_agentic?.version ?? "20261106";
     const publishedDate = parseIsoDate(
       `${pinnedReleaseId.slice(0, 4)}-${pinnedReleaseId.slice(4, 6)}-${pinnedReleaseId.slice(6, 8)}`,
       nowIso,

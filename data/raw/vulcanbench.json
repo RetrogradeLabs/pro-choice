@@ -3,8 +3,8 @@
     "sourceId": "vulcanbench",
     "label": "VulcanBench SWE v4 Agent Stacks",
     "status": "ok",
-    "fetchedAt": "2026-11-21T06:39:49.514Z",
-    "lastHealthyAt": "2026-11-21T06:39:49.514Z",
+    "fetchedAt": "2026-11-21T20:47:49.660Z",
+    "lastHealthyAt": "2026-11-21T20:47:49.660Z",
     "staleDays": 0,
     "rowCount": 91,
     "license": "Public Research Leaderboard / Attribution Required",
@@ -18,7 +18,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-21T06:39:49.514Z",
+        "lastHealthyAt": "2026-11-21T20:47:49.660Z",
         "message": null
       }
     ],

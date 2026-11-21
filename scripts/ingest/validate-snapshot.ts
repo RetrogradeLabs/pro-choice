@@ -40,6 +40,7 @@ import {
   compileDomainsFromSources,
   MANDATORY_ADAPTERS,
   majorEpochFilename,
+  parseEpochMajorNumber,
   previousMajorEpochFilename,
   readEpochManifest,
   sha256Hex,
@@ -500,10 +501,74 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
     }
   }
 
-  // 4. Defense-in-depth domain, epoch-lock, arithmetic, and monotonicity invariants
+  // 4. Defense-in-depth domain, zero-overlap lineage, epoch-lock, arithmetic, and monotonicity invariants
   for (const meta of DOMAINS) {
     const domain = snapshot.domains[meta.id];
     if (!domain) continue;
+
+    // Enforce strict zero-overlap dataset lineages and non-overlapping LMArena splits within every domain
+    const seenLineages = new Map<string, string>();
+    const seenLmArenaSplits = new Map<string, string>();
+    for (const bmId of domain.activeBenchmarkIds) {
+      const bMeta = BENCHMARK_BY_ID[bmId];
+      if (!bMeta) continue;
+      const prevLineageBm = seenLineages.get(bMeta.datasetLineageId);
+      if (prevLineageBm) {
+        failures.push(
+          `${meta.id}: overlapping datasetLineageId '${bMeta.datasetLineageId}' shared by '${prevLineageBm}' and '${bmId}'`,
+        );
+      } else {
+        seenLineages.set(bMeta.datasetLineageId, bmId);
+      }
+      if (bMeta.sourceId === "lmarena") {
+        const prevSplitBm = seenLmArenaSplits.get(bMeta.version);
+        if (prevSplitBm) {
+          failures.push(
+            `${meta.id}: duplicate LMArena split '${bMeta.version}' shared by '${prevSplitBm}' and '${bmId}'`,
+          );
+        } else {
+          seenLmArenaSplits.set(bMeta.version, bmId);
+        }
+      }
+      // Verify Popoviciu sampleSize matches uniform upstream task count when a bounded benchmark omits upstream SE/CI
+      if (!bMeta.isArena && bMeta.boundedMax !== null && bMeta.sampleSize !== null) {
+        const bmObs = validCachedFiles.flatMap((f) =>
+          f.payload.observations.filter((o) => o.benchmarkId === bmId),
+        );
+        const allPopoviciu =
+          bmObs.length > 0 &&
+          bmObs.every(
+            (o) =>
+              (o.seRaw === undefined || o.seRaw === null) &&
+              o.ciHalfWidth === null &&
+              o.ciLower === null &&
+              o.ciUpper === null,
+          );
+        if (allPopoviciu) {
+          const counts = new Set(
+            bmObs
+              .map((o) => o.battleCount)
+              .filter((n): n is number => n !== null && Number.isInteger(n) && n > 0),
+          );
+          if (
+            counts.size === 1 &&
+            bmObs.every((o) => o.battleCount !== null && o.battleCount > 0)
+          ) {
+            const upstreamN = [...counts][0]!;
+            // Multi-repeat harnesses report total trials (e.g. TB 4.1 66x5=330); single-trial feeds must match exact task count
+            const validMultiRepeat =
+              bmId === "tbench_4_1" &&
+              bMeta.sampleSize <= upstreamN &&
+              upstreamN % bMeta.sampleSize === 0;
+            if (!validMultiRepeat && bMeta.sampleSize !== upstreamN) {
+              failures.push(
+                `${meta.id}: Popoviciu sampleSize ${bMeta.sampleSize} for '${bmId}' !== uniform upstream task count ${upstreamN}`,
+              );
+            }
+          }
+        }
+      }
+    }
 
     const frozenSnap = frozenByDomain.get(meta.id);
     if (frozenSnap) {
@@ -515,16 +580,86 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
         );
       }
       for (const [k, frozenStat] of Object.entries(frozenSnap.anchorStats)) {
+        const expectedBmId = k.endsWith("::standardized")
+          ? k.slice(0, -"::standardized".length)
+          : k;
         const currentStat = domain.anchorStats[k];
+        if (frozenStat.benchmarkId !== expectedBmId) {
+          failures.push(
+            `${meta.id}: frozen anchor '${k}' benchmarkId '${frozenStat.benchmarkId}' !== '${expectedBmId}'`,
+          );
+        }
         if (
           !currentStat ||
+          currentStat.benchmarkId !== expectedBmId ||
           Math.abs(currentStat.mean - frozenStat.mean) > 1e-6 ||
           Math.abs(currentStat.sd - frozenStat.sd) > 1e-6 ||
-          Math.abs(currentStat.raschDelta - frozenStat.raschDelta) > 1e-6
+          Math.abs(currentStat.raschDelta - frozenStat.raschDelta) > 1e-6 ||
+          currentStat.redundancyFactor !== frozenStat.redundancyFactor ||
+          currentStat.taskFamily !== frozenStat.taskFamily ||
+          currentStat.datasetLineageId !== frozenStat.datasetLineageId ||
+          currentStat.boundedMax !== frozenStat.boundedMax ||
+          currentStat.sampleSize !== frozenStat.sampleSize
         ) {
           failures.push(
             `${meta.id}: frozen anchor '${k}' mutated relative to ${majorEpochFilename(domain.epochVersion)}`,
           );
+        }
+        const liveMeta = BENCHMARK_BY_ID[expectedBmId];
+        if (!liveMeta) {
+          failures.push(
+            `${meta.id}: frozen anchor '${k}' references unregistered benchmark '${expectedBmId}'`,
+          );
+        } else {
+          if (
+            frozenStat.taskFamily !== undefined &&
+            frozenStat.taskFamily !== liveMeta.taskFamily
+          ) {
+            failures.push(
+              `${meta.id}: live registry taskFamily '${liveMeta.taskFamily}' for '${expectedBmId}' drifted from frozen '${frozenStat.taskFamily}'`,
+            );
+          }
+          if (
+            frozenStat.datasetLineageId !== undefined &&
+            frozenStat.datasetLineageId !== liveMeta.datasetLineageId
+          ) {
+            failures.push(
+              `${meta.id}: live registry datasetLineageId '${liveMeta.datasetLineageId}' for '${expectedBmId}' drifted from frozen '${frozenStat.datasetLineageId}'`,
+            );
+          }
+          if (
+            liveMeta.boundedMax !== null &&
+            liveMeta.boundedMax > 0 &&
+            liveMeta.sampleSize !== null &&
+            liveMeta.sampleSize > 0 &&
+            frozenStat.popoviciuSe !== undefined
+          ) {
+            const expectedPopoviciu =
+              liveMeta.id === "scicode_aa"
+                ? 100 / (2 * Math.sqrt((288 * 288) / 1826))
+                : liveMeta.boundedMax / (2 * Math.sqrt(liveMeta.sampleSize));
+            if (Math.abs(frozenStat.popoviciuSe - expectedPopoviciu) > 1e-3) {
+              failures.push(
+                `${meta.id}: live registry sampleSize ${liveMeta.sampleSize} for '${expectedBmId}' implies Popoviciu SE ${expectedPopoviciu.toFixed(4)} !== frozen ${frozenStat.popoviciuSe.toFixed(4)}`,
+              );
+            }
+            if (
+              frozenStat.boundedMax !== undefined &&
+              Math.abs(frozenStat.boundedMax - liveMeta.boundedMax) > 1e-4
+            ) {
+              failures.push(
+                `${meta.id}: live registry boundedMax ${liveMeta.boundedMax} for '${expectedBmId}' !== frozen ${frozenStat.boundedMax}`,
+              );
+            }
+            if (
+              frozenStat.sampleSize !== undefined &&
+              Math.abs(frozenStat.sampleSize - liveMeta.sampleSize) > 1e-4
+            ) {
+              failures.push(
+                `${meta.id}: live registry sampleSize ${liveMeta.sampleSize} for '${expectedBmId}' !== frozen ${frozenStat.sampleSize}`,
+              );
+            }
+          }
         }
       }
       if (
@@ -683,6 +818,9 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
             `${meta.id}: ${cfg.id} theta ${cfg.theta} !== priorMean + shrinkage * (thetaMle - priorMean) (${expectedTheta.toFixed(6)})`,
           );
         }
+        const domainMajor = parseEpochMajorNumber(domain.epochVersion);
+        const domainShrinkageMode =
+          domainMajor !== null && domainMajor < 2 ? "total" : "measurement";
         const post = computeConfigPosterior(
           cfg.benchmarks,
           domain.anchorStats,
@@ -694,12 +832,18 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
           rmForCfg.tauModelSq,
           undefined,
           rmForCfg.linkJointCov,
+          domainShrinkageMode,
         );
         if (!post?.exactSeRecomputable) {
           failures.push(
             `${meta.id}: ${cfg.id} posterior uncertainty cannot be recomputed from persisted SE metadata`,
           );
         } else {
+          if (cfg.eligibleForFrontier && post.infoReliability < MIN_FRONTIER_SHRINKAGE - 1e-6) {
+            failures.push(
+              `${meta.id}: eligible config '${cfg.id}' infoReliability ${post.infoReliability} < ${MIN_FRONTIER_SHRINKAGE}`,
+            );
+          }
           if (Math.abs(cfg.shrinkageFactor - post.shrinkageFactor) > 1e-3) {
             failures.push(
               `${meta.id}: ${cfg.id} shrinkageFactor ${cfg.shrinkageFactor} !== recomputed ${post.shrinkageFactor}`,

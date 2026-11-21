@@ -1,11 +1,13 @@
 import { BENCHMARK_BY_ID } from "../../../src/config/benchmarks.ts";
 import {
   parseExplicitEffort,
+  parseStrictEffortMetadata,
   resolveExplicitHarness,
   resolveModelSlugFromString,
 } from "../../../src/lib/math/canonicalize.ts";
-import type { DomainId, RawObservation } from "../../../src/lib/schema.ts";
+import type { DomainId, HarnessRegime, RawObservation } from "../../../src/lib/schema.ts";
 import {
+  fetchJson,
   fetchText,
   parseIsoDate,
   parseNumeric,
@@ -21,15 +23,100 @@ interface ValsFeedSpec {
   refusalFallbackKey: string;
   version: string;
   domainId: DomainId;
+  harnessRegime: HarnessRegime;
+  defaultObservedHarness: string;
 }
 
 const VALS_FEEDS: readonly ValsFeedSpec[] = [
+  {
+    slug: "code-migration-v1-1",
+    benchmarkId: "vals_code_migration",
+    refusalFallbackKey: "code_migration_v1_1",
+    version: "1.1",
+    domainId: "coding",
+    harnessRegime: "standardized",
+    defaultObservedHarness: "Pi",
+  },
+  {
+    slug: "sre_bench",
+    benchmarkId: "vals_sre_bench",
+    refusalFallbackKey: "sre_bench",
+    version: "1",
+    domainId: "coding",
+    harnessRegime: "standardized",
+    defaultObservedHarness: "Vals SRE Runner",
+  },
   {
     slug: "vibe-code",
     benchmarkId: "vals_vibe_code",
     refusalFallbackKey: "vibe_code_bench",
     version: "1.1",
     domainId: "design_code",
+    harnessRegime: "native",
+    defaultObservedHarness: "OpenHands",
+  },
+  {
+    slug: "swebench-multimodal",
+    benchmarkId: "vals_swebench_multimodal",
+    refusalFallbackKey: "swebench_multimodal",
+    version: "1",
+    domainId: "design_code",
+    harnessRegime: "native",
+    defaultObservedHarness: "mini-SWE-agent",
+  },
+  {
+    slug: "legal_research",
+    benchmarkId: "vals_legal_research",
+    refusalFallbackKey: "legal_research",
+    version: "1",
+    domainId: "research",
+    harnessRegime: "native",
+    defaultObservedHarness: "Direct API",
+  },
+  {
+    slug: "fabv2-1",
+    benchmarkId: "vals_finance_agent",
+    refusalFallbackKey: "finance_agent_v2_1",
+    version: "2.1",
+    domainId: "research",
+    harnessRegime: "native",
+    defaultObservedHarness: "Vals Finance Agent",
+  },
+  {
+    slug: "emb-v1-1",
+    benchmarkId: "vals_emb",
+    refusalFallbackKey: "emb_v1_1",
+    version: "1.1",
+    domainId: "research",
+    harnessRegime: "native",
+    defaultObservedHarness: "Direct API",
+  },
+  {
+    slug: "tax_agent_bench",
+    benchmarkId: "vals_tax_agent",
+    refusalFallbackKey: "tax_agent_bench",
+    version: "1",
+    domainId: "research",
+    harnessRegime: "native",
+    defaultObservedHarness: "Vals Tax Agent",
+  },
+  {
+    slug: "mysterymechanism",
+    benchmarkId: "vals_mystery_mechanism",
+    refusalFallbackKey: "mysterymechanism",
+    version: "1",
+    domainId: "research",
+    harnessRegime: "native",
+    defaultObservedHarness: "Direct API",
+  },
+  {
+    slug: "medcode",
+    benchmarkId: "vals_medcode",
+    refusalFallbackKey: "medcode",
+    version: "1",
+    domainId: "research",
+    harnessRegime: "native",
+    defaultObservedHarness: "Direct API",
   },
 ];
 
@@ -448,9 +535,112 @@ function matchValsHtmlMeta(
   return scoreMatches.length > 1 ? { kind: "ambiguous" } : { kind: "none" };
 }
 
+interface ValsIslandEffortRecord {
+  effort: string | null;
+  conflict: boolean;
+}
+
+function cleanValsEffortField(raw: unknown): string | null {
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    return trimmed || null;
+  }
+  if (typeof raw === "number" && Number.isFinite(raw)) return String(raw);
+  return null;
+}
+
+function extractValsBenchmarkViewUrl(rawIslands: readonly string[]): string | null {
+  for (const islandRaw of rawIslands) {
+    const decoded = decodeHtmlAttr(islandRaw);
+    if (!decoded.includes("benchmarkViewUrl")) continue;
+    try {
+      const parsed = JSON.parse(decoded) as Record<string, unknown>;
+      const urlVal = unwrapAstroProps(parsed.benchmarkViewUrl);
+      if (typeof urlVal === "string" && urlVal.trim().length > 0) {
+        return urlVal.trim();
+      }
+    } catch {}
+  }
+  return null;
+}
+
+// Reconcile per-model reasoning_effort and compute_effort across external benchmarkView JSON and every inline Astro island
+function extractValsIslandEfforts(
+  primaryView: ValsBenchmarkView | undefined,
+  rawIslands: readonly string[],
+): Map<string, ValsIslandEffortRecord> {
+  const out = new Map<string, ValsIslandEffortRecord>();
+  const tables: Record<string, unknown>[] = [];
+  if (primaryView?.tasks && typeof primaryView.tasks === "object") {
+    for (const tbl of Object.values(primaryView.tasks)) {
+      if (tbl && typeof tbl === "object") tables.push(tbl as Record<string, unknown>);
+    }
+  }
+
+  for (const islandRaw of rawIslands) {
+    const decoded = decodeHtmlAttr(islandRaw);
+    if (!decoded.includes("reasoning_effort") && !decoded.includes("compute_effort")) continue;
+    let rawParsed: unknown;
+    try {
+      rawParsed = JSON.parse(decoded);
+    } catch {
+      continue;
+    }
+    if (!rawParsed || typeof rawParsed !== "object" || Array.isArray(rawParsed)) continue;
+    const rawRec = rawParsed as Record<string, unknown>;
+    const bv = unwrapAstroProps(rawRec.benchmarkView) as
+      | { tasks?: Record<string, unknown> }
+      | undefined;
+    const bp = unwrapAstroProps(rawRec.benchmarkPerformance) as Record<string, unknown> | undefined;
+    if (bv?.tasks && typeof bv.tasks === "object") {
+      for (const tbl of Object.values(bv.tasks)) {
+        if (tbl && typeof tbl === "object") tables.push(tbl as Record<string, unknown>);
+      }
+    }
+    if (bp && typeof bp === "object" && !Array.isArray(bp)) {
+      tables.push(bp);
+    }
+  }
+
+  for (const tbl of tables) {
+    for (const [modelKey, rawRow] of Object.entries(tbl)) {
+      if (!rawRow || typeof rawRow !== "object") continue;
+      const row = rawRow as { reasoning_effort?: unknown; compute_effort?: unknown };
+      const re = cleanValsEffortField(row.reasoning_effort);
+      const ce = cleanValsEffortField(row.compute_effort);
+      if (re === null && ce === null) continue;
+
+      let rowEffort: string | null = null;
+      let rowConflict = false;
+      if (re !== null && ce !== null) {
+        const reNorm = parseStrictEffortMetadata(re);
+        const ceNorm = parseStrictEffortMetadata(ce);
+        if (reNorm !== null && ceNorm !== null && reNorm === ceNorm) {
+          rowEffort = reNorm;
+        } else if (re.toLowerCase() === ce.toLowerCase()) {
+          rowEffort = re;
+        } else {
+          rowConflict = true;
+        }
+      } else {
+        const rawVal = re ?? ce!;
+        rowEffort = parseStrictEffortMetadata(rawVal) ?? rawVal;
+      }
+
+      const prev = out.get(modelKey);
+      if (!prev) {
+        out.set(modelKey, { effort: rowEffort, conflict: rowConflict });
+      } else if (prev.conflict || rowConflict || prev.effort !== rowEffort) {
+        out.set(modelKey, { effort: null, conflict: true });
+      }
+    }
+  }
+  return out;
+}
+
 export const valsAdapter: SourceAdapter = {
   id: "vals",
-  label: "Vals AI Vibe Code",
+  label: `Vals AI Frontier Suite (${VALS_FEEDS.length} Benchmarks)`,
   license: "Public Benchmarks / Attribution Required",
   sourceUrl: "https://www.vals.ai/benchmarks",
   expectedBenchmarks: VALS_FEEDS.map((f) => f.benchmarkId),
@@ -469,17 +659,21 @@ export const valsAdapter: SourceAdapter = {
       VALS_FEEDS.map(async (spec) => {
         const url = `https://www.vals.ai/benchmarks/${spec.slug}`;
         const html = await fetchText(url);
-        const island = [...html.matchAll(/<astro-island[^>]*props="([^"]*)"/g)]
-          .map((m) => m[1] ?? "")
-          .find((p) => p.includes("benchmarkView"));
-        if (!island) throw new Error(`Vals island missing for ${spec.slug}`);
-
-        const rawObj = JSON.parse(decodeHtmlAttr(island)) as { benchmarkView?: unknown };
-        const bv = unwrapAstroProps(rawObj.benchmarkView) as ValsBenchmarkView | undefined;
+        const rawIslands = [...html.matchAll(/<astro-island[^>]*props="([^"]*)"/g)].map(
+          (m) => m[1] ?? "",
+        );
+        const bvRelUrl = extractValsBenchmarkViewUrl(rawIslands);
+        if (!bvRelUrl) {
+          throw new Error(`Vals BenchmarkViewLoader benchmarkViewUrl missing for ${spec.slug}`);
+        }
+        const bv = await fetchJson<ValsBenchmarkView>(
+          new URL(bvRelUrl, "https://www.vals.ai").toString(),
+        );
         const overall = bv?.tasks?.overall;
         if (!overall || typeof overall !== "object") {
           throw new Error(`Vals overall task table missing for ${spec.slug}`);
         }
+        const islandEfforts = extractValsIslandEfforts(bv, rawIslands);
         const htmlRows = parseValsHtmlTableRows(html);
 
         // Always require Vals' per-benchmark refusal/fallback ledger so page restructuring fails closed instead of admitting fallback rows
@@ -499,7 +693,7 @@ export const valsAdapter: SourceAdapter = {
         const fbJs = await fetchText(`https://www.vals.ai/_astro/${fbMod}`);
         const fallbackModels = parseRefusalFallbackModelsJs(fbJs, spec.refusalFallbackKey);
 
-        return { spec, url, bv, overall, htmlRows, fallbackModels };
+        return { spec, url, bv, overall, islandEfforts, htmlRows, fallbackModels };
       }),
     );
 
@@ -519,7 +713,17 @@ export const valsAdapter: SourceAdapter = {
         continue;
       }
 
-      const { url, bv, overall, htmlRows, fallbackModels } = settled.value;
+      const { url, bv, overall, islandEfforts, htmlRows, fallbackModels } = settled.value;
+      const overallKeys = Object.keys(overall);
+      const matchedEffortCount = overallKeys.filter((k) => {
+        const rec = islandEfforts.get(k);
+        return rec !== undefined && !rec.conflict && rec.effort !== null;
+      }).length;
+      // Fail closed per partition when effort annotations disappear from a live Vals benchmarkView payload
+      if (overallKeys.length >= 20 && matchedEffortCount === 0) {
+        st.error = `Vals effort metadata schema drift on ${spec.benchmarkId}: recovered 0 effort annotations across ${overallKeys.length} models`;
+        continue;
+      }
       const disqualifiedIds = new Set<string>();
       for (const [fbKey, entry] of Object.entries(fallbackModels)) {
         const fbRec = entry?.benchmarks?.[spec.refusalFallbackKey];
@@ -637,16 +841,32 @@ export const valsAdapter: SourceAdapter = {
             ? htmlMeta.displayName
             : canonicalSkuKey;
 
-          // Reject contradictory effort labels between canonical SKU key and matched HTML display label (including thinking vs none)
+          // Reconcile explicit island reasoning_effort/compute_effort with SKU key and HTML display label
+          const islandEffRec = islandEfforts.get(modelKey) ?? islandEfforts.get(canonicalSkuKey);
+          if (islandEffRec?.conflict) {
+            st.rejected++;
+            continue;
+          }
+          const islandEffRaw = islandEffRec?.effort ?? null;
+          const islandEffStrict = parseStrictEffortMetadata(islandEffRaw);
+
           const keySuffix = keySlash > 0 ? canonicalSkuKey.slice(keySlash + 1) : canonicalSkuKey;
           const displayEffort = parseExplicitEffort(htmlMeta?.displayName ?? "", true);
           const rawNameEffort = parseExplicitEffort(rawModelName, true);
           const keyEffortConcrete = rawNameEffort !== null && rawNameEffort !== "thinking";
           const displayEffortConcrete = displayEffort !== null && displayEffort !== "thinking";
+          const islandEffortConcrete = islandEffStrict !== null && islandEffStrict !== "thinking";
           if (
             (keyEffortConcrete && displayEffortConcrete && rawNameEffort !== displayEffort) ||
             (rawNameEffort === "thinking" && displayEffort === "none") ||
-            (rawNameEffort === "none" && displayEffort === "thinking")
+            (rawNameEffort === "none" && displayEffort === "thinking") ||
+            (keyEffortConcrete && islandEffortConcrete && rawNameEffort !== islandEffStrict) ||
+            (displayEffortConcrete && islandEffortConcrete && displayEffort !== islandEffStrict) ||
+            (rawNameEffort === "none" && islandEffortConcrete && islandEffStrict !== "none") ||
+            (islandEffStrict === "none" &&
+              (rawNameEffort === "thinking" || displayEffort === "thinking")) ||
+            (islandEffStrict === "thinking" &&
+              (rawNameEffort === "none" || displayEffort === "none"))
           ) {
             st.rejected++;
             continue;
@@ -657,7 +877,10 @@ export const valsAdapter: SourceAdapter = {
           );
           const manualBudgetToken = manualBudgetMatch?.[1] ?? null;
           let rawEffort: string | null = null;
-          if (
+          if (islandEffRaw !== null) {
+            // Preserve unparseable upstream effort strings (e.g. numeric "0.99") so canonicalizer quarantines cleanly
+            rawEffort = islandEffStrict ?? islandEffRaw;
+          } else if (
             rawNameEffort === "thinking" &&
             displayEffort !== null &&
             displayEffort !== "thinking" &&
@@ -679,31 +902,13 @@ export const valsAdapter: SourceAdapter = {
 
           const upstreamHarness = htmlMeta?.harness ?? metricsHarness;
           const canonicalUpstreamHarness = canonicalValsHarness(upstreamHarness);
-          const isCyberBench = spec.benchmarkId === "vals_cyberbench";
           const isOpenHandsDesign = spec.benchmarkId === "vals_vibe_code";
-          if (
-            isCyberBench &&
-            canonicalUpstreamHarness !== null &&
-            canonicalUpstreamHarness !== "mini-swe-agent"
-          ) {
-            st.rejected++;
-            continue;
-          }
           // Fold documented per-benchmark default harnesses while preserving observedHarness provenance
-          const isDocumentedDefaultHarness = isCyberBench
-            ? true
-            : canonicalUpstreamHarness === null ||
-              canonicalUpstreamHarness === "direct" ||
-              (isOpenHandsDesign && canonicalUpstreamHarness === "openhands");
-          const observedHarness =
-            upstreamHarness ??
-            (isCyberBench
-              ? "mini-SWE-agent"
-              : spec.benchmarkId === "vals_srebench"
-                ? "Vals SRE Runner"
-                : isOpenHandsDesign
-                  ? "OpenHands"
-                  : "Direct API");
+          const isDocumentedDefaultHarness =
+            canonicalUpstreamHarness === null ||
+            canonicalUpstreamHarness === "direct" ||
+            (isOpenHandsDesign && canonicalUpstreamHarness === "openhands");
+          const observedHarness = upstreamHarness ?? spec.defaultObservedHarness;
           const emittedRawHarness = isDocumentedDefaultHarness ? null : canonicalUpstreamHarness;
 
           observations.push({
@@ -717,7 +922,7 @@ export const valsAdapter: SourceAdapter = {
             rawEffort,
             rawHarness: emittedRawHarness,
             observedHarness,
-            harnessRegime: "native",
+            harnessRegime: spec.harnessRegime,
             rawScore: Number(accuracy.toFixed(2)),
             seRaw,
             ciHalfWidth,

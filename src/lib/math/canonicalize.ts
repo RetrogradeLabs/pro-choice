@@ -84,11 +84,14 @@ export function resolveAllowlistedProvider(raw: string | null | undefined): Prov
 
 const STRICT_EFFORT_METADATA_MAP: Readonly<Record<string, ReasoningEffort>> = {
   none: "none",
+  "no reasoning": "none",
   "non reasoning": "none",
   nonreasoning: "none",
   "no thinking": "none",
   "non thinking": "none",
   nonthinking: "none",
+  "without reasoning": "none",
+  "without thinking": "none",
   off: "none",
   disabled: "none",
   minimal: "minimal",
@@ -137,7 +140,7 @@ export function parseUniqueEffortFromText(
   let hasGenericThinking = false;
 
   const nonThinkRx =
-    /\b(non[\s_-]?reasoning|no[\s_-]?thinking|non[\s_-]?thinking|nonthinking|none)\b/g;
+    /\b(non[\s_-]?reasoning|no[\s_-]?reasoning|no[\s_-]?thinking|non[\s_-]?thinking|nonthinking|without[\s_-]+(?:reasoning|thinking)|none)\b/g;
   if (nonThinkRx.test(lower)) {
     hasNonThinking = true;
     concrete.add("none");
@@ -275,7 +278,7 @@ export function isRegisteredModelExact(rawName: string): boolean {
 function stripTrailingEffortTokens(input: string): string {
   let cur = input;
   const trailingEffortToken =
-    /[\s_-]+(non[\s_-]?reasoning|non[\s_-]?thinking|nonthinking|none|thinking|minimal|low|medium|extra[\s_-]?high|x[\s_-]?high|xhigh|high|max|effort|reasoning|unknown)$/i;
+    /[\s_-]+(without[\s_-]+(?:reasoning|thinking)|non[\s_-]?reasoning|no[\s_-]?reasoning|non[\s_-]?thinking|no[\s_-]?thinking|nonthinking|none|thinking|minimal|low|medium|extra[\s_-]?high|x[\s_-]?high|xhigh|high|max|effort|reasoning|unknown)$/i;
   while (true) {
     if (COMPILED_ALIASES.some((entry) => entry.regexes.some((rx) => rx.test(cur)))) {
       break;
@@ -319,7 +322,7 @@ function cleanModelNameForMatch(rawModelName: string): {
         .filter(
           (part) =>
             part.length > 0 &&
-            !/^(?:non[\s_-]?reasoning|reasoning|non[\s_-]?thinking|nonthinking|none|minimal|low|medium|med|high|xhigh|x[\s_-]?high|extra[\s_-]?high|max|thinking|unknown|default fallback|with fallback|openhands|mini[\s_-]?swe[\s_-]?agent|claude code|codex(?:\s+harness)?|antigravity|cursor|june 2026)$/i.test(
+            !/^(?:without[\s_-]+(?:reasoning|thinking)|non[\s_-]?reasoning|no[\s_-]?reasoning|reasoning|non[\s_-]?thinking|no[\s_-]?thinking|nonthinking|none|minimal|low|medium|med|high|xhigh|x[\s_-]?high|extra[\s_-]?high|max|thinking|unknown|default fallback|with fallback|openhands|mini[\s_-]?swe[\s_-]?agent|claude code|codex(?:\s+harness)?|antigravity|cursor|june 2026)$/i.test(
               part,
             ),
         );
@@ -512,12 +515,23 @@ export function canonicalizeObservation(obs: RawObservation): CanonicalizeOutcom
       return { kind: "unmapped", reason: `unsupported_or_unknown_effort:${trimmedMetaEffort}` };
     }
     if (nameEffort !== null && nameEffort !== parsedMeta) {
-      return {
-        kind: "unmapped",
-        reason: `conflicting_effort_metadata:${nameEffort}!=${parsedMeta}`,
-      };
+      const nameIsGenericThinking = nameEffort === "thinking";
+      const metaIsGenericThinking = parsedMeta === "thinking";
+      const metaIsPositiveConcrete = !metaIsGenericThinking && parsedMeta !== "none";
+      const nameIsPositiveConcrete = !nameIsGenericThinking && nameEffort !== "none";
+      if (nameIsGenericThinking && metaIsPositiveConcrete) {
+        effort = parsedMeta;
+      } else if (metaIsGenericThinking && nameIsPositiveConcrete) {
+        effort = nameEffort;
+      } else {
+        return {
+          kind: "unmapped",
+          reason: `conflicting_effort_metadata:${nameEffort}!=${parsedMeta}`,
+        };
+      }
+    } else {
+      effort = parsedMeta;
     }
-    effort = parsedMeta;
   } else if (nameEffort !== null) {
     effort = nameEffort;
   } else if (matchedAlias.requireExplicitEffort) {

@@ -27,6 +27,7 @@ import {
   MIN_FRONTIER_SHRINKAGE,
   type ObservedCell,
   type RemlPriorPoint,
+  type ShrinkageMode,
 } from "../../src/lib/math/aggregate.ts";
 import { canonicalizeObservation } from "../../src/lib/math/canonicalize.ts";
 import {
@@ -88,7 +89,6 @@ import { aikidoAdapter } from "./sources/aikido.ts";
 import { artificialAnalysisAdapter } from "./sources/artificial-analysis.ts";
 import { cweBenchAdapter } from "./sources/cwe-bench.ts";
 import { cyberArenaAdapter } from "./sources/cyber-arena.ts";
-import { deepsweAdapter } from "./sources/deepswe.ts";
 import { designarenaAdapter } from "./sources/designarena.ts";
 import { epochAdapter } from "./sources/epoch.ts";
 import { frontierHarnessAdapter } from "./sources/frontier-harness.ts";
@@ -97,18 +97,20 @@ import { livebenchAdapter } from "./sources/livebench.ts";
 import { lmarenaAdapter } from "./sources/lmarena.ts";
 import { pricingAdapter } from "./sources/pricing.ts";
 import { scaleSealAdapter } from "./sources/scale-seal.ts";
+import { surgeAdapter } from "./sources/surge.ts";
 import { MIN_TBENCH_4_1_TRIALS, tbenchAdapter } from "./sources/tbench.ts";
 import { valsAdapter } from "./sources/vals.ts";
 import { vulcanbenchAdapter } from "./sources/vulcanbench.ts";
-import { weirdmlAdapter } from "./sources/weirdml.ts";
 import { writingFeedsAdapter } from "./sources/writing-feeds.ts";
 import type { CachedSourceFile, SourceAdapter } from "./types.ts";
 
 const DEFAULT_DATA_DIR = path.join(process.cwd(), "data");
 export const EPOCH_MANIFEST_PATH = path.join(DEFAULT_DATA_DIR, "epochs", "manifest.json");
 const MIN_ARENA_BATTLES = 300;
-const MIN_ARENA_UNREPORTED_SE_BATTLES = 1000;
-const MAX_ELO_CI_HALF = 25;
+const MIN_ARENA_UNREPORTED_SE_BATTLES = 350;
+const MAX_ARENA_ELO_CI_HALF = 25;
+const MAX_RUBRIC_ELO_CI_HALF = 30;
+const MAX_AGENT_CAPABILITY_CI_HALF = 60;
 
 // Await settlement of every started filesystem promise before rethrowing so no mutation can outlive the publish lock
 export async function awaitAllSettledOrThrow<T>(promises: readonly Promise<T>[]): Promise<T[]> {
@@ -308,7 +310,6 @@ export const MANDATORY_ADAPTERS: readonly SourceAdapter[] = [
   aikidoAdapter,
   cweBenchAdapter,
   cyberArenaAdapter,
-  deepsweAdapter,
   epochAdapter,
   frontierHarnessAdapter,
   lmarenaAdapter,
@@ -320,7 +321,7 @@ export const MANDATORY_ADAPTERS: readonly SourceAdapter[] = [
   designarenaAdapter,
   writingFeedsAdapter,
   scaleSealAdapter,
-  weirdmlAdapter,
+  surgeAdapter,
   pricingAdapter,
 ];
 
@@ -599,7 +600,20 @@ export function extractAcceptedCellsFromSources(results: readonly CachedSourceFi
             ? obs.seRaw * 1.96
             : obs.ciHalfWidth;
 
-      if (bmMeta.isArena) {
+      if (bmMeta.id === "lmarena_agent") {
+        if (
+          obs.battleCount === null ||
+          !Number.isInteger(obs.battleCount) ||
+          obs.battleCount < MIN_ARENA_BATTLES ||
+          obs.ciLower === null ||
+          obs.ciUpper === null ||
+          obs.ciUpper <= obs.ciLower
+        ) {
+          continue;
+        }
+        const exactCiHalf = (obs.ciUpper - obs.ciLower) / 2;
+        if (exactCiHalf <= 0 || exactCiHalf > MAX_AGENT_CAPABILITY_CI_HALF) continue;
+      } else if (bmMeta.isArena) {
         if (obs.battleCount === null || !Number.isInteger(obs.battleCount)) continue;
         if (obs.sourceId !== "designarena") {
           // Non-DesignArena crowd arenas (LMArena) strictly require explicit published CI endpoints
@@ -608,7 +622,7 @@ export function extractAcceptedCellsFromSources(results: readonly CachedSourceFi
           if (
             obs.battleCount < MIN_ARENA_BATTLES ||
             exactCiHalf <= 0 ||
-            exactCiHalf > MAX_ELO_CI_HALF
+            exactCiHalf > MAX_ARENA_ELO_CI_HALF
           ) {
             continue;
           }
@@ -616,7 +630,7 @@ export function extractAcceptedCellsFromSources(results: readonly CachedSourceFi
           if (
             obs.battleCount < MIN_ARENA_BATTLES ||
             rawCiHalf <= 0 ||
-            rawCiHalf > MAX_ELO_CI_HALF
+            rawCiHalf > MAX_ARENA_ELO_CI_HALF
           ) {
             continue;
           }
@@ -624,7 +638,16 @@ export function extractAcceptedCellsFromSources(results: readonly CachedSourceFi
           continue;
         }
       } else if (bmMeta.scale === "elo") {
-        if (rawCiHalf === null || rawCiHalf <= 0 || rawCiHalf > MAX_ELO_CI_HALF) continue;
+        // Require explicit published CI endpoints matching live Elo adapters (containment checked above)
+        if (obs.ciLower === null || obs.ciUpper === null || obs.ciUpper <= obs.ciLower) continue;
+        const exactCiHalf = (obs.ciUpper - obs.ciLower) / 2;
+        const maxEloCi =
+          bmMeta.id === "aa_briefcase" || bmMeta.id === "gdpval_aa"
+            ? MAX_ARENA_ELO_CI_HALF
+            : MAX_RUBRIC_ELO_CI_HALF;
+        if (exactCiHalf <= 0 || exactCiHalf > maxEloCi) continue;
+      } else if (bmMeta.id === "lechmazur_writing") {
+        if (obs.ciLower === null || obs.ciUpper === null || obs.ciUpper <= obs.ciLower) continue;
       } else if (bmMeta.id === "tbench_4_1") {
         if (
           obs.battleCount === null ||
@@ -795,6 +818,8 @@ export function validateFrozenMajorEpochSnapshot(
   }
 
   const archiveMajor = parseEpochMajorNumber(filename);
+  const archiveShrinkageMode: ShrinkageMode =
+    archiveMajor !== null && archiveMajor < 2 ? "total" : "measurement";
   const publishedEpoch = publishedEpochByDomain?.get(snap.domainId) ?? domainMeta.epochVersion;
   const currentMajor = parseEpochMajorNumber(publishedEpoch);
   if (archiveMajor === null || currentMajor === null) {
@@ -1011,6 +1036,7 @@ export function validateFrozenMajorEpochSnapshot(
       weightByBenchmark: regimeWeights,
       anchorStats: snap.anchorStats,
       ...(rm.linkJointCov ? { linkJointCov: rm.linkJointCov } : {}),
+      shrinkageMode: archiveShrinkageMode,
     };
     // Always recompute missingOlderWeight strictly from frozen anchorStats.introducedAt so registry edits never disable archive checks
     const missingOlderByIdArchive = new Map<string, number>();
@@ -1061,6 +1087,7 @@ export function validateFrozenMajorEpochSnapshot(
         regimeWeights,
         snap.anchorStats,
         rm.linkJointCov,
+        archiveShrinkageMode,
       );
       const expectedImpMap = computeSliceImputationSensitivity(
         sliceConfigs,
@@ -1081,6 +1108,7 @@ export function validateFrozenMajorEpochSnapshot(
             snap.anchorStats,
             null,
             rm.linkJointCov,
+            archiveShrinkageMode,
           )
         : null;
       if (pf.harnessFilter === "all") {
@@ -1220,11 +1248,14 @@ export function validateFrozenMajorEpochSnapshot(
     }
     let weightedDeltaSum = 0;
     let totalAnchorW = 0;
+    const seenFrozenLineages = new Map<string, string>();
+    const requireV2Metadata = archiveMajor !== null && archiveMajor >= 2;
     for (const bmId of rm.activeBenchmarkIds) {
       const anchorKey = regime === "standardized" ? `${bmId}::standardized` : bmId;
       const anchor = snap.anchorStats[anchorKey];
       if (
         !anchor ||
+        anchor.benchmarkId !== bmId ||
         !Number.isFinite(anchor.mean) ||
         !Number.isFinite(anchor.sd) ||
         anchor.sd <= 0
@@ -1233,6 +1264,35 @@ export function validateFrozenMajorEpochSnapshot(
       } else {
         weightedDeltaSum += anchor.effectiveWeight * anchor.raschDelta;
         totalAnchorW += anchor.effectiveWeight;
+        if (requireV2Metadata) {
+          if (
+            anchor.redundancyFactor === undefined ||
+            !anchor.taskFamily ||
+            !anchor.datasetLineageId
+          ) {
+            errors.push(
+              `${filename} (${regime}): v${archiveMajor} anchor '${anchorKey}' missing required redundancyFactor, taskFamily, or datasetLineageId`,
+            );
+          } else {
+            const prevBm = seenFrozenLineages.get(anchor.datasetLineageId);
+            if (prevBm) {
+              errors.push(
+                `${filename} (${regime}): duplicate frozen datasetLineageId '${anchor.datasetLineageId}' on '${prevBm}' and '${bmId}'`,
+              );
+            } else {
+              seenFrozenLineages.set(anchor.datasetLineageId, bmId);
+            }
+            const expectedW = Math.min(
+              1,
+              Math.max(0.1, anchor.reliability * anchor.discrimination * anchor.redundancyFactor),
+            );
+            if (Math.abs(anchor.effectiveWeight - expectedW) > 1e-3) {
+              errors.push(
+                `${filename} (${regime}): anchor '${anchorKey}' effectiveWeight ${anchor.effectiveWeight} !== clamp(rho*phi*red) (${expectedW.toFixed(4)})`,
+              );
+            }
+          }
+        }
       }
     }
     if (totalAnchorW > 0 && Math.abs(weightedDeltaSum) > 1e-3) {
@@ -1315,12 +1375,18 @@ export function validateFrozenMajorEpochSnapshot(
         rm.tauModelSq,
         undefined,
         rm.linkJointCov,
+        archiveShrinkageMode,
       );
       if (!post?.exactSeRecomputable) {
         errors.push(
           `${filename}: ${cfg.id} posterior uncertainty cannot be recomputed from persisted SE metadata`,
         );
       } else {
+        if (cfg.eligibleForFrontier && post.infoReliability < MIN_FRONTIER_SHRINKAGE - 1e-6) {
+          errors.push(
+            `${filename}: eligible config '${cfg.id}' infoReliability ${post.infoReliability} < ${MIN_FRONTIER_SHRINKAGE}`,
+          );
+        }
         const withheldSet = new Set(rm.withheldBenchmarkIds);
         const calibratedIds = rm.activeBenchmarkIds.filter((id) => !withheldSet.has(id));
         const list = allStatsByRegime.get(cfg.harnessRegime) ?? [];
@@ -2219,6 +2285,7 @@ async function runIngestionLocked(
                   calibrationTauResidSq: regimeMeta.calibrationTauResidSq,
                   priorMean: regimeMeta.priorMean,
                   tauModelSq: regimeMeta.tauModelSq,
+                  ...(regimeMeta.linkJointCov ? { linkJointCov: regimeMeta.linkJointCov } : {}),
                 }
               : {}),
             priorAudit: null,

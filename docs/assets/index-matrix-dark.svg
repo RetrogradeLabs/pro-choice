@@ -42,7 +42,7 @@
         </g>
       </g>
       <text x="61" y="29" class="wordmark">prochoice</text>
-      <text x="932" y="28" text-anchor="end" class="meta">6 indices · 45 benchmarks · 2026-11-21</text>
+      <text x="932" y="28" text-anchor="end" class="meta">6 indices · 59 benchmarks · 2026-11-21</text>
       <line x1="0" y1="48" x2="960" y2="48" class="hairline" />
     </g>
 
@@ -55,21 +55,26 @@
     <!-- Row 1, Col 1: Coding -->
     <g id="cell-coding" transform="translate(0, 48)">
       <text x="28" y="36" class="domain">Coding<tspan dx="6" dy="-1" class="arrow">&#8594;</tspan></text>
-      <text x="28" y="57" class="tagline">Multi-file software engineering, CLI recovery,</text>
-      <text x="28" y="73" class="tagline">repository tasks, and scientific coding.</text>
+      <text x="28" y="57" class="tagline">Multi-file engineering, SRE operations,</text>
+      <text x="28" y="73" class="tagline">code migration, and scientific coding.</text>
 
       <g transform="translate(0, -40)">
-        <path class="spark-area" d="M348 100 L375.8 95 L382.8 89.3 L389.2 89 L391.3 86.2 L394.1 84.5 L399.8 82.7 L405.5 82.3 L405.7 78.5 L411.9 77.9 L417.1 75.5 L429.8 74.4 L444.6 73.7 L448 71.9 L448 70 L448 100 L348 100 Z" />
-        <path class="spark-line" d="M348 100 L375.8 95 L382.8 89.3 L389.2 89 L391.3 86.2 L394.1 84.5 L399.8 82.7 L405.5 82.3 L405.7 78.5 L411.9 77.9 L417.1 75.5 L429.8 74.4 L444.6 73.7 L448 71.9 L448 70" />
+        <path class="spark-area" d="M348 100 L372.7 96.3 L378.8 92.7 L384.5 89.6 L386.3 89.4 L388.9 86.8 L389.9 86.6 L393.9 85.8 L399 84.8 L399.1 80.2 L403 79.9 L404.6 79.8 L409.2 79.6 L409.8 77.7 L420.5 76.5 L425.1 75.9 L425.9 75.8 L431.4 75.5 L436.6 74.6 L436.6 73.6 L448 70 L448 100 L348 100 Z" />
+        <path class="spark-line" d="M348 100 L372.7 96.3 L378.8 92.7 L384.5 89.6 L386.3 89.4 L388.9 86.8 L389.9 86.6 L393.9 85.8 L399 84.8 L399.1 80.2 L403 79.9 L404.6 79.8 L409.2 79.6 L409.8 77.7 L420.5 76.5 L425.1 75.9 L425.9 75.8 L431.4 75.5 L436.6 74.6 L436.6 73.6 L448 70" />
         <circle cx="348" cy="100" r="1.8" class="spark-dot" />
-        <circle cx="375.8" cy="95" r="1.8" class="spark-dot" />
-        <circle cx="382.8" cy="89.3" r="1.8" class="spark-dot" />
-        <circle cx="391.3" cy="86.2" r="1.8" class="spark-dot" />
-        <circle cx="399.8" cy="82.7" r="1.8" class="spark-dot" />
-        <circle cx="405.7" cy="78.5" r="1.8" class="spark-dot" />
-        <circle cx="417.1" cy="75.5" r="1.8" class="spark-dot" />
-        <circle cx="429.8" cy="74.4" r="1.8" class="spark-dot" />
-        <circle cx="444.6" cy="73.7" r="1.8" class="spark-dot" />
+        <circle cx="372.7" cy="96.3" r="1.8" class="spark-dot" />
+        <circle cx="378.8" cy="92.7" r="1.8" class="spark-dot" />
+        <circle cx="384.5" cy="89.6" r="1.8" class="spark-dot" />
+        <circle cx="388.9" cy="86.8" r="1.8" class="spark-dot" />
+        <circle cx="393.9" cy="85.8" r="1.8" class="spark-dot" />
+        <circle cx="399" cy="84.8" r="1.8" class="spark-dot" />
+        <circle cx="399.1" cy="80.2" r="1.8" class="spark-dot" />
+        <circle cx="403" cy="79.9" r="1.8" class="spark-dot" />
+        <circle cx="409.2" cy="79.6" r="1.8" class="spark-dot" />
+        <circle cx="420.5" cy="76.5" r="1.8" class="spark-dot" />
+        <circle cx="425.1" cy="75.9" r="1.8" class="spark-dot" />
+        <circle cx="431.4" cy="75.5" r="1.8" class="spark-dot" />
+        <circle cx="436.6" cy="74.6" r="1.8" class="spark-dot" />
         <circle cx="448" cy="70" r="2.8" class="spark-end" />
       </g>
 
@@ -77,30 +82,30 @@
 
       <text x="28" y="116" class="label">Top score</text>
       <circle cx="105" cy="112" r="3.1" fill="#ff7769" />
-      <text x="116" y="116"><tspan class="top-name">Claude Opus 5.5</tspan><tspan dx="7" class="effort">Max</tspan></text>
-      <text x="452" y="116" text-anchor="end" class="top-val">77.5 · $10.0</text>
+      <text x="116" y="116"><tspan class="top-name">Claude Fable 5.2</tspan><tspan dx="7" class="effort">Max</tspan></text>
+      <text x="452" y="116" text-anchor="end" class="top-val">86.0 · $26.5</text>
 
       <text x="28" y="139" class="label">Best value</text>
       <rect x="102.2" y="132.2" width="5.6" height="5.6" fill="#2ac5a8" />
-      <text x="116" y="139"><tspan class="sec-name">GPT-6.2 Sol</tspan><tspan dx="7" class="effort">Medium</tspan></text>
-      <text x="452" y="139" text-anchor="end" class="sec-val">64.2 · $0.41</text>
+      <text x="116" y="139"><tspan class="sec-name">GPT-6.2 Sol</tspan><tspan dx="7" class="effort">Max</tspan></text>
+      <text x="452" y="139" text-anchor="end" class="sec-val">71.9 · $1.01</text>
     </g>
 
     <!-- Row 1, Col 2: Writing -->
     <g id="cell-writing" transform="translate(480, 48)">
       <text x="28" y="36" class="domain">Writing<tspan dx="6" dy="-1" class="arrow">&#8594;</tspan></text>
-      <text x="28" y="57" class="tagline">Creative fiction and rubric-graded writing for</text>
-      <text x="28" y="73" class="tagline">academic, business, legal, and marketing briefs.</text>
+      <text x="28" y="57" class="tagline">Creative fiction, longform narrative,</text>
+      <text x="28" y="73" class="tagline">and constrained professional writing.</text>
 
       <g transform="translate(-480, -40)">
-        <path class="spark-area" d="M828 100 L846.7 92.1 L874 88.2 L889.8 86.6 L896.4 79.8 L912.2 74 L928 70 L928 100 L828 100 Z" />
-        <path class="spark-line" d="M828 100 L846.7 92.1 L874 88.2 L889.8 86.6 L896.4 79.8 L912.2 74 L928 70" />
+        <path class="spark-area" d="M828 100 L874 96.5 L889.8 88.1 L896.4 87.1 L912.2 81.1 L917.3 76.1 L928 70 L928 100 L828 100 Z" />
+        <path class="spark-line" d="M828 100 L874 96.5 L889.8 88.1 L896.4 87.1 L912.2 81.1 L917.3 76.1 L928 70" />
         <circle cx="828" cy="100" r="1.8" class="spark-dot" />
-        <circle cx="846.7" cy="92.1" r="1.8" class="spark-dot" />
-        <circle cx="874" cy="88.2" r="1.8" class="spark-dot" />
-        <circle cx="889.8" cy="86.6" r="1.8" class="spark-dot" />
-        <circle cx="896.4" cy="79.8" r="1.8" class="spark-dot" />
-        <circle cx="912.2" cy="74" r="1.8" class="spark-dot" />
+        <circle cx="874" cy="96.5" r="1.8" class="spark-dot" />
+        <circle cx="889.8" cy="88.1" r="1.8" class="spark-dot" />
+        <circle cx="896.4" cy="87.1" r="1.8" class="spark-dot" />
+        <circle cx="912.2" cy="81.1" r="1.8" class="spark-dot" />
+        <circle cx="917.3" cy="76.1" r="1.8" class="spark-dot" />
         <circle cx="928" cy="70" r="2.8" class="spark-end" />
       </g>
 
@@ -109,29 +114,31 @@
       <text x="28" y="116" class="label">Top score</text>
       <rect x="102.2" y="109.2" width="5.6" height="5.6" fill="#2ac5a8" />
       <text x="116" y="116"><tspan class="top-name">GPT-6.2 Astra</tspan><tspan dx="7" class="effort">High</tspan></text>
-      <text x="452" y="116" text-anchor="end" class="top-val">79.2 · $0.24</text>
+      <text x="452" y="116" text-anchor="end" class="top-val">86.1 · $0.24</text>
 
       <text x="28" y="139" class="label">Best value</text>
       <circle cx="105" cy="135" r="3.1" fill="#ff7769" />
       <text x="116" y="139"><tspan class="sec-name">Claude Opus 5.5</tspan><tspan dx="7" class="effort">High</tspan></text>
-      <text x="452" y="139" text-anchor="end" class="sec-val">74.6 · $0.12</text>
+      <text x="452" y="139" text-anchor="end" class="sec-val">75.1 · $0.12</text>
     </g>
 
     <!-- Row 2, Col 1: Design -->
     <g id="cell-design" transform="translate(0, 209.5)">
       <text x="28" y="36" class="domain">Design<tspan dx="6" dy="-1" class="arrow">&#8594;</tspan></text>
-      <text x="28" y="57" class="tagline">Web interfaces, vector illustrations, documents,</text>
-      <text x="28" y="73" class="tagline">presentations, and motion graphics.</text>
+      <text x="28" y="57" class="tagline">Web apps, visual UI debugging, vector SVG,</text>
+      <text x="28" y="73" class="tagline">3D scenes, and motion graphics.</text>
 
       <g transform="translate(0, -200)">
-        <path class="spark-area" d="M348 260 L397.5 256.8 L402.2 246.5 L402.3 244.7 L412.1 240.7 L431.4 239 L431.9 238.5 L444.7 237.9 L448 230.6 L448 230 L448 260 L348 260 Z" />
-        <path class="spark-line" d="M348 260 L397.5 256.8 L402.2 246.5 L402.3 244.7 L412.1 240.7 L431.4 239 L431.9 238.5 L444.7 237.9 L448 230.6 L448 230" />
+        <path class="spark-area" d="M348 260 L362.6 250.5 L366.5 247.2 L385.6 243.6 L413.7 242.1 L414.5 241.7 L417.1 240.9 L419.4 240.1 L427.6 237.9 L427.8 237.8 L435.9 235.7 L448 230 L448 260 L348 260 Z" />
+        <path class="spark-line" d="M348 260 L362.6 250.5 L366.5 247.2 L385.6 243.6 L413.7 242.1 L414.5 241.7 L417.1 240.9 L419.4 240.1 L427.6 237.9 L427.8 237.8 L435.9 235.7 L448 230" />
         <circle cx="348" cy="260" r="1.8" class="spark-dot" />
-        <circle cx="397.5" cy="256.8" r="1.8" class="spark-dot" />
-        <circle cx="402.2" cy="246.5" r="1.8" class="spark-dot" />
-        <circle cx="412.1" cy="240.7" r="1.8" class="spark-dot" />
-        <circle cx="431.4" cy="239" r="1.8" class="spark-dot" />
-        <circle cx="444.7" cy="237.9" r="1.8" class="spark-dot" />
+        <circle cx="362.6" cy="250.5" r="1.8" class="spark-dot" />
+        <circle cx="366.5" cy="247.2" r="1.8" class="spark-dot" />
+        <circle cx="385.6" cy="243.6" r="1.8" class="spark-dot" />
+        <circle cx="413.7" cy="242.1" r="1.8" class="spark-dot" />
+        <circle cx="417.1" cy="240.9" r="1.8" class="spark-dot" />
+        <circle cx="427.6" cy="237.9" r="1.8" class="spark-dot" />
+        <circle cx="435.9" cy="235.7" r="1.8" class="spark-dot" />
         <circle cx="448" cy="230" r="2.8" class="spark-end" />
       </g>
 
@@ -139,32 +146,37 @@
 
       <text x="28" y="116" class="label">Top score</text>
       <circle cx="105" cy="112" r="3.1" fill="#ff7769" />
-      <text x="116" y="116"><tspan class="top-name">Claude Fable 5.2</tspan><tspan dx="7" class="effort">Extra high</tspan></text>
-      <text x="452" y="116" text-anchor="end" class="top-val">81.1 · $24.7</text>
+      <text x="116" y="116"><tspan class="top-name">Claude Opus 5.5</tspan><tspan dx="7" class="effort">Max</tspan></text>
+      <text x="452" y="116" text-anchor="end" class="top-val">83.7 · $1.19</text>
 
       <text x="28" y="139" class="label">Best value</text>
       <rect x="102.2" y="132.2" width="5.6" height="5.6" fill="#2ac5a8" />
-      <text x="116" y="139"><tspan class="sec-name">GPT-6.2 Sol</tspan><tspan dx="7" class="effort">Max</tspan></text>
-      <text x="452" y="139" text-anchor="end" class="sec-val">72.9 · $2.18</text>
+      <text x="116" y="139"><tspan class="sec-name">GPT-5.6 Luna</tspan><tspan dx="7" class="effort">Max</tspan></text>
+      <text x="452" y="139" text-anchor="end" class="sec-val">62.1 · $0.014</text>
     </g>
 
     <!-- Row 2, Col 2: Research -->
     <g id="cell-research" transform="translate(480, 209.5)">
       <text x="28" y="36" class="domain">Research<tspan dx="6" dy="-1" class="arrow">&#8594;</tspan></text>
-      <text x="28" y="57" class="tagline">Document analysis, long-context synthesis,</text>
-      <text x="28" y="73" class="tagline">scientific reasoning, math, and knowledge work.</text>
+      <text x="28" y="57" class="tagline">Long-context retrieval, frontier science,</text>
+      <text x="28" y="73" class="tagline">finance, legal, and biomedical research.</text>
 
       <g transform="translate(-480, -200)">
-        <path class="spark-area" d="M828 260 L852.7 257.3 L858.8 251.2 L868.9 247.8 L869.9 245.2 L879 244.2 L879.1 238.7 L883 236.7 L884.6 236.4 L895.3 235.4 L898.2 233.2 L900.5 232.5 L915.5 231.1 L921.2 230.9 L928 230 L928 260 L828 260 Z" />
-        <path class="spark-line" d="M828 260 L852.7 257.3 L858.8 251.2 L868.9 247.8 L869.9 245.2 L879 244.2 L879.1 238.7 L883 236.7 L884.6 236.4 L895.3 235.4 L898.2 233.2 L900.5 232.5 L915.5 231.1 L921.2 230.9 L928 230" />
+        <path class="spark-area" d="M828 260 L852.7 257.2 L858.8 251.5 L864.5 249.7 L866.3 249.5 L868.9 247.5 L869.9 244.3 L879 243.5 L879.1 238.5 L883 236.4 L895.3 235.5 L898.2 232.8 L905.1 232.4 L909.9 232.1 L921.2 230.7 L928 230 L928 260 L828 260 Z" />
+        <path class="spark-line" d="M828 260 L852.7 257.2 L858.8 251.5 L864.5 249.7 L866.3 249.5 L868.9 247.5 L869.9 244.3 L879 243.5 L879.1 238.5 L883 236.4 L895.3 235.5 L898.2 232.8 L905.1 232.4 L909.9 232.1 L921.2 230.7 L928 230" />
         <circle cx="828" cy="260" r="1.8" class="spark-dot" />
-        <circle cx="852.7" cy="257.3" r="1.8" class="spark-dot" />
-        <circle cx="858.8" cy="251.2" r="1.8" class="spark-dot" />
-        <circle cx="869.9" cy="245.2" r="1.8" class="spark-dot" />
-        <circle cx="879.1" cy="238.7" r="1.8" class="spark-dot" />
-        <circle cx="884.6" cy="236.4" r="1.8" class="spark-dot" />
-        <circle cx="898.2" cy="233.2" r="1.8" class="spark-dot" />
-        <circle cx="915.5" cy="231.1" r="1.8" class="spark-dot" />
+        <circle cx="852.7" cy="257.2" r="1.8" class="spark-dot" />
+        <circle cx="858.8" cy="251.5" r="1.8" class="spark-dot" />
+        <circle cx="864.5" cy="249.7" r="1.8" class="spark-dot" />
+        <circle cx="868.9" cy="247.5" r="1.8" class="spark-dot" />
+        <circle cx="879" cy="243.5" r="1.8" class="spark-dot" />
+        <circle cx="879.1" cy="238.5" r="1.8" class="spark-dot" />
+        <circle cx="883" cy="236.4" r="1.8" class="spark-dot" />
+        <circle cx="895.3" cy="235.5" r="1.8" class="spark-dot" />
+        <circle cx="898.2" cy="232.8" r="1.8" class="spark-dot" />
+        <circle cx="905.1" cy="232.4" r="1.8" class="spark-dot" />
+        <circle cx="909.9" cy="232.1" r="1.8" class="spark-dot" />
+        <circle cx="921.2" cy="230.7" r="1.8" class="spark-dot" />
         <circle cx="928" cy="230" r="2.8" class="spark-end" />
       </g>
 
@@ -173,29 +185,30 @@
       <text x="28" y="116" class="label">Top score</text>
       <circle cx="105" cy="112" r="3.1" fill="#ff7769" />
       <text x="116" y="116"><tspan class="top-name">Claude Fable 5.2</tspan><tspan dx="7" class="effort">Max</tspan></text>
-      <text x="452" y="116" text-anchor="end" class="top-val">81.7 · $26.5</text>
+      <text x="452" y="116" text-anchor="end" class="top-val">80.1 · $26.5</text>
 
       <text x="28" y="139" class="label">Best value</text>
       <rect x="102.2" y="132.2" width="5.6" height="5.6" fill="#2ac5a8" />
       <text x="116" y="139"><tspan class="sec-name">GPT-6.2 Sol</tspan><tspan dx="7" class="effort">High</tspan></text>
-      <text x="452" y="139" text-anchor="end" class="sec-val">71.3 · $0.56</text>
+      <text x="452" y="139" text-anchor="end" class="sec-val">70.4 · $0.56</text>
     </g>
 
     <!-- Row 3, Col 1: Cyber -->
     <g id="cell-cyber" transform="translate(0, 371)">
       <text x="28" y="36" class="domain">Cyber<tspan dx="6" dy="-1" class="arrow">&#8594;</tspan></text>
-      <text x="28" y="57" class="tagline">Vulnerability detection, security patching,</text>
+      <text x="28" y="57" class="tagline">Vulnerability detection, CVE patching,</text>
       <text x="28" y="73" class="tagline">and attack-defense CTF benchmarks.</text>
 
       <g transform="translate(0, -360)">
-        <path class="spark-area" d="M348 420 L350.5 406.9 L357.1 401.4 L371.1 400.3 L378.2 400.1 L399.1 399 L411 397.9 L441.7 395 L448 390 L448 420 L348 420 Z" />
-        <path class="spark-line" d="M348 420 L350.5 406.9 L357.1 401.4 L371.1 400.3 L378.2 400.1 L399.1 399 L411 397.9 L441.7 395 L448 390" />
+        <path class="spark-area" d="M348 420 L350.5 406.8 L357.1 401.6 L371.1 400.2 L378.2 399.8 L399.1 398.9 L411 397.8 L441.7 395 L448 390 L448 420 L348 420 Z" />
+        <path class="spark-line" d="M348 420 L350.5 406.8 L357.1 401.6 L371.1 400.2 L378.2 399.8 L399.1 398.9 L411 397.8 L441.7 395 L448 390" />
         <circle cx="348" cy="420" r="1.8" class="spark-dot" />
-        <circle cx="350.5" cy="406.9" r="1.8" class="spark-dot" />
-        <circle cx="357.1" cy="401.4" r="1.8" class="spark-dot" />
-        <circle cx="371.1" cy="400.3" r="1.8" class="spark-dot" />
-        <circle cx="399.1" cy="399" r="1.8" class="spark-dot" />
-        <circle cx="411" cy="397.9" r="1.8" class="spark-dot" />
+        <circle cx="350.5" cy="406.8" r="1.8" class="spark-dot" />
+        <circle cx="357.1" cy="401.6" r="1.8" class="spark-dot" />
+        <circle cx="371.1" cy="400.2" r="1.8" class="spark-dot" />
+        <circle cx="378.2" cy="399.8" r="1.8" class="spark-dot" />
+        <circle cx="399.1" cy="398.9" r="1.8" class="spark-dot" />
+        <circle cx="411" cy="397.8" r="1.8" class="spark-dot" />
         <circle cx="441.7" cy="395" r="1.8" class="spark-dot" />
         <circle cx="448" cy="390" r="2.8" class="spark-end" />
       </g>
@@ -205,12 +218,12 @@
       <text x="28" y="116" class="label">Top score</text>
       <circle cx="105" cy="112" r="3.1" fill="#ff7769" />
       <text x="116" y="116"><tspan class="top-name">Claude Fable 5.2</tspan><tspan dx="7" class="effort">High</tspan></text>
-      <text x="452" y="116" text-anchor="end" class="top-val">79.3 · $67.0</text>
+      <text x="452" y="116" text-anchor="end" class="top-val">81.4 · $67.0</text>
 
       <text x="28" y="139" class="label">Best value</text>
       <rect x="102.2" y="132.2" width="5.6" height="5.6" fill="#2ac5a8" />
       <text x="116" y="139"><tspan class="sec-name">GPT-6 Sol</tspan><tspan dx="7" class="effort">Medium</tspan></text>
-      <text x="452" y="139" text-anchor="end" class="sec-val">66.4 · $4.57</text>
+      <text x="452" y="139" text-anchor="end" class="sec-val">66.6 · $4.57</text>
     </g>
 
     <!-- Row 3, Col 2: Harnesses -->
@@ -220,11 +233,10 @@
       <text x="28" y="73" class="tagline">models and full model-plus-harness stacks.</text>
 
       <g transform="translate(-480, -360)">
-        <path class="spark-area" d="M828 420 L903.2 402.7 L905.5 400.5 L928 390 L928 420 L828 420 Z" />
-        <path class="spark-line" d="M828 420 L903.2 402.7 L905.5 400.5 L928 390" />
+        <path class="spark-area" d="M828 420 L912.5 400.7 L928 390 L928 420 L828 420 Z" />
+        <path class="spark-line" d="M828 420 L912.5 400.7 L928 390" />
         <circle cx="828" cy="420" r="1.8" class="spark-dot" />
-        <circle cx="903.2" cy="402.7" r="1.8" class="spark-dot" />
-        <circle cx="905.5" cy="400.5" r="1.8" class="spark-dot" />
+        <circle cx="912.5" cy="400.7" r="1.8" class="spark-dot" />
         <circle cx="928" cy="390" r="2.8" class="spark-end" />
       </g>
 
@@ -233,7 +245,7 @@
       <text x="28" y="116" class="label">Top score</text>
       <circle cx="105" cy="112" r="3.1" fill="#60a5fa" />
       <text x="116" y="116"><tspan class="top-name">OpenCode</tspan><tspan dx="7" class="effort">v2.2.6</tspan></text>
-      <text x="452" y="116" text-anchor="end" class="top-val">48.0% · $0.57</text>
+      <text x="452" y="116" text-anchor="end" class="top-val">48.0% · $0.55</text>
 
       <text x="28" y="139" class="label">Best value</text>
       <circle cx="105" cy="135" r="3.1" fill="#a6a298" />

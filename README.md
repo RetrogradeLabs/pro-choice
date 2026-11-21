@@ -19,16 +19,16 @@ Open-source LLM leaderboard and coding agent harness benchmark by [Retrograde La
 
 ## Live composite indices
 
-Snapshot `43237d0f0a7497fc`, updated `2026-11-21` from 18 live public benchmark and first-party pricing feeds. Default model picks cover the five Western providers shown on initial load; toggle DeepSeek, Moonshot, Alibaba, and Zhipu on [prochoice.industries](https://prochoice.industries) to compare all nine.
+Snapshot `cc83b00e9d94a671`, updated `2026-11-21` from 17 live public benchmark and first-party pricing feeds across 59 active benchmarks with unique dataset lineages within each domain. Default model picks cover the five Western providers shown on initial load; toggle DeepSeek, Moonshot, Alibaba, and Zhipu on [prochoice.industries](https://prochoice.industries) to compare all nine.
 
 | Composite index | Active benchmarks | Budget | Best value | Top score |
 | :--- | :---: | :--- | :--- | :--- |
-| [Coding](https://prochoice.industries/coding) | 9 | GPT-6 Luna at 30.6, \$0.0051 | GPT-6.2 Sol at 64.2, \$0.41 | Claude Opus 5.5 at 77.5, \$10.0 |
-| [Writing](https://prochoice.industries/writing) | 3 | GPT-6 Luna at 44.4, \$0.0030 | Claude Opus 5.5 at 74.6, \$0.12 | GPT-6.2 Astra at 79.2, \$0.24 |
-| [Design](https://prochoice.industries/design) | 3 | Muse Ember at 58.1, \$0.029 | GPT-6.2 Sol at 72.9, \$2.18 | Claude Fable 5.2 at 81.1, \$24.7 |
-| [Research](https://prochoice.industries/research) | 21 | GPT-6 Luna at 35.0, \$0.0051 | GPT-6.2 Sol at 71.3, \$0.56 | Claude Fable 5.2 at 81.7, \$26.5 |
-| [Cyber](https://prochoice.industries/cyber) | 3 | Gemini 3.7 Flash at 45.3, \$3.49 | GPT-6 Sol at 66.4, \$4.57 | Claude Fable 5.2 at 79.3, \$67.0 |
-| [Harnesses](https://prochoice.industries/harnesses) | 3 | OpenClaw at 38.7%, \$0.39 | Pi at 44.8%, \$0.52 | OpenCode at 48.0%, \$0.57 |
+| [Coding](https://prochoice.industries/coding) | 12 | GPT-6 Luna at 30.9, \$0.0051 | GPT-6.2 Sol at 71.9, \$1.01 | Claude Fable 5.2 at 86.0, \$26.5 |
+| [Writing](https://prochoice.industries/writing) | 5 | Muse Ember at 56.2, \$0.0030 | Claude Opus 5.5 at 75.1, \$0.12 | GPT-6.2 Astra at 86.1, \$0.24 |
+| [Design](https://prochoice.industries/design) | 8 | GPT-6 Luna at 46.1, \$0.0050 | GPT-5.6 Luna at 62.1, \$0.014 | Claude Opus 5.5 at 83.7, \$1.19 |
+| [Research](https://prochoice.industries/research) | 27 | GPT-6 Luna at 34.4, \$0.0051 | GPT-6.2 Sol at 70.4, \$0.56 | Claude Fable 5.2 at 80.1, \$26.5 |
+| [Cyber](https://prochoice.industries/cyber) | 3 | Gemini 3.7 Flash at 43.3, \$3.49 | GPT-6 Sol at 66.6, \$4.57 | Claude Fable 5.2 at 81.4, \$67.0 |
+| [Harnesses](https://prochoice.industries/harnesses) | 4 | OpenClaw at 38.8%, \$0.38 | Pi at 44.8%, \$0.52 | OpenCode at 48.0%, \$0.55 |
 
 ## Why ProChoice
 
@@ -68,8 +68,8 @@ Machine-readable discovery also ships at `/.well-known/api-catalog`, `/sitemap.x
 Every daily pipeline run executes the same deterministic psychometric and economic pipeline from raw cached upstream feeds:
 
 1. **Nine-provider allowlist.** Model leaderboards rank Anthropic, OpenAI, Google, SpaceXAI, Meta, DeepSeek, Moonshot, Alibaba, and Zhipu only, resolved through strict token-bounded aliases in `src/config/aliases.json`.
-2. **All 45 active benchmarks weighted by signal.** Zero shadow candidates sit on the shelf. Each active benchmark receives a frozen data-derived `effectiveWeight` in `[0.10, 1.00]` from empirical reliability and discrimination.
-3. **Equal-1.0 anchor standardization and REML Empirical Bayes pooling.** Raw scores align via provider-balanced anchor standardization, Kolen and Brennan Mean-Sigma overlap linking with joint-jackknife uncertainty, weighted two-way linear Rasch equating, and heteroscedastic REML Empirical Bayes shrinkage with a `B >= 0.50` eligibility floor.
+2. **All 59 active benchmarks weighted by signal and independence.** Zero shadow candidates sit on the shelf, and every dataset lineage is unique within its domain. Each active benchmark receives a frozen data-derived `effectiveWeight` in `[0.10, 1.00]` from Classical Test Theory reliability using Bhatia-Davis bounded task variance, uninflated-SE frontier discrimination, provider-balanced Kish construct-family and source redundancy, and uniform anchor-breadth dampening.
+3. **Provider-balanced anchor standardization and measurement-only REML Empirical Bayes denoising.** Raw scores align via provider-balanced anchor standardization, Kolen and Brennan Mean-Sigma overlap linking with joint-jackknife uncertainty, weighted two-way linear Rasch equating, and measurement-only heteroscedastic REML Empirical Bayes denoising that shrinks stochastic measurement and linking noise without penalizing newly released frontier models for incomplete benchmark coverage, gated by total information reliability `>= 0.50`.
 4. **Homogeneous cost axis and correlated Pareto bootstraps.** Missing task costs for non-retired models with verified first-party public API pricing are estimated on the domain's homogeneous cost axis through joint OLS plus isotonic effort-ladder regression. Log-normal cost uncertainty propagates through 10,000 correlated Monte Carlo draws to estimate frontier membership and knee probabilities.
 5. **Automated saturation retirement.** Daily CI computes Akhtar et al. ICML 2026 saturation indices, Arena-Hard 95% CI pairwise separability, leave-one-out composite rank stability, and 14-day sustained trigger checks inside immutable semantic MAJOR domain epochs under `data/epochs/`.
 
@@ -96,7 +96,7 @@ bun run verify
 
 `bun run sync` runs three stages in order:
 
-1. `bun run ingest` fetches all 18 mandatory upstream feeds, updates per-benchmark partitions under `data/raw/`, computes Rasch scores, Empirical Bayes shrinkage, monotone effort cost estimates, and bootstrap Pareto probabilities, and writes `data/snapshot.json`, `data/epochs/*.json`, and `data/unmapped.json`.
+1. `bun run ingest` fetches all 17 mandatory upstream feeds, updates per-benchmark partitions under `data/raw/`, computes Rasch scores, Empirical Bayes denoising, monotone effort cost estimates, and bootstrap Pareto probabilities, and writes `data/snapshot.json`, `data/epochs/*.json`, and `data/unmapped.json`.
 2. `bun run audit:lifecycle` computes daily saturation indices, pairwise separability, leave-one-out stability, and cross-domain correlations into `data/lifecycle.json`.
 3. `bun run validate:snapshot` verifies schema validity, canonical hash match, immutable MAJOR epoch baselines, full raw-to-release recomputation, and source freshness.
 
@@ -115,9 +115,9 @@ See [`.env.example`](.env.example):
 | :--- | :--- |
 | `src/app/` | Next.js 16 App Router pages, static domain routes, OpenGraph cards, `/api/v1/*`, `/llms.txt`, and `/openapi.json` |
 | `src/components/` | Pareto SVG charts, verdict placards, multi-row tables, harness tabs, and methodology monograph drawer |
-| `src/config/` | Provider allowlist, 45 benchmark definitions, effort defaults, and strict model aliases |
+| `src/config/` | Provider allowlist, 59 benchmark definitions, effort defaults, and strict model aliases |
 | `src/lib/math/` | Anchor standardization, linear Rasch solver, REML Empirical Bayes, isotonic cost regression, and Pareto bootstraps |
-| `scripts/ingest/` | 18 mandatory upstream source adapters, lifecycle saturation auditor, and dual-runtime snapshot validator |
+| `scripts/ingest/` | 17 mandatory upstream source adapters, lifecycle saturation auditor, and dual-runtime snapshot validator |
 | `data/` | Partitioned raw caches, canonical `snapshot.json`, `lifecycle.json`, and append-only MAJOR `epochs/*.json` |
 
 ## Automation
@@ -128,7 +128,7 @@ See [`.env.example`](.env.example):
 ## Licenses and attribution
 
 - **Source code:** [MIT License](LICENSE), Copyright 2026 Retrograde Labs.
-- **Compiled datasets and API outputs:** [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) with upstream attribution to every source benchmark, including FrontierCode, Terminal-Bench, DeepSWE, SWE-bench Pro, LiveBench, SciCode, LMArena, EQ-Bench, DesignArena, Vals AI, Artificial Analysis, Epoch AI, FrontierMath, FrontierHarness, and Harness Leaderboard.
+- **Compiled datasets and API outputs:** [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) with upstream attribution to every source benchmark, including FrontierCode, Terminal-Bench, DeepSWE, CursorBench, LiveBench, SciCode, LMArena, EQ-Bench, Lech Mazur, DesignArena, Surge AI, Scale SEAL PRBench, Vals AI, Artificial Analysis, Epoch AI, CWE-bench, CyberArena, Aikido Arena, VulcanBench, FrontierHarness, and Harness Leaderboard.
 
 ## Contributing
 
@@ -142,7 +142,7 @@ If you use ProChoice rankings, methodology, or compiled snapshots in papers or e
 @software{retrograde_labs_prochoice_2026,
   author  = {{Retrograde Labs}},
   title   = {{ProChoice: Composite LLM and Coding Agent Harness Pareto Leaderboards}},
-  version = {1.0.0},
+  version = {2.0.0},
   year    = {2026},
   url     = {https://prochoice.industries},
   note    = {Source code: https://github.com/RetrogradeLabs/pro-choice}

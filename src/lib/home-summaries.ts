@@ -79,11 +79,11 @@ export function buildHomeSummaries(
   const harnessCount = pooledSlice?.entries.length ?? 0;
 
   const taglines: Record<DomainId, string> = {
-    coding: "Multi-file engineering, CLI recovery, and scientific coding.",
-    writing: "Creative fiction and long-form narrative writing.",
-    design_code: "Web apps, interface design, and visual layouts.",
-    research: "Document analysis, scientific reasoning, and knowledge work.",
-    cyber: "Vulnerability detection, security patching, and attack-defense CTF.",
+    coding: "Multi-file engineering, SRE operations, code migration, and scientific coding.",
+    writing: "Creative fiction, longform narrative, and constrained professional writing.",
+    design_code: "Web apps, visual UI debugging, vector SVG, 3D, and motion graphics.",
+    research: "Long-context retrieval, frontier science, finance, legal, and biomedical research.",
+    cyber: "Vulnerability detection, CVE patching, and attack-defense CTF.",
     harnesses: "Coding agents compared on fixed test models and full stacks.",
   };
 

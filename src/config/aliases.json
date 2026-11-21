@@ -583,7 +583,7 @@
     "displayName": "Muse Glimmer",
     "releaseDate": null,
     "defaultEffort": "high",
-    "patterns": ["muse[\\s_-]+glimmer"]
+    "patterns": ["muse[\\s_-]+glimmer(?:[\\s_-]+30b)?"]
   },
   {
     "provider": "meta",

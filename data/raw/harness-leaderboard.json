@@ -3,10 +3,10 @@
     "sourceId": "harness-leaderboard",
     "label": "Harness Leaderboard (TB 2.1 + DeepSWE)",
     "status": "ok",
-    "fetchedAt": "2026-11-21T06:39:49.514Z",
-    "lastHealthyAt": "2026-11-21T06:39:49.514Z",
+    "fetchedAt": "2026-11-21T20:47:49.660Z",
+    "lastHealthyAt": "2026-11-21T20:47:49.660Z",
     "staleDays": 0,
-    "rowCount": 60,
+    "rowCount": 65,
     "license": "Apache-2.0",
     "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard",
     "message": null,
@@ -14,11 +14,11 @@
       {
         "benchmarkId": "__harness_leaderboard__",
         "status": "ok",
-        "rowCount": 60,
+        "rowCount": 65,
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-21T06:39:49.514Z",
+        "lastHealthyAt": "2026-11-21T20:47:49.660Z",
         "message": null
       }
     ],
@@ -28,8 +28,8 @@
     "observations": [],
     "pricing": [],
     "harnessLeaderboard": {
-      "sourceVersion": "0.1.10",
-      "upstreamGeneratedAt": "2026-11-21T06:38:42Z",
+      "sourceVersion": "0.1.11",
+      "upstreamGeneratedAt": "2026-11-21T20:46:51Z",
       "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard",
       "slices": [
         {
@@ -498,6 +498,52 @@
               ]
             },
             {
+              "harnessId": "oh-my-pi",
+              "name": "oh-my-pi",
+              "vendor": "Stencil Labs",
+              "color": "#F97316",
+              "version": "18.18.3",
+              "passRate": 45.47,
+              "ciLower": 39.17,
+              "ciUpper": 51.92,
+              "costPerTrialUsd": 0.7652,
+              "costPerPassUsd": 1.887,
+              "passAll3Rate": 26.85,
+              "tokensPerTrial": 13280000,
+              "agentSecondsPerTrial": 1760,
+              "nScored": 3564,
+              "onFrontier": false,
+              "dominatedById": "pi",
+              "scoreDeficit": 3.92,
+              "costRatio": 1.6,
+              "benchmarks": [
+                {
+                  "benchmarkId": "deep-swe",
+                  "name": "DeepSWE v1.1",
+                  "passRate": 37.91,
+                  "ciLower": 30.28,
+                  "ciUpper": 46.34,
+                  "ciIsUpperBound": true,
+                  "passAll3Rate": 16.78,
+                  "costPerTrialUsd": 1.259,
+                  "nTasks": 111,
+                  "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
+                },
+                {
+                  "benchmarkId": "terminal-bench-2.1",
+                  "name": "Terminal-Bench 2.1",
+                  "passRate": 53.02,
+                  "ciLower": 42.99,
+                  "ciUpper": 62.79,
+                  "ciIsUpperBound": true,
+                  "passAll3Rate": 36.93,
+                  "costPerTrialUsd": 0.1351,
+                  "nTasks": 87,
+                  "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
+                }
+              ]
+            },
+            {
               "harnessId": "qwen-code",
               "name": "Qwen Code",
               "vendor": "Alibaba",
@@ -821,6 +867,52 @@
                   "ciIsUpperBound": false,
                   "passAll3Rate": null,
                   "costPerTrialUsd": 0.0397,
+                  "nTasks": 87,
+                  "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
+                }
+              ]
+            },
+            {
+              "harnessId": "oh-my-pi",
+              "name": "oh-my-pi",
+              "vendor": "Stencil Labs",
+              "color": "#F97316",
+              "version": "18.18.3",
+              "passRate": 19.95,
+              "ciLower": 15.14,
+              "ciUpper": 26.1,
+              "costPerTrialUsd": 0.1947,
+              "costPerPassUsd": 1.052,
+              "passAll3Rate": 11.57,
+              "tokensPerTrial": 19110000,
+              "agentSecondsPerTrial": 2189,
+              "nScored": 594,
+              "onFrontier": true,
+              "dominatedById": null,
+              "scoreDeficit": null,
+              "costRatio": null,
+              "benchmarks": [
+                {
+                  "benchmarkId": "deep-swe",
+                  "name": "DeepSWE v1.1",
+                  "passRate": 8.11,
+                  "ciLower": 4.32,
+                  "ciUpper": 14.69,
+                  "ciIsUpperBound": false,
+                  "passAll3Rate": 3.6,
+                  "costPerTrialUsd": 0.3254,
+                  "nTasks": 111,
+                  "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
+                },
+                {
+                  "benchmarkId": "terminal-bench-2.1",
+                  "name": "Terminal-Bench 2.1",
+                  "passRate": 31.8,
+                  "ciLower": 22.96,
+                  "ciUpper": 42.18,
+                  "ciIsUpperBound": false,
+                  "passAll3Rate": 19.54,
+                  "costPerTrialUsd": 0.02805,
                   "nTasks": 87,
                   "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
                 }
@@ -1706,6 +1798,52 @@
                   "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
                 }
               ]
+            },
+            {
+              "harnessId": "oh-my-pi",
+              "name": "oh-my-pi",
+              "vendor": "Stencil Labs",
+              "color": "#F97316",
+              "version": "18.18.3",
+              "passRate": 61.47,
+              "ciLower": 54.49,
+              "ciUpper": 67.79,
+              "costPerTrialUsd": 0.1036,
+              "costPerPassUsd": 0.1701,
+              "passAll3Rate": 39.45,
+              "tokensPerTrial": 7460000,
+              "agentSecondsPerTrial": 831.1,
+              "nScored": 1188,
+              "onFrontier": false,
+              "dominatedById": "openclaw",
+              "scoreDeficit": 0.66,
+              "costRatio": 1.18,
+              "benchmarks": [
+                {
+                  "benchmarkId": "deep-swe",
+                  "name": "DeepSWE v1.1",
+                  "passRate": 56.46,
+                  "ciLower": 47.17,
+                  "ciUpper": 65.31,
+                  "ciIsUpperBound": true,
+                  "passAll3Rate": 30.63,
+                  "costPerTrialUsd": 0.1522,
+                  "nTasks": 111,
+                  "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
+                },
+                {
+                  "benchmarkId": "terminal-bench-2.1",
+                  "name": "Terminal-Bench 2.1",
+                  "passRate": 66.48,
+                  "ciLower": 56.05,
+                  "ciUpper": 75.51,
+                  "ciIsUpperBound": true,
+                  "passAll3Rate": 48.28,
+                  "costPerTrialUsd": 0.04159,
+                  "nTasks": 87,
+                  "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
+                }
+              ]
             }
           ]
         },
@@ -2169,6 +2307,52 @@
                   "ciIsUpperBound": false,
                   "passAll3Rate": 36.78,
                   "costPerTrialUsd": 0.4659,
+                  "nTasks": 87,
+                  "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
+                }
+              ]
+            },
+            {
+              "harnessId": "oh-my-pi",
+              "name": "oh-my-pi",
+              "vendor": "Stencil Labs",
+              "color": "#F97316",
+              "version": "18.18.3",
+              "passRate": 44.07,
+              "ciLower": 37.42,
+              "ciUpper": 50.95,
+              "costPerTrialUsd": 2.609,
+              "costPerPassUsd": 6.053,
+              "passAll3Rate": 20.84,
+              "tokensPerTrial": 23210000,
+              "agentSecondsPerTrial": 2735,
+              "nScored": 594,
+              "onFrontier": false,
+              "dominatedById": "codex",
+              "scoreDeficit": 11.86,
+              "costRatio": 1.65,
+              "benchmarks": [
+                {
+                  "benchmarkId": "deep-swe",
+                  "name": "DeepSWE v1.1",
+                  "passRate": 36.04,
+                  "ciLower": 27.71,
+                  "ciUpper": 45.3,
+                  "ciIsUpperBound": false,
+                  "passAll3Rate": 7.21,
+                  "costPerTrialUsd": 4.315,
+                  "nTasks": 111,
+                  "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
+                },
+                {
+                  "benchmarkId": "terminal-bench-2.1",
+                  "name": "Terminal-Bench 2.1",
+                  "passRate": 52.11,
+                  "ciLower": 41.74,
+                  "ciUpper": 62.29,
+                  "ciIsUpperBound": false,
+                  "passAll3Rate": 34.48,
+                  "costPerTrialUsd": 0.4324,
                   "nTasks": 87,
                   "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
                 }
@@ -2728,6 +2912,52 @@
                   "ciIsUpperBound": true,
                   "passAll3Rate": 44.83,
                   "costPerTrialUsd": 0.046,
+                  "nTasks": 87,
+                  "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
+                }
+              ]
+            },
+            {
+              "harnessId": "oh-my-pi",
+              "name": "oh-my-pi",
+              "vendor": "Stencil Labs",
+              "color": "#F97316",
+              "version": "18.18.3",
+              "passRate": 56.37,
+              "ciLower": 49.42,
+              "ciUpper": 62.92,
+              "costPerTrialUsd": 0.1534,
+              "costPerPassUsd": 0.2737,
+              "passAll3Rate": 35.54,
+              "tokensPerTrial": 3349000,
+              "agentSecondsPerTrial": 1286,
+              "nScored": 1188,
+              "onFrontier": false,
+              "dominatedById": "pi",
+              "scoreDeficit": 5.68,
+              "costRatio": 1.56,
+              "benchmarks": [
+                {
+                  "benchmarkId": "deep-swe",
+                  "name": "DeepSWE v1.1",
+                  "passRate": 51.05,
+                  "ciLower": 41.93,
+                  "ciUpper": 60.09,
+                  "ciIsUpperBound": true,
+                  "passAll3Rate": 25.68,
+                  "costPerTrialUsd": 0.2436,
+                  "nTasks": 111,
+                  "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
+                },
+                {
+                  "benchmarkId": "terminal-bench-2.1",
+                  "name": "Terminal-Bench 2.1",
+                  "passRate": 61.69,
+                  "ciLower": 51.21,
+                  "ciUpper": 71.18,
+                  "ciIsUpperBound": true,
+                  "passAll3Rate": 45.4,
+                  "costPerTrialUsd": 0.03844,
                   "nTasks": 87,
                   "sourceUrl": "https://huggingface.co/spaces/joelniklaus/harness-leaderboard"
                 }

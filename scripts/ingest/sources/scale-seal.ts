@@ -3,6 +3,7 @@ import type { DomainId, HarnessRegime, RawObservation } from "../../../src/lib/s
 import {
   extractRscText,
   fetchText,
+  observationsMatchExact,
   parseBalancedJson,
   parseIsoDate,
   parseNumeric,
@@ -10,7 +11,7 @@ import {
 } from "../http.ts";
 import type { PartitionStats, SourceAdapter } from "../types.ts";
 
-const SEAL_SWE_PRO_URL = "https://scale.com/leaderboard/swe_bench_pro_public_v2";
+const SEAL_PRBENCH_URL = "https://scale.com/leaderboard/prbench";
 
 interface SealEntry {
   model?: string;
@@ -28,7 +29,7 @@ interface SealVariant {
 }
 
 interface SealFeedSpec {
-  pageKey: "swePro";
+  pageKey: "prbench";
   url: string;
   variantKey: string;
   label: string;
@@ -37,21 +38,33 @@ interface SealFeedSpec {
   domainId: DomainId;
   harnessRegime: HarnessRegime;
   defaultHarness: string;
-  requireStandardizedSweHarness?: boolean;
+  stripOnePassAgent?: boolean;
 }
 
 const SEAL_FEEDS: readonly SealFeedSpec[] = [
   {
-    pageKey: "swePro",
-    url: SEAL_SWE_PRO_URL,
-    variantKey: "full",
-    label: "SWE-bench Pro v2",
-    benchmarkId: "swe_bench_pro_v2",
-    version: "2.0",
-    domainId: "coding",
-    harnessRegime: "standardized",
-    defaultHarness: "mini-SWE-agent",
-    requireStandardizedSweHarness: true,
+    pageKey: "prbench",
+    url: SEAL_PRBENCH_URL,
+    variantKey: "finance",
+    label: "PRBench Finance",
+    benchmarkId: "scale_prbench_finance",
+    version: "1.0",
+    domainId: "research",
+    harnessRegime: "native",
+    defaultHarness: "Scale one-pass-agent",
+    stripOnePassAgent: true,
+  },
+  {
+    pageKey: "prbench",
+    url: SEAL_PRBENCH_URL,
+    variantKey: "legal",
+    label: "PRBench Legal",
+    benchmarkId: "scale_prbench_legal",
+    version: "1.0",
+    domainId: "research",
+    harnessRegime: "native",
+    defaultHarness: "Scale one-pass-agent",
+    stripOnePassAgent: true,
   },
 ];
 
@@ -109,16 +122,16 @@ function safeSealProvider(rawCompany: string | null, modelTrimmed: string): stri
 
 export const scaleSealAdapter: SourceAdapter = {
   id: "scale-seal",
-  label: "Scale SEAL (SWE-bench Pro v2)",
+  label: "Scale SEAL (PRBench Finance & Legal)",
   license: "Public Research Leaderboard",
-  sourceUrl: SEAL_SWE_PRO_URL,
+  sourceUrl: SEAL_PRBENCH_URL,
   expectedBenchmarks: SEAL_FEEDS.map((f) => f.benchmarkId),
   expectsPricing: false,
   async fetchLive(nowIso) {
-    const [sweProRes] = await Promise.allSettled([fetchText(SEAL_SWE_PRO_URL)]);
+    const [prbenchRes] = await Promise.allSettled([fetchText(SEAL_PRBENCH_URL)]);
 
     const resByPage: Record<SealFeedSpec["pageKey"], PromiseSettledResult<string>> = {
-      swePro: sweProRes,
+      prbench: prbenchRes,
     };
     const rscByPage = new Map<SealFeedSpec["pageKey"], string>();
     const errByPage = new Map<SealFeedSpec["pageKey"], string>();
@@ -139,6 +152,7 @@ export const scaleSealAdapter: SourceAdapter = {
 
     const observations: RawObservation[] = [];
     const partitionStats: Record<string, PartitionStats> = {};
+    const disqualifiedByBenchmark: Record<string, string[]> = {};
 
     for (const spec of SEAL_FEEDS) {
       const st: PartitionStats = { attempted: 0, rejected: 0, excluded: 0 };
@@ -159,7 +173,7 @@ export const scaleSealAdapter: SourceAdapter = {
         continue;
       }
 
-      const seenRowIds = new Set<string>();
+      const candidatesByRowId = new Map<string, RawObservation[]>();
       for (const entry of entries) {
         st.attempted++;
         if (!entry || typeof entry !== "object") {
@@ -181,47 +195,53 @@ export const scaleSealAdapter: SourceAdapter = {
         }
 
         const modelTrimmed = entry.model.trim();
-        let observedHarness = spec.defaultHarness;
-        if (spec.requireStandardizedSweHarness) {
-          const parenTokens = [...modelTrimmed.matchAll(/\(([^)]+)\)/g)]
+        let cleanModelName = modelTrimmed;
+        const observedHarness = spec.defaultHarness;
+        if (spec.stripOnePassAgent) {
+          // Strip PRBench's uniform standardized "one-pass-agent" token inside standalone or compound parentheticals
+          const nonStandardParens = [...modelTrimmed.matchAll(/\(([^)]+)\)/g)]
             .flatMap((m) => (m[1] ?? "").split(/[,/]+/))
             .map((t) => t.trim())
             .filter(
               (t) =>
                 t.length > 0 &&
+                !/^one[\s_-]?pass[\s_-]?agent$/i.test(t) &&
                 parseExplicitEffort(t, false) === null &&
                 !/^(?:202\d-\d{2}-\d{2}|202\d\d{4}|\d{4})$/.test(t),
             );
-          if (
-            parenTokens.length > 0 &&
-            !parenTokens.every((t) => /^mini[\s_-]?swe[\s_-]?agent$/i.test(t))
-          ) {
+          if (nonStandardParens.length > 0) {
             st.excluded++;
             continue;
           }
-          if (parenTokens.length > 0) observedHarness = parenTokens.join(", ");
+          cleanModelName = modelTrimmed
+            .replace(/\(([^)]+)\)/g, (_full, inner: string) => {
+              const kept = inner
+                .split(/[,/]+/)
+                .map((t) => t.trim())
+                .filter((t) => t.length > 0 && !/^one[\s_-]?pass[\s_-]?agent$/i.test(t));
+              return kept.length > 0 ? `(${kept.join(", ")})` : "";
+            })
+            .replace(/\s+/g, " ")
+            .trim();
         }
 
         const rawCompany = typeof entry.company === "string" ? entry.company.trim() || null : null;
         const ciHalf = parsePositive(entry.confidenceInterval_upper);
         const sourceRowId = `seal:${spec.benchmarkId}:${spec.variantKey}:${modelTrimmed}`;
-        if (seenRowIds.has(sourceRowId)) continue;
-        seenRowIds.add(sourceRowId);
-
-        observations.push({
+        const obs: RawObservation = {
           sourceId: "scale-seal",
           sourceRowId,
           benchmarkId: spec.benchmarkId,
           benchmarkVersion: spec.version,
           domainId: spec.domainId,
-          rawModelName: modelTrimmed,
-          rawProvider: safeSealProvider(rawCompany, modelTrimmed),
+          rawModelName: cleanModelName,
+          rawProvider: safeSealProvider(rawCompany, cleanModelName),
           rawEffort: null,
           rawHarness: null,
           observedHarness,
           harnessRegime: spec.harnessRegime,
           rawScore: Number(score.toFixed(2)),
-          seRaw: ciHalf !== null ? Number((ciHalf / 1.96).toFixed(6)) : null,
+          seRaw: null,
           ciHalfWidth: ciHalf !== null ? Number(ciHalf.toFixed(4)) : null,
           ciLower: null,
           ciUpper: null,
@@ -233,10 +253,34 @@ export const scaleSealAdapter: SourceAdapter = {
           evalDate: parseIsoDate(entry.createdAt, nowIso),
           publishedDate: null,
           sourceUrl: spec.url,
-        });
+        };
+        const list = candidatesByRowId.get(sourceRowId) ?? [];
+        list.push(obs);
+        candidatesByRowId.set(sourceRowId, list);
+      }
+
+      const disqualifiedIds: string[] = [];
+      for (const [rowId, list] of candidatesByRowId.entries()) {
+        const first = list[0]!;
+        if (list.length > 1 && !list.every((cand) => observationsMatchExact(first, cand))) {
+          st.rejected += list.length;
+          disqualifiedIds.push(rowId);
+          continue;
+        }
+        observations.push(first);
+      }
+      if (disqualifiedIds.length > 0) {
+        disqualifiedByBenchmark[spec.benchmarkId] = disqualifiedIds;
       }
     }
 
-    return { observations, pricing: [], partitionStats };
+    return {
+      observations,
+      pricing: [],
+      partitionStats,
+      ...(Object.keys(disqualifiedByBenchmark).length > 0
+        ? { disqualifiedSourceRowIdsByBenchmark: disqualifiedByBenchmark }
+        : {}),
+    };
   },
 };

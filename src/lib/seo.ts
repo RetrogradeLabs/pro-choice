@@ -62,8 +62,9 @@ const DOMAIN_KEYWORDS: Readonly<Record<DomainId, readonly string[]>> = {
     "AI coding benchmarks",
     "FrontierCode",
     "Terminal-Bench",
-    "DeepSWE",
-    "SWE-bench Pro",
+    "CursorBench",
+    "SRE-Bench",
+    "Sudo-L7",
     "coding model cost comparison",
   ],
   writing: [
@@ -72,6 +73,7 @@ const DOMAIN_KEYWORDS: Readonly<Record<DomainId, readonly string[]>> = {
     "creative writing AI benchmarks",
     "EQ-Bench",
     "LMArena creative writing",
+    "ComplexConstraints",
     "LLM writing cost comparison",
   ],
   design_code: [
@@ -81,15 +83,18 @@ const DOMAIN_KEYWORDS: Readonly<Record<DomainId, readonly string[]>> = {
     "DesignArena",
     "WebDev Arena",
     "Vals Vibe Code",
+    "Code2Video",
+    "SWE-bench Multimodal",
   ],
   research: [
     "LLM research leaderboard",
     "best reasoning LLM",
     "AI research benchmarks",
     "GDPval-AA",
-    "GPQA",
-    "HLE",
-    "FrontierMath",
+    "HLE-Diamond",
+    "PRBench",
+    "Riemann Bench",
+    "Vals Finance Agent",
     "research LLM cost comparison",
   ],
   cyber: [
@@ -104,6 +109,7 @@ const DOMAIN_KEYWORDS: Readonly<Record<DomainId, readonly string[]>> = {
     "best AI coding agent",
     "FrontierHarness",
     "Terminal-Bench",
+    "DeepSWE v1.1",
     "Claude Code vs Codex vs OpenCode",
     "coding agent cost comparison",
   ],
@@ -368,7 +374,7 @@ export function buildDomainMetadata(domainId: DomainId, snapshot: ProChoiceSnaps
 
 export function buildHomeMetadata(snapshot: ProChoiceSnapshot): Metadata {
   const updated = formatUtcDate(snapshot.generatedAt);
-  const description = `Compare frontier LLMs and 25 coding agent harnesses across 6 composite indices and 45 live benchmarks by score and real dollar cost. Updated ${updated}.`;
+  const description = `Compare frontier LLMs and 25 coding agent harnesses across 6 composite indices and ${BENCHMARKS.length} live benchmarks by score and real dollar cost. Updated ${updated}.`;
   const ogImageUrl = `${SITE_URL}/opengraph-image`;
 
   return {
@@ -531,7 +537,7 @@ export function buildDomainJsonLd(
         measurementTechnique:
           domainId === "harnesses"
             ? "Controlled multi-benchmark pass rate and dollar cost per run merged across FrontierHarness v1.1 and Harness Leaderboard."
-            : "Equal-1.0 anchor standardization with connected heteroscedastic REML Empirical Bayes pooling and bootstrap Pareto frontier analysis.",
+            : "Provider-balanced anchor standardization with reliability, discrimination, and construct-family redundancy weights, heteroscedastic REML Empirical Bayes pooling, and bootstrap Pareto frontier analysis.",
         variableMeasured: [
           domainId === "harnesses" ? "Controlled pass rate (%)" : "Composite benchmark score",
           meta.costAxisLabel,
@@ -721,7 +727,7 @@ export function renderStaticPageMarkdown(
       "",
       `> Built by ${ORG_NAME} (${ORG_URL}) to rank frontier language models and coding agent harnesses by empirical score and real dollar cost.`,
       "",
-      "ProChoice ingests 18 public benchmark and first-party pricing feeds daily, aligns 45 active benchmarks onto shared domain scales via equal-1.0 anchor standardization and heteroscedastic REML Empirical Bayes pooling, and computes cost-quality Pareto frontiers across six domains: Coding, Writing, Design, Research, Cyber, and Harnesses.",
+      `ProChoice ingests 17 public benchmark and first-party pricing feeds daily, aligns ${BENCHMARKS.length} active benchmarks onto shared domain scales with reliability, discrimination, anchor breadth, and construct-family redundancy weights plus measurement-only heteroscedastic REML Empirical Bayes denoising, and computes cost-quality Pareto frontiers across six domains: Coding, Writing, Design, Research, Cyber, and Harnesses.`,
       "",
       `- Organization: ${ORG_NAME} (${ORG_URL})`,
       `- Source repository: ${REPO_URL} (MIT)`,
@@ -790,7 +796,7 @@ export function renderLlmsTxt(
   const lines: string[] = [
     `# ${SITE_NAME}`,
     "",
-    `> ${SITE_DESCRIPTION} Updated daily from 18 public benchmark and pricing sources.`,
+    `> ${SITE_DESCRIPTION} Updated daily from 17 public benchmark and pricing sources.`,
     "",
     "## When to use ProChoice",
     "",

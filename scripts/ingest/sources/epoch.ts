@@ -3,7 +3,9 @@ import Papa from "papaparse";
 import {
   isRegisteredModelExact,
   parseStrictEffortMetadata,
+  parseUniqueEffortFromText,
   resolveExplicitHarness,
+  resolveModelSlugFromString,
 } from "../../../src/lib/math/canonicalize.ts";
 import type { DomainId, HarnessRegime, RawObservation } from "../../../src/lib/schema.ts";
 import {
@@ -166,19 +168,19 @@ const EPOCH_FEEDS: readonly EpochFeedSpec[] = [
     sourceUrl: "https://www.frontierswe.com/",
   },
   {
-    csvFile: "posttrainbench_external.csv",
-    benchmarkId: "epoch_posttrainbench",
-    domainId: "harnesses",
-    harnessRegime: "native",
-    observedHarness: "PostTrainBench",
-    scoreCol: "Average (%)",
+    csvFile: "cursorbench_external.csv",
+    benchmarkId: "epoch_cursorbench",
+    domainId: "coding",
+    harnessRegime: "standardized",
+    observedHarness: "Cursor",
+    scoreCol: "Score",
     scaleFactor: 100,
     maxScore: 100,
     stderrCol: null,
-    harnessCol: "Scaffold",
-    costCol: null,
+    effortCol: "Reasoning level",
+    costCol: "Cost per task",
     dateCol: null,
-    sourceUrl: "https://posttrainbench.com/",
+    sourceUrl: "https://cursor.com/cursorbench",
   },
   {
     csvFile: "simpleqa_verified.csv",
@@ -193,63 +195,6 @@ const EPOCH_FEEDS: readonly EpochFeedSpec[] = [
     costCol: null,
     dateCol: "Started at",
     sourceUrl: "https://epoch.ai/benchmarks/simpleqa-verified",
-  },
-  {
-    csvFile: "frontiermath_tiers_1_3_v2.csv",
-    benchmarkId: "epoch_frontiermath_t1_3",
-    domainId: "research",
-    harnessRegime: "native",
-    observedHarness: "Direct API",
-    scoreCol: "mean_score",
-    scaleFactor: 100,
-    maxScore: 100,
-    stderrCol: "stderr",
-    costCol: null,
-    dateCol: "Started at",
-    sourceUrl: "https://epoch.ai/frontiermath",
-  },
-  {
-    csvFile: "frontiermath_tier_4_v2.csv",
-    benchmarkId: "epoch_frontiermath_t4",
-    domainId: "research",
-    harnessRegime: "native",
-    observedHarness: "Direct API",
-    scoreCol: "mean_score",
-    scaleFactor: 100,
-    maxScore: 100,
-    stderrCol: "stderr",
-    costCol: null,
-    dateCol: "Started at",
-    sourceUrl: "https://epoch.ai/frontiermath/tier-4",
-  },
-  {
-    csvFile: "proofbench_external.csv",
-    benchmarkId: "epoch_proofbench",
-    domainId: "research",
-    harnessRegime: "native",
-    observedHarness: "Direct API",
-    scoreCol: "Accuracy",
-    scaleFactor: 100,
-    maxScore: 100,
-    stderrCol: "Accuracy Standard Error",
-    effortCol: "Reasoning effort",
-    costCol: "Cost per test (USD)",
-    dateCol: null,
-    sourceUrl: "https://www.vals.ai/benchmarks/proof_bench",
-  },
-  {
-    csvFile: "arc_agi_2_external.csv",
-    benchmarkId: "epoch_arc_agi_2",
-    domainId: "research",
-    harnessRegime: "native",
-    observedHarness: "Direct API",
-    scoreCol: "Score",
-    scaleFactor: 100,
-    maxScore: 100,
-    stderrCol: null,
-    costCol: "Cost per task",
-    dateCol: null,
-    sourceUrl: "https://arcprize.org/leaderboard",
   },
   {
     csvFile: "apex_agents_external.csv",
@@ -271,7 +216,7 @@ const EPOCH_FEEDS: readonly EpochFeedSpec[] = [
 
 export const epochAdapter: SourceAdapter = {
   id: "epoch",
-  label: "Epoch AI Benchmark Hub (10 Frontier Benchmarks)",
+  label: `Epoch AI Benchmark Hub (${EPOCH_FEEDS.length} Frontier Benchmarks)`,
   license: "CC-BY-4.0",
   sourceUrl: EPOCH_HUB_URL,
   expectedBenchmarks: EPOCH_FEEDS.map((f) => f.benchmarkId),
@@ -299,6 +244,21 @@ export const epochAdapter: SourceAdapter = {
         header: true,
         skipEmptyLines: true,
       });
+      const headerSet = new Set(parsed.meta.fields ?? []);
+      const requiredCols = [
+        "Model version",
+        spec.scoreCol,
+        ...(spec.stderrCol ? [spec.stderrCol] : []),
+        ...(spec.effortCol ? [spec.effortCol] : []),
+        ...(spec.harnessCol ? [spec.harnessCol] : []),
+        ...(spec.costCol ? [spec.costCol] : []),
+        ...(spec.dateCol ? [spec.dateCol] : []),
+      ];
+      const missingCols = requiredCols.filter((c) => !headerSet.has(c));
+      if (missingCols.length > 0) {
+        st.error = `Epoch CSV '${spec.csvFile}' missing required columns: ${missingCols.join(", ")}`;
+        continue;
+      }
 
       const candidatesByRowId = new Map<string, RawObservation[]>();
       for (const row of parsed.data) {
@@ -340,6 +300,43 @@ export const epochAdapter: SourceAdapter = {
           effort = versionEffort ?? colEffort;
         }
 
+        const org = (row.Organization ?? "").trim() || null;
+        const rowDisplayName = (row.Name ?? "").trim();
+        if (rowDisplayName) {
+          const versionSlug = resolveModelSlugFromString(modelName, org);
+          const nameSlug = resolveModelSlugFromString(rowDisplayName, org);
+          if (versionSlug && nameSlug && versionSlug.modelSlug !== nameSlug.modelSlug) {
+            st.rejected++;
+            continue;
+          }
+          const nameEffRes = parseUniqueEffortFromText(rowDisplayName, true);
+          if (nameEffRes.ambiguous) {
+            st.rejected++;
+            continue;
+          }
+          const nameEff = nameEffRes.effort;
+          if (nameEff !== null) {
+            if (effort === null || effort === "unknown") {
+              effort = nameEff;
+            } else {
+              const curNorm = parseStrictEffortMetadata(effort);
+              const curConcrete = curNorm !== null && curNorm !== "thinking";
+              const nameConcrete = nameEff !== "thinking";
+              if (
+                (curConcrete && nameConcrete && curNorm !== nameEff) ||
+                (curNorm === "thinking" && nameEff === "none") ||
+                (curNorm === "none" && nameEff === "thinking")
+              ) {
+                st.rejected++;
+                continue;
+              }
+              if (curNorm === "thinking" && nameConcrete) {
+                effort = nameEff;
+              }
+            }
+          }
+        }
+
         let rawHarness: string | null = null;
         let observedHarness = spec.observedHarness;
         if (spec.harnessCol) {
@@ -373,7 +370,6 @@ export const epochAdapter: SourceAdapter = {
 
         const measuredCostUsd = spec.costCol ? parsePositive(row[spec.costCol]) : null;
         const evalDate = spec.dateCol ? parseIsoDate(row[spec.dateCol], nowIso) : null;
-        const org = (row.Organization ?? "").trim() || null;
         const explicitId = (row.id ?? "").trim();
         // Include resolved effort in generated keys for ID-less rows so distinct verified efforts never collide
         const rowUid = explicitId || `${rawVersion}:${effort ?? ""}:${rawHarness ?? ""}`;

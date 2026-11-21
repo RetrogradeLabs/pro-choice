@@ -11,6 +11,9 @@ import {
   DISPLAY_SPREAD,
   factorJointLinkCovariance,
   type RemlLinkTerm,
+  type ShrinkageMode,
+  Z_SCORE_MAX,
+  Z_SCORE_MIN,
 } from "./aggregate.ts";
 import {
   type DomainCostBootstrapModel,
@@ -313,6 +316,7 @@ function buildConfigLinkScoreTerms(
     const st = lookupAnchorForRegime(anchorStats, bm.benchmarkId, regime);
     if (
       !st?.linkedViaMeanSigma ||
+      !(st.sd > 0) ||
       st.linkVarIntercept === undefined ||
       st.linkVarSlope === undefined ||
       st.linkCovIS === undefined
@@ -321,6 +325,8 @@ function buildConfigLinkScoreTerms(
     }
     const sign = st.invertScore ? -1 : 1;
     const oriented = sign * bm.rawScore;
+    const rawZ = (oriented - st.mean) / st.sd;
+    if (!(rawZ > Z_SCORE_MIN && rawZ < Z_SCORE_MAX)) continue;
     const scale = DISPLAY_SPREAD * cfg.shrinkageFactor * (wb / wSum);
     terms.push({
       benchmarkId: bm.benchmarkId,
@@ -409,8 +415,9 @@ export function stepSignificance(
   weightByBenchmark?: ReadonlyMap<string, number>,
   anchorStats?: Readonly<Record<string, AnchorStats>>,
   linkJointCov?: LinkJointCov | null,
+  shrinkageMode: ShrinkageMode = "measurement",
 ): { zStep: number; pBetter: number; statisticallyTied: boolean } {
-  // Exact weighted finite-roster covariance under scalar EB shrinkage: B_i * B_j * rho * sigma_resid^2 * sum_b c_ib * c_jb
+  // Exact weighted finite-roster covariance: B_i * B_j * rho * sigma_resid^2 * sum_b c_ib * c_jb
   const rho =
     low.provider !== high.provider
       ? 0
@@ -428,7 +435,11 @@ export function stepSignificance(
   if (low.residualSe > 0 && high.residualSe > 0) {
     const geom = weightedResidualNormAndInner(low, high, weightByBenchmark);
     if (geom) {
-      const shrinkScale = Math.sqrt(Math.max(0, low.shrinkageFactor * high.shrinkageFactor));
+      // Under measurement-only shrinkage, residualSe already carries B_i linearly; under v1 total shrinkage it carries sqrt(B_i)
+      const shrinkScale =
+        shrinkageMode === "measurement"
+          ? 1
+          : Math.sqrt(Math.max(0, low.shrinkageFactor * high.shrinkageFactor));
       const sigmaResidSq =
         ((low.residualSe * high.residualSe) / Math.sqrt(geom.normLowSq * geom.normHighSq)) *
         shrinkScale;
@@ -522,6 +533,7 @@ export function computeBootstrapParetoProb(
   anchorStats?: Readonly<Record<string, AnchorStats>>,
   costModel?: DomainCostBootstrapModel | PartialBasketCostModel | null,
   linkJointCov?: LinkJointCov | null,
+  shrinkageMode: ShrinkageMode = "measurement",
 ): Map<string, number> {
   const priced = providerConfigs.filter(isPriced);
   const counts = new Map<string, number>();
@@ -733,15 +745,18 @@ export function computeBootstrapParetoProb(
         }
       }
       if (residualSes[i]! > 0 && normSq > 0) {
-        const shrinkSqrt = Math.sqrt(Math.max(1e-12, ordered[i]!.shrinkageFactor));
-        sigmaResidScore = residualSes[i]! / (Math.sqrt(normSq) * shrinkSqrt);
+        const residScale =
+          shrinkageMode === "measurement"
+            ? Math.max(1e-12, ordered[i]!.shrinkageFactor)
+            : Math.sqrt(Math.max(1e-12, ordered[i]!.shrinkageFactor));
+        sigmaResidScore = residualSes[i]! / (Math.sqrt(normSq) * residScale);
         break;
       }
     }
   }
   const hasAnyResidual = sigmaResidScore > 0 && activeB > 1 && residualSes.some((s) => s > 0);
 
-  // Under scalar EB shrinkage, shared residual draws scale by B_i (covariance B_i*B_j) while (1-B_i)*residualSe^2 stays independent
+  // Under measurement-only shrinkage, residualSe = B_i * unshrunkSe is fully shared; under v1 total shrinkage, (1-B_i)*residualSe^2 stays independent
   const sharedResidScales = new Float64Array(n);
   const indepResidVars = new Float64Array(n);
   if (hasAnyResidual && totalUniverseW > 0) {
@@ -759,7 +774,8 @@ export function computeBootstrapParetoProb(
       const unshrunkSe = sigmaResidScore * Math.sqrt(normSq);
       const shrink = Math.min(1, Math.max(0, ordered[i]!.shrinkageFactor));
       const fullScale = unshrunkSe > 1e-12 ? residualSes[i]! / unshrunkSe : 0;
-      const sharedScale = fullScale * Math.sqrt(shrink);
+      const sharedScale =
+        shrinkageMode === "measurement" ? fullScale : fullScale * Math.sqrt(shrink);
       sharedResidScales[i] = sharedScale;
       const sharedVar = sharedScale * unshrunkSe * (sharedScale * unshrunkSe);
       indepResidVars[i] = Math.max(0, residualSes[i]! * residualSes[i]! - sharedVar);
@@ -844,6 +860,7 @@ export function computeBootstrapParetoProb(
         const st = lookupAnchorForRegime(anchorStats, bm.benchmarkId, regime);
         if (
           !st?.linkedViaMeanSigma ||
+          !(st.sd > 0) ||
           st.linkVarIntercept === undefined ||
           st.linkVarSlope === undefined ||
           st.linkCovIS === undefined
@@ -853,6 +870,8 @@ export function computeBootstrapParetoProb(
         const wb = bmWeights[bmPos] ?? st.effectiveWeight;
         const sign = st.invertScore ? -1 : 1;
         const oriented = sign * bm.rawScore;
+        const rawZ = (oriented - st.mean) / st.sd;
+        if (!(rawZ > Z_SCORE_MIN && rawZ < Z_SCORE_MAX)) continue;
         const scale = DISPLAY_SPREAD * cfg.shrinkageFactor * (wb / wObs);
         scoreTerms.push({
           benchmarkId: bm.benchmarkId,
@@ -1174,6 +1193,7 @@ export function computeProviderFrontier(
   weightByBenchmark?: ReadonlyMap<string, number>,
   anchorStats?: Readonly<Record<string, AnchorStats>>,
   linkJointCov?: LinkJointCov | null,
+  shrinkageMode: ShrinkageMode = "measurement",
 ): {
   frontier: FrontierPoint[];
   pruned: PrunedConfig[];
@@ -1275,7 +1295,14 @@ export function computeProviderFrontier(
     }
 
     const prev = surviving[idx - 1]!;
-    const sig = stepSignificance(prev, cfg, weightByBenchmark, anchorStats, linkJointCov);
+    const sig = stepSignificance(
+      prev,
+      cfg,
+      weightByBenchmark,
+      anchorStats,
+      linkJointCov,
+      shrinkageMode,
+    );
     const deltaCost = Math.max(COST_EPSILON, cfg.effectiveCostUsd - prev.effectiveCostUsd);
     const marginal = (cfg.score - prev.score) / deltaCost;
 
@@ -1306,6 +1333,7 @@ export function extractVerdictPicks(
     weightByBenchmark?: ReadonlyMap<string, number>;
     anchorStats?: Readonly<Record<string, AnchorStats>>;
     linkJointCov?: LinkJointCov | null | undefined;
+    shrinkageMode?: ShrinkageMode;
   },
 ): { budgetId: string | null; defaultId: string | null; maxId: string | null } {
   if (frontier.length === 0) {
@@ -1333,6 +1361,7 @@ export function extractVerdictPicks(
   const weightByBenchmark = options?.weightByBenchmark;
   const anchorStats = options?.anchorStats;
   const linkJointCov = options?.linkJointCov;
+  const shrinkageMode = options?.shrinkageMode ?? "measurement";
   const endpointSlugs = new Set<string>([first.modelSlug, last.modelSlug]);
 
   let bestQualifiedAnyId: string | null = null;
@@ -1361,7 +1390,8 @@ export function extractVerdictPicks(
     if (!cfg || cfg.effectiveCostUsd === null) continue;
     // Require a statistically reliable gain (>= 1.0 SE) over Budget rather than over the adjacent step
     if (
-      stepSignificance(first, cfg, weightByBenchmark, anchorStats, linkJointCov).statisticallyTied
+      stepSignificance(first, cfg, weightByBenchmark, anchorStats, linkJointCov, shrinkageMode)
+        .statisticallyTied
     )
       continue;
 

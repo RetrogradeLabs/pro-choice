@@ -1,6 +1,6 @@
 import { parquetReadObjects } from "hyparquet";
 import { compressors } from "hyparquet-compressors";
-import type { DomainId, RawObservation } from "../../../src/lib/schema.ts";
+import type { DomainId, HarnessRegime, RawObservation } from "../../../src/lib/schema.ts";
 import {
   fetchArrayBufferWithSafeAuth,
   observationsMatchExact,
@@ -16,43 +16,57 @@ const DATASET_URL = "https://huggingface.co/datasets/lmarena-ai/leaderboard-data
 
 const MIN_BATTLES = 300;
 const MAX_CI_ELO = 25;
+// LMArena Agent Capability index has SD ~ 135 Elo (~2.7x text Elo SD ~ 50), so 60 Elo = ~0.44 SD
+const MAX_AGENT_CAPABILITY_CI = 60;
 
 interface ArenaSplitSpec {
   splitDir: string;
   targetCategory: string;
   benchmarkId: string;
   domainId: DomainId;
+  harnessRegime: HarnessRegime;
+  format: "elo" | "agent_capability";
+  sourceUrl?: string;
 }
 
-// Strictly one non-overlapping split per LMArena crowd arena to prevent multi-label battle double-counting
+// Strictly one non-overlapping split per LMArena arena to prevent multi-label battle double-counting
 const ARENA_SPLITS: readonly ArenaSplitSpec[] = [
+  {
+    splitDir: "agent_capability",
+    targetCategory: "code",
+    benchmarkId: "lmarena_agent",
+    domainId: "coding",
+    harnessRegime: "standardized",
+    format: "agent_capability",
+    sourceUrl: "https://arena.ai/leaderboard/agent/code",
+  },
   {
     splitDir: "text_style_control",
     targetCategory: "creative_writing",
     benchmarkId: "lmarena_creative_writing",
     domainId: "writing",
-  },
-  {
-    splitDir: "document_style_control",
-    targetCategory: "overall",
-    benchmarkId: "lmarena_document",
-    domainId: "research",
+    harnessRegime: "native",
+    format: "elo",
   },
   {
     splitDir: "webdev",
     targetCategory: "overall",
     benchmarkId: "lmarena_webdev",
     domainId: "design_code",
+    harnessRegime: "native",
+    format: "elo",
   },
   {
     splitDir: "text_factuality",
     targetCategory: "overall",
     benchmarkId: "lmarena_factuality",
     domainId: "research",
+    harnessRegime: "native",
+    format: "elo",
   },
 ];
 
-const REQUIRED_COLUMNS = [
+const ELO_REQUIRED_COLUMNS = [
   "model_name",
   "rating",
   "rating_lower",
@@ -61,16 +75,26 @@ const REQUIRED_COLUMNS = [
   "category",
 ] as const;
 
+const AGENT_CAPABILITY_REQUIRED_COLUMNS = [
+  "model_name",
+  "index_score",
+  "index_score_ci_lower",
+  "index_score_ci_upper",
+  "session_count",
+  "category",
+] as const;
+
 export const lmarenaAdapter: SourceAdapter = {
   id: "lmarena",
-  label: "LMArena Style-Controlled Parquet Leaderboards",
+  label: "LMArena Style-Controlled & Agent Parquet Leaderboards",
   license: "Apache-2.0 / CC-BY-4.0",
   sourceUrl: DATASET_URL,
   expectedBenchmarks: ARENA_SPLITS.map((s) => s.benchmarkId),
   expectsPricing: false,
   async fetchLive(nowIso) {
     const authHeader = process.env.HF_TOKEN ? `Bearer ${process.env.HF_TOKEN}` : undefined;
-    const uniqueDirs = [...new Set(ARENA_SPLITS.map((s) => s.splitDir))];
+    const formatByDir = new Map(ARENA_SPLITS.map((s) => [s.splitDir, s.format]));
+    const uniqueDirs = [...formatByDir.keys()];
 
     const splitResults = await Promise.allSettled(
       uniqueDirs.map(async (splitDir) => {
@@ -84,7 +108,11 @@ export const lmarenaAdapter: SourceAdapter = {
         })) as Record<string, unknown>[];
         if (rows.length === 0) throw new Error(`LMArena split '${splitDir}' returned 0 rows`);
         const first = rows[0]!;
-        for (const col of REQUIRED_COLUMNS) {
+        const reqCols =
+          formatByDir.get(splitDir) === "agent_capability"
+            ? AGENT_CAPABILITY_REQUIRED_COLUMNS
+            : ELO_REQUIRED_COLUMNS;
+        for (const col of reqCols) {
           if (!(col in first)) {
             throw new Error(`LMArena split '${splitDir}' missing required column '${col}'`);
           }
@@ -129,10 +157,11 @@ export const lmarenaAdapter: SourceAdapter = {
 
         st.attempted++;
         const modelName = String(row.model_name ?? "").trim();
-        const rating = parseNumeric(row.rating);
-        const lower = parseNumeric(row.rating_lower);
-        const upper = parseNumeric(row.rating_upper);
-        const battles = parseStrictNonNegativeInt(row.vote_count);
+        const isAgentCap = spec.format === "agent_capability";
+        const rating = parseNumeric(isAgentCap ? row.index_score : row.rating);
+        const lower = parseNumeric(isAgentCap ? row.index_score_ci_lower : row.rating_lower);
+        const upper = parseNumeric(isAgentCap ? row.index_score_ci_upper : row.rating_upper);
+        const battles = parseStrictNonNegativeInt(isAgentCap ? row.session_count : row.vote_count);
 
         if (
           !modelName ||
@@ -148,9 +177,10 @@ export const lmarenaAdapter: SourceAdapter = {
           continue;
         }
 
-        // Apply precision gate before rounding so 25.004 never slips past the 25 Elo threshold
+        // Apply precision gate before rounding so boundary crossings never slip past the CI cap
         const rawCiHalf = (upper - lower) / 2;
-        if (battles < MIN_BATTLES || rawCiHalf > MAX_CI_ELO) {
+        const maxCi = isAgentCap ? MAX_AGENT_CAPABILITY_CI : MAX_CI_ELO;
+        if (battles < MIN_BATTLES || rawCiHalf > maxCi) {
           st.excluded++;
           continue;
         }
@@ -160,6 +190,7 @@ export const lmarenaAdapter: SourceAdapter = {
           typeof row.organization === "string" && row.organization.trim()
             ? row.organization.trim()
             : null;
+        const measuredCostUsd = null;
 
         // Detect explicit agent wrappers (e.g. "GPT-5.6 Sol (xHigh, Codex Harness)") instead of labeling them Direct API
         let cleanModelName = modelName;
@@ -191,21 +222,21 @@ export const lmarenaAdapter: SourceAdapter = {
           rawProvider: org,
           rawEffort: null,
           rawHarness: explicitHarness,
-          observedHarness: explicitHarness ?? "Direct API",
-          harnessRegime: "native",
+          observedHarness: explicitHarness ?? (isAgentCap ? "LMArena Agent Harness" : "Direct API"),
+          harnessRegime: spec.harnessRegime,
           rawScore: Number(rating.toFixed(2)),
           ciHalfWidth: Number(rawCiHalf.toFixed(4)),
           ciLower: Number(lower.toFixed(4)),
           ciUpper: Number(upper.toFixed(4)),
           battleCount: battles,
-          measuredCostUsd: null,
+          measuredCostUsd,
           suiteCostUsd: null,
           measuredInputTokens: null,
           measuredOutputTokens: null,
           // leaderboard_publish_date is a publication timestamp, not a per-model evaluation date
           evalDate: null,
           publishedDate: publishDate,
-          sourceUrl: DATASET_URL,
+          sourceUrl: spec.sourceUrl ?? DATASET_URL,
         };
         const grp = candidatesByRowId.get(sourceRowId) ?? [];
         grp.push(obs);

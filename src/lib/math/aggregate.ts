@@ -175,9 +175,20 @@ export interface DomainAggregationResult {
   provisional: AggregatedConfigResult[];
 }
 
-// Upstream CI/SE when published; else distribution-free Popoviciu upper bound over independent parent problems
+// Exact Bhatia-Davis (2000) bounded task-level SE with Laplace continuity guard
+export function computeBhatiaDavisSe(
+  rawScore: number,
+  boundedMax: number,
+  sampleSize: number,
+): number {
+  const p = Math.min(1, Math.max(0, rawScore / boundedMax));
+  const pAdj = (sampleSize * p + 0.5) / (sampleSize + 1);
+  return boundedMax * Math.sqrt((pAdj * (1 - pAdj)) / sampleSize);
+}
+
+// Upstream CI/SE when published; else distribution-free Bhatia-Davis bound over independent parent problems
 export function computeMeasurementSe(
-  _rawScore: number,
+  rawScore: number,
   ciHalfWidth: number | null,
   meta: Pick<BenchmarkMeta, "boundedMax" | "sampleSize" | "outcomeModel" | "isArena">,
   ciLower?: number | null,
@@ -207,7 +218,7 @@ export function computeMeasurementSe(
     meta.sampleSize !== null &&
     meta.sampleSize > 0
   ) {
-    return meta.boundedMax / (2 * Math.sqrt(meta.sampleSize));
+    return computeBhatiaDavisSe(rawScore, meta.boundedMax, meta.sampleSize);
   }
   return null;
 }
@@ -525,6 +536,9 @@ function invertSquareMatrix(matrix: readonly (readonly number[])[]): number[][] 
 
 export const MIN_BENCHMARK_WEIGHT = 0.1;
 export const UNREPORTED_SE_Z = 1.0;
+// Exact CTT match for reliability = 0.50 (1 - se_z^2 = 0.50 -> se_z = sqrt(0.5))
+export const UNREPORTED_SE_Z_V2 = Math.SQRT1_2;
+export type ShrinkageMode = "measurement" | "total";
 
 export function buildWeightMapFromAnchors(
   anchorStats: Readonly<Record<string, AnchorStats>>,
@@ -541,30 +555,6 @@ export function buildWeightMapFromAnchors(
     }
   }
   return weights;
-}
-
-function effectiveSeAkhtarCalibration(
-  rawScore: number,
-  ciHalfWidth: number | null,
-  meta: BenchmarkMeta,
-  ciLower?: number | null,
-  ciUpper?: number | null,
-  seRaw?: number | null,
-): number | null {
-  const baseSe = computeMeasurementSe(rawScore, ciHalfWidth, meta, ciLower, ciUpper, seRaw);
-  if (baseSe === null || baseSe <= 0) return null;
-  const hasUpstreamUncertainty =
-    (ciLower !== undefined &&
-      ciLower !== null &&
-      ciUpper !== undefined &&
-      ciUpper !== null &&
-      ciUpper > ciLower) ||
-    (seRaw !== undefined && seRaw !== null && seRaw > 0) ||
-    (ciHalfWidth !== null && ciHalfWidth > 0);
-  if (!meta.isArena && !hasUpstreamUncertainty && meta.sampleSize !== null && meta.sampleSize > 1) {
-    return baseSe * meta.sampleSize ** 0.25;
-  }
-  return baseSe;
 }
 
 function facingSeBoundsCalibration(
@@ -625,6 +615,8 @@ export function computeBenchmarkQualityWeight(
   );
   const varObs = orientedStats.sd * orientedStats.sd;
 
+  const fallbackMissingSe =
+    orientedStats.sd > 1e-9 ? UNREPORTED_SE_Z_V2 * orientedStats.sd : Number.POSITIVE_INFINITY;
   let wSeSum = 0;
   let wSeSqSum = 0;
   let sePresentCount = 0;
@@ -637,11 +629,14 @@ export function computeBenchmarkQualityWeight(
       c.ciUpper,
       c.seRaw,
     );
+    const labW = 1 / (countByLab.get(c.provider) ?? 1);
+    wSeSum += labW;
     if (rawSe !== null && rawSe > 0) {
-      const labW = 1 / (countByLab.get(c.provider) ?? 1);
-      wSeSum += labW;
       wSeSqSum += labW * rawSe * rawSe;
       sePresentCount++;
+    } else if (Number.isFinite(fallbackMissingSe)) {
+      // Substitute conservative UNREPORTED_SE_Z * sd on missing-SE rows instead of dropping them from noise variance
+      wSeSqSum += labW * fallbackMissingSe * fallbackMissingSe;
     }
   }
 
@@ -663,12 +658,12 @@ export function computeBenchmarkQualityWeight(
       ciHalfWidth: number | null;
       ciLower: number | null;
       ciUpper: number | null;
-      akhtarSe: number | null;
+      measSe: number | null;
     }
   >();
   for (const c of bmCells) {
     const oriented = orientScore(bmId, c.rawScore);
-    const akhtarSe = effectiveSeAkhtarCalibration(
+    const measSe = computeMeasurementSe(
       c.rawScore,
       c.ciHalfWidth,
       meta,
@@ -680,8 +675,8 @@ export function computeBenchmarkQualityWeight(
     const beatsTie =
       cur !== undefined &&
       oriented === cur.oriented &&
-      ((akhtarSe ?? Number.POSITIVE_INFINITY) < (cur.akhtarSe ?? Number.POSITIVE_INFINITY) ||
-        ((akhtarSe ?? Number.POSITIVE_INFINITY) === (cur.akhtarSe ?? Number.POSITIVE_INFINITY) &&
+      ((measSe ?? Number.POSITIVE_INFINITY) < (cur.measSe ?? Number.POSITIVE_INFINITY) ||
+        ((measSe ?? Number.POSITIVE_INFINITY) === (cur.measSe ?? Number.POSITIVE_INFINITY) &&
           compareAscii(c.configId, cur.configId) < 0));
     if (!cur || oriented > cur.oriented || beatsTie) {
       perLabPeak.set(c.provider, {
@@ -693,7 +688,7 @@ export function computeBenchmarkQualityWeight(
         ciHalfWidth: c.ciHalfWidth,
         ciLower: c.ciLower,
         ciUpper: c.ciUpper,
-        akhtarSe,
+        measSe,
       });
     }
   }
@@ -701,36 +696,30 @@ export function computeBenchmarkQualityWeight(
   const labLeaders = [...perLabPeak.values()].toSorted(
     (a, b) =>
       b.oriented - a.oriented ||
-      (a.akhtarSe ?? Number.POSITIVE_INFINITY) - (b.akhtarSe ?? Number.POSITIVE_INFINITY) ||
+      (a.measSe ?? Number.POSITIVE_INFINITY) - (b.measSe ?? Number.POSITIVE_INFINITY) ||
       compareAscii(a.provider, b.provider),
   );
   let discrimination = 0.25;
   if (labLeaders.length >= minLabs) {
     const top1 = labLeaders[0]!;
     const topLast = labLeaders[minLabs - 1]!;
-    const se1 = effectiveSeAkhtarCalibration(
-      top1.rawScore,
-      top1.ciHalfWidth,
-      meta,
-      top1.ciLower,
-      top1.ciUpper,
-      top1.seRaw,
-    );
-    const seLast = effectiveSeAkhtarCalibration(
-      topLast.rawScore,
-      topLast.ciHalfWidth,
-      meta,
-      topLast.ciLower,
-      topLast.ciUpper,
-      topLast.seRaw,
-    );
-    const bounds = labLeaders.map((leader) => facingSeBoundsCalibration(meta, leader));
-    if (se1 !== null && seLast !== null && bounds.every((b) => b !== null)) {
+    const anySePresent = labLeaders.some((l) => l.measSe !== null);
+    const fallbackSe =
+      orientedStats.sd > 1e-9 ? UNREPORTED_SE_Z_V2 * orientedStats.sd : Number.POSITIVE_INFINITY;
+
+    if (anySePresent) {
+      // Preserve measured SEs on mixed-SE benchmarks by assigning conservative UNREPORTED_SE_Z to any leader missing SE
+      const se1 = top1.measSe ?? fallbackSe;
+      const seLast = topLast.measSe ?? fallbackSe;
       const seDelta = Math.hypot(se1, seLast);
       const spread = Math.max(0, top1.oriented - topLast.oriented);
-      const rNorm = seDelta > 1e-9 ? spread / seDelta : 0;
+      const rNorm = Number.isFinite(seDelta) && seDelta > 1e-9 ? spread / seDelta : 0;
       const satIndex = Math.exp(-(rNorm * rNorm));
 
+      const bounds = labLeaders.map(
+        (leader) =>
+          facingSeBoundsCalibration(meta, leader) ?? { seLow: fallbackSe, seHigh: fallbackSe },
+      );
       let sepPairs = 0;
       const totalPairs = (labLeaders.length * (labLeaders.length - 1)) / 2;
       for (let i = 0; i < labLeaders.length; i++) {
@@ -746,6 +735,18 @@ export function computeBenchmarkQualityWeight(
       }
       const sep = totalPairs > 0 ? sepPairs / totalPairs : 0;
       discrimination = Math.min(1, Math.max(0, (1 - satIndex) * (0.25 + 0.75 * sep)));
+    } else if (meta.boundedMax === null && orientedStats.sd > 1e-9) {
+      // Unreported-SE unbounded benchmarks use empirical top-k spread relative to full roster SD, capped at 0.75
+      const spreadRatio = Math.max(0, top1.oriented - topLast.oriented) / orientedStats.sd;
+      discrimination = Math.min(
+        0.75,
+        Math.max(0.25, 0.25 + 0.5 * (1 - Math.exp(-(spreadRatio * spreadRatio)))),
+      );
+    } else if (meta.boundedMax !== null && meta.boundedMax > 0) {
+      // Bounded benchmarks without SE or sampleSize cap discrimination strictly by remaining headroom to ceiling
+      const ceilingVal = meta.invertScore ? meta.boundedMax - top1.rawScore : top1.rawScore;
+      const headroom = Math.max(0, 1 - ceilingVal / meta.boundedMax);
+      discrimination = Math.min(0.5, Math.max(0.1, headroom * 0.5));
     }
   }
 
@@ -755,6 +756,115 @@ export function computeBenchmarkQualityWeight(
     discrimination: Number(discrimination.toFixed(4)),
     effectiveWeight: Number(effectiveWeight.toFixed(4)),
   };
+}
+
+function labBalancedPearsonCorrelation(
+  pairs: readonly { provider: ProviderId; x: number; y: number }[],
+): number | null {
+  if (pairs.length < 6) return null;
+  const countByLab = new Map<ProviderId, number>();
+  for (const p of pairs) {
+    countByLab.set(p.provider, (countByLab.get(p.provider) ?? 0) + 1);
+  }
+  let sumW = 0;
+  let sx = 0;
+  let sy = 0;
+  for (const p of pairs) {
+    const w = 1 / (countByLab.get(p.provider) ?? 1);
+    sumW += w;
+    sx += w * p.x;
+    sy += w * p.y;
+  }
+  if (!(sumW > 1e-12)) return null;
+  const mx = sx / sumW;
+  const my = sy / sumW;
+  let sxx = 0;
+  let syy = 0;
+  let sxy = 0;
+  for (const p of pairs) {
+    const w = 1 / (countByLab.get(p.provider) ?? 1);
+    const dx = p.x - mx;
+    const dy = p.y - my;
+    sxx += w * dx * dx;
+    syy += w * dy * dy;
+    sxy += w * dx * dy;
+  }
+  const denom = Math.sqrt(sxx * syy);
+  if (!(denom > 1e-12)) return null;
+  return Math.max(-1, Math.min(1, sxy / denom));
+}
+
+// Additive provider-balanced Kish redundancy and linked-panel breadth dampening strictly in [0.10, 1.00]
+function computeRedundancyFactors(
+  calibratedIds: readonly string[],
+  obsByBm: ReadonlyMap<string, readonly ObservedCell[]>,
+  anchorStats: Readonly<Record<string, AnchorStats>>,
+): Map<string, number> {
+  const zMaps = new Map<string, Map<string, { provider: ProviderId; z: number }>>();
+  let maxAnchorCount = 0;
+  for (const bmId of calibratedIds) {
+    const st = anchorStats[bmId];
+    if (!st) continue;
+    if (st.anchorCount > maxAnchorCount) {
+      maxAnchorCount = st.anchorCount;
+    }
+    const m = new Map<string, { provider: ProviderId; z: number }>();
+    for (const c of obsByBm.get(bmId) ?? []) {
+      m.set(c.configId, {
+        provider: c.provider,
+        z: clampZScore((orientScore(bmId, c.rawScore) - st.mean) / st.sd),
+      });
+    }
+    zMaps.set(bmId, m);
+  }
+
+  const out = new Map<string, number>();
+  for (const bId of calibratedIds) {
+    const metaB = BENCHMARK_BY_ID[bId];
+    const stB = anchorStats[bId];
+    const zB = zMaps.get(bId);
+    let famSumSq = 0;
+    let srcOnlySumSq = 0;
+
+    if (metaB && zB) {
+      for (const cId of calibratedIds) {
+        if (cId === bId) continue;
+        const metaC = BENCHMARK_BY_ID[cId];
+        if (!metaC) continue;
+        const sameFamily = metaB.taskFamily === metaC.taskFamily;
+        const sameSource = metaB.sourceId === metaC.sourceId;
+        if (!sameFamily && !sameSource) continue;
+
+        const zC = zMaps.get(cId);
+        let sharedSq: number;
+        if (zC) {
+          const pairs: { provider: ProviderId; x: number; y: number }[] = [];
+          for (const [cfgId, entryB] of zB.entries()) {
+            const entryC = zC.get(cfgId);
+            if (entryC !== undefined) {
+              pairs.push({ provider: entryB.provider, x: entryB.z, y: entryC.z });
+            }
+          }
+          const r = labBalancedPearsonCorrelation(pairs);
+          sharedSq = r !== null ? Math.max(0, r) ** 2 : sameFamily ? 0.5 : 0.25;
+        } else {
+          sharedSq = sameFamily ? 0.5 : 0.25;
+        }
+
+        if (sameFamily) famSumSq += sharedSq;
+        else srcOnlySumSq += sharedSq;
+      }
+    }
+
+    const kishRed = 1 / (1 + famSumSq + 0.25 * srcOnlySumSq);
+    // Scale every benchmark uniformly by sqrt(anchorCount / maxAnchorCount) in [0.50, 1.00] so tiny panels cannot overpower broad benchmarks
+    const breadthScale =
+      stB && maxAnchorCount > 0
+        ? Math.min(1, Math.max(0.5, Math.sqrt(stB.anchorCount / maxAnchorCount)))
+        : 1;
+    out.set(bId, Number(Math.min(1, Math.max(0.1, kishRed * breadthScale)).toFixed(4)));
+  }
+  return out;
 }
 
 export function solveTwoWayLinearRasch(
@@ -1135,6 +1245,7 @@ export function buildRemlLinkTerms(
     if (
       !st?.linkedViaMeanSigma ||
       !(st.effectiveWeight > 0) ||
+      !(st.sd > 0) ||
       st.linkVarIntercept === undefined ||
       st.linkVarSlope === undefined ||
       st.linkCovIS === undefined
@@ -1143,6 +1254,8 @@ export function buildRemlLinkTerms(
     }
     const sign = orientOverrides?.get(bm.benchmarkId) ?? (st.invertScore ? -1 : 1);
     const oriented = sign * bm.rawScore;
+    const rawZ = (oriented - st.mean) / st.sd;
+    if (!(rawZ > Z_SCORE_MIN && rawZ < Z_SCORE_MAX)) continue;
     const share = st.effectiveWeight / sumW;
     terms.push({
       benchmarkId: bm.benchmarkId,
@@ -1635,6 +1748,7 @@ export interface ConfigPosteriorResult {
   fpcTerm: number;
   measTerm: number;
   shrinkageFactor: number;
+  infoReliability: number;
   theta: number;
   se: number;
   samplingSe: number;
@@ -1643,7 +1757,7 @@ export interface ConfigPosteriorResult {
   exactSeRecomputable: boolean;
 }
 
-// Recompute exact Morris Empirical Bayes posterior and variance components from persisted benchmark details and anchors
+// Recompute exact Empirical Bayes posterior and variance components from persisted benchmark details and anchors
 export function computeConfigPosterior(
   benchmarks: readonly BenchmarkScoreDetail[],
   anchorStats: Readonly<Record<string, AnchorStats>>,
@@ -1655,6 +1769,7 @@ export function computeConfigPosterior(
   tauModelSq: number,
   orientationOverrides?: ReadonlyMap<string, 1 | -1>,
   linkJointCov?: LinkJointCov | null,
+  shrinkageMode: ShrinkageMode = "measurement",
 ): ConfigPosteriorResult | null {
   const keyFor = (bmId: string) => (regime === "standardized" ? `${bmId}::standardized` : bmId);
   const withheldSet = new Set(withheldBenchmarkIds);
@@ -1668,6 +1783,7 @@ export function computeConfigPosterior(
     totalUniverseWeight += st.effectiveWeight;
   }
 
+  const unreportedSeZ = shrinkageMode === "total" ? UNREPORTED_SE_Z : UNREPORTED_SE_Z_V2;
   let sumW = 0;
   let sumWAdj = 0;
   let sumW2SampVarZ = 0;
@@ -1712,8 +1828,22 @@ export function computeConfigPosterior(
         exactSeRecomputable = false;
       }
     } else if (bm.seModel === "popoviciu_upper_bound") {
-      // Strictly require frozen popoviciuSe on anchorStats so later registry edits never mutate archived posteriors
-      if (st.popoviciuSe !== undefined && Number.isFinite(st.popoviciuSe) && st.popoviciuSe > 0) {
+      // Strictly require frozen bounded task parameters on anchorStats so later registry edits never mutate archived posteriors
+      if (
+        shrinkageMode === "measurement" &&
+        st.boundedMax !== undefined &&
+        st.sampleSize !== undefined &&
+        Number.isFinite(st.boundedMax) &&
+        Number.isFinite(st.sampleSize) &&
+        st.boundedMax > 0 &&
+        st.sampleSize > 0
+      ) {
+        rawSe = computeBhatiaDavisSe(bm.rawScore, st.boundedMax, st.sampleSize);
+      } else if (
+        st.popoviciuSe !== undefined &&
+        Number.isFinite(st.popoviciuSe) &&
+        st.popoviciuSe > 0
+      ) {
         rawSe = st.popoviciuSe;
       } else {
         exactSeRecomputable = false;
@@ -1724,22 +1854,25 @@ export function computeConfigPosterior(
 
     const sign = orientationOverrides?.get(bm.benchmarkId) ?? (st.invertScore ? -1 : 1);
     const oriented = sign * bm.rawScore;
+    const rawZ = (oriented - st.mean) / st.sd;
     let sampVarZ: number;
     if (
       (bm.seModel === "upstream_ci" || bm.seModel === "upstream_se") &&
       rawSe !== null &&
       rawSe > 0
     ) {
-      const rawZ = (oriented - st.mean) / st.sd;
       sampVarZ = clippedNormalVariance(rawZ, rawSe / st.sd, Z_SCORE_MIN, Z_SCORE_MAX);
     } else {
-      const seZ = rawSe !== null ? rawSe / st.sd : UNREPORTED_SE_Z;
+      const seZ = rawSe !== null ? rawSe / st.sd : unreportedSeZ;
       sampVarZ = seZ * seZ;
     }
     sumW2SampVarZ += w * w * sampVarZ;
 
+    // Clipped Winsorized scores lie on the flat boundary where d clamp(z) / dz = 0
     if (
       st.linkedViaMeanSigma &&
+      rawZ > Z_SCORE_MIN &&
+      rawZ < Z_SCORE_MAX &&
       st.linkVarIntercept !== undefined &&
       st.linkVarSlope !== undefined &&
       st.linkCovIS !== undefined
@@ -1774,23 +1907,27 @@ export function computeConfigPosterior(
   const fpcTerm = Math.max(0, fpcWeightSumSq) * Math.max(0, calibrationTauResidSq);
   const measTerm = (sumW2SampVarZ + jointLinkVar) / (sumW * sumW);
   const totalVar = Math.max(0, fpcTerm + measTerm);
-  const shrinkageFactor = tauModelSq / (tauModelSq + totalVar);
+  const infoReliability = tauModelSq / (tauModelSq + totalVar);
+  const shrinkageFactor =
+    shrinkageMode === "total" ? infoReliability : tauModelSq / (tauModelSq + measTerm);
   const theta = priorMean + shrinkageFactor * (thetaMle - priorMean);
-  const seTheta = Math.sqrt(Math.max(0, shrinkageFactor * totalVar));
+  const samplingVarTheta = Math.max(0, shrinkageFactor * measTerm);
+  const residualVarTheta =
+    shrinkageMode === "total"
+      ? Math.max(0, shrinkageFactor * fpcTerm)
+      : Math.max(0, shrinkageFactor * shrinkageFactor * fpcTerm);
+  const seTheta = Math.sqrt(samplingVarTheta + residualVarTheta);
 
   return {
     thetaMle,
     fpcTerm,
     measTerm,
     shrinkageFactor: Number(shrinkageFactor.toFixed(6)),
+    infoReliability: Number(infoReliability.toFixed(6)),
     theta: Number(theta.toFixed(6)),
     se: Number((DISPLAY_SPREAD * seTheta).toFixed(2)),
-    samplingSe: Number(
-      (DISPLAY_SPREAD * Math.sqrt(Math.max(0, shrinkageFactor * measTerm))).toFixed(4),
-    ),
-    residualSe: Number(
-      (DISPLAY_SPREAD * Math.sqrt(Math.max(0, shrinkageFactor * fpcTerm))).toFixed(4),
-    ),
+    samplingSe: Number((DISPLAY_SPREAD * Math.sqrt(samplingVarTheta)).toFixed(4)),
+    residualSe: Number((DISPLAY_SPREAD * Math.sqrt(residualVarTheta)).toFixed(4)),
     score: Number((DISPLAY_BASE + DISPLAY_SPREAD * theta).toFixed(2)),
     exactSeRecomputable,
   };
@@ -1883,14 +2020,15 @@ export function aggregateDomain(
       if (stats.sd > 1e-6) {
         const qual = computeBenchmarkQualityWeight(bmId, bmCells, minLabs);
         const bmMeta = BENCHMARK_BY_ID[bmId];
-        const popoviciuSe =
-          bmMeta &&
+        const hasBoundedN =
+          bmMeta !== undefined &&
           bmMeta.boundedMax !== null &&
           bmMeta.boundedMax > 0 &&
           bmMeta.sampleSize !== null &&
-          bmMeta.sampleSize > 0
-            ? Number((bmMeta.boundedMax / (2 * Math.sqrt(bmMeta.sampleSize))).toFixed(6))
-            : undefined;
+          bmMeta.sampleSize > 0;
+        const popoviciuSe = hasBoundedN
+          ? Number((bmMeta.boundedMax! / (2 * Math.sqrt(bmMeta.sampleSize!))).toFixed(6))
+          : undefined;
         anchorStats[bmId] = {
           benchmarkId: bmId,
           mean: Number(stats.mean.toFixed(6)),
@@ -1901,10 +2039,20 @@ export function aggregateDomain(
           raschDelta: 0,
           reliability: qual.reliability,
           discrimination: qual.discrimination,
+          redundancyFactor: 1,
           effectiveWeight: qual.effectiveWeight,
+          ...(bmMeta
+            ? { taskFamily: bmMeta.taskFamily, datasetLineageId: bmMeta.datasetLineageId }
+            : {}),
           introducedAt: bmMeta?.introducedAt ?? "2026-01-01",
           invertScore: bmMeta?.invertScore ?? false,
           ...(popoviciuSe !== undefined ? { popoviciuSe } : {}),
+          ...(hasBoundedN
+            ? {
+                boundedMax: Number(bmMeta.boundedMax!.toFixed(6)),
+                sampleSize: Number(bmMeta.sampleSize!.toFixed(6)),
+              }
+            : {}),
         };
         denseBenchmarks.push(bmId);
         continue;
@@ -1914,11 +2062,29 @@ export function aggregateDomain(
     sparseBenchmarks.push(bmId);
   }
 
+  // Seed dense benchmarks with Kish redundancy before sparse Mean-Sigma linking so reference theta reflects balanced families
+  const uncalibratedDense = denseBenchmarks.filter((bmId) => !frozenAnchors?.[bmId]);
+  if (uncalibratedDense.length > 0) {
+    const denseRedMap = computeRedundancyFactors(Object.keys(anchorStats), obsByBm, anchorStats);
+    for (const bmId of uncalibratedDense) {
+      const st = anchorStats[bmId]!;
+      const red = denseRedMap.get(bmId) ?? 1;
+      st.redundancyFactor = red;
+      st.effectiveWeight = Number(
+        Math.min(
+          1,
+          Math.max(MIN_BENCHMARK_WEIGHT, st.reliability * st.discrimination * red),
+        ).toFixed(4),
+      );
+    }
+  }
+
   // Link sparse or restricted-range benchmarks via iterative Mean-Sigma overlap across connected anchors; withhold if linking fails
   const overlapByLinkedBm = new Map<
     string,
     { configId: string; provider: ProviderId; benchmarkRaw: number; refTheta: number }[]
   >();
+  const linkPasses: string[][] = [];
   let remainingSparse = [...sparseBenchmarks];
   while (remainingSparse.length > 0 && Object.keys(anchorStats).length > 0) {
     const prelimWeights = new Map<string, number>();
@@ -1938,7 +2104,7 @@ export function aggregateDomain(
     const prelimFit = solveTwoWayLinearRasch(prelimZ, undefined, prelimWeights);
 
     const nextRemaining: string[] = [];
-    let linkedThisPass = 0;
+    const linkedThisPassIds: string[] = [];
     for (const bmId of remainingSparse) {
       const bmCells = obsByBm.get(bmId) ?? [];
       const overlap = bmCells
@@ -1953,16 +2119,18 @@ export function aggregateDomain(
       const linked = linkBenchmarkMeanSigma(overlap, minLabs);
       if (linked.linked) {
         overlapByLinkedBm.set(bmId, overlap);
+        linkedThisPassIds.push(bmId);
         const qual = computeBenchmarkQualityWeight(bmId, bmCells, minLabs);
         const bmMeta = BENCHMARK_BY_ID[bmId];
-        const popoviciuSe =
-          bmMeta &&
+        const hasBoundedN =
+          bmMeta !== undefined &&
           bmMeta.boundedMax !== null &&
           bmMeta.boundedMax > 0 &&
           bmMeta.sampleSize !== null &&
-          bmMeta.sampleSize > 0
-            ? Number((bmMeta.boundedMax / (2 * Math.sqrt(bmMeta.sampleSize))).toFixed(6))
-            : undefined;
+          bmMeta.sampleSize > 0;
+        const popoviciuSe = hasBoundedN
+          ? Number((bmMeta.boundedMax! / (2 * Math.sqrt(bmMeta.sampleSize!))).toFixed(6))
+          : undefined;
         anchorStats[bmId] = {
           benchmarkId: bmId,
           mean: Number(linked.mean.toFixed(6)),
@@ -1973,25 +2141,171 @@ export function aggregateDomain(
           raschDelta: 0,
           reliability: qual.reliability,
           discrimination: qual.discrimination,
+          redundancyFactor: 1,
           effectiveWeight: qual.effectiveWeight,
+          ...(bmMeta
+            ? { taskFamily: bmMeta.taskFamily, datasetLineageId: bmMeta.datasetLineageId }
+            : {}),
           introducedAt: bmMeta?.introducedAt ?? "2026-01-01",
           invertScore: bmMeta?.invertScore ?? false,
           ...(popoviciuSe !== undefined ? { popoviciuSe } : {}),
+          ...(hasBoundedN
+            ? {
+                boundedMax: Number(bmMeta.boundedMax!.toFixed(6)),
+                sampleSize: Number(bmMeta.sampleSize!.toFixed(6)),
+              }
+            : {}),
           ...(linked.linkVarIntercept !== undefined
             ? { linkVarIntercept: linked.linkVarIntercept }
             : {}),
           ...(linked.linkVarSlope !== undefined ? { linkVarSlope: linked.linkVarSlope } : {}),
           ...(linked.linkCovIS !== undefined ? { linkCovIS: linked.linkCovIS } : {}),
         };
-        linkedThisPass++;
       } else {
         nextRemaining.push(bmId);
       }
     }
     remainingSparse = nextRemaining;
-    if (linkedThisPass === 0) break;
+    if (linkedThisPassIds.length === 0) break;
+    linkPasses.push(linkedThisPassIds);
   }
   withheldBenchmarkIds.push(...remainingSparse);
+
+  const frozenDeltaMap = new Map<string, number>();
+  if (frozenAnchors) {
+    for (const [k, v] of Object.entries(frozenAnchors)) {
+      frozenDeltaMap.set(k, v.raschDelta);
+    }
+  }
+
+  // Prune any disconnected benchmarks before finalizing Kish redundancy and pass-by-pass Mean-Sigma link slopes
+  const finalLinkPasses: string[][] = [];
+  const uncalibratedIds = Object.keys(anchorStats).filter((bmId) => !frozenAnchors?.[bmId]);
+  if (uncalibratedIds.length > 0) {
+    const connCells: RaschCell[] = [];
+    for (const obs of activeObs) {
+      const st = anchorStats[obs.benchmarkId];
+      if (!st) continue;
+      connCells.push({
+        configId: obs.configId,
+        benchmarkId: obs.benchmarkId,
+        zScore: clampZScore((orientScore(obs.benchmarkId, obs.rawScore) - st.mean) / st.sd),
+      });
+    }
+    const connFit = solveTwoWayLinearRasch(connCells, frozenDeltaMap);
+    for (const bmId of Object.keys(anchorStats)) {
+      if (frozenDeltaMap.has(bmId)) continue;
+      if (!connFit.deltaByBenchmark.has(bmId)) {
+        delete anchorStats[bmId];
+        overlapByLinkedBm.delete(bmId);
+        if (!withheldBenchmarkIds.includes(bmId)) withheldBenchmarkIds.push(bmId);
+      }
+    }
+
+    const updateUncalibratedRedundancy = (): number => {
+      const connectedUncal = Object.keys(anchorStats).filter((bmId) => !frozenAnchors?.[bmId]);
+      if (connectedUncal.length === 0) return 0;
+      const redundancyMap = computeRedundancyFactors(
+        Object.keys(anchorStats),
+        obsByBm,
+        anchorStats,
+      );
+      let maxDelta = 0;
+      for (const bmId of connectedUncal) {
+        const st = anchorStats[bmId]!;
+        const red = redundancyMap.get(bmId) ?? 1;
+        const nextW = Number(
+          Math.min(
+            1,
+            Math.max(MIN_BENCHMARK_WEIGHT, st.reliability * st.discrimination * red),
+          ).toFixed(4),
+        );
+        maxDelta = Math.max(maxDelta, Math.abs(st.effectiveWeight - nextW));
+        st.redundancyFactor = red;
+        st.effectiveWeight = nextW;
+      }
+      return maxDelta;
+    };
+
+    const connectedUncalibrated = Object.keys(anchorStats).filter((bmId) => !frozenAnchors?.[bmId]);
+    if (connectedUncalibrated.length > 0) {
+      updateUncalibratedRedundancy();
+
+      // Re-fit uncalibrated sparse Mean-Sigma links pass-by-pass against a shared reference set per pass so results are order-independent
+      for (let fixedIter = 0; fixedIter < 2; fixedIter++) {
+        finalLinkPasses.length = 0;
+        const refSet = new Set(
+          Object.keys(anchorStats).filter((id) => !anchorStats[id]?.linkedViaMeanSigma),
+        );
+        let anyWithheld = false;
+        for (const pass of linkPasses) {
+          const passIds = pass.filter(
+            (bmId) => anchorStats[bmId]?.linkedViaMeanSigma && !frozenAnchors?.[bmId],
+          );
+          if (passIds.length === 0) continue;
+
+          const refWeights = new Map<string, number>();
+          for (const refId of refSet) {
+            const refSt = anchorStats[refId];
+            if (refSt) refWeights.set(refId, refSt.effectiveWeight);
+          }
+          const refZ: RaschCell[] = [];
+          for (const obs of activeObs) {
+            if (!refSet.has(obs.benchmarkId)) continue;
+            const refSt = anchorStats[obs.benchmarkId];
+            if (!refSt) continue;
+            refZ.push({
+              configId: obs.configId,
+              benchmarkId: obs.benchmarkId,
+              zScore: clampZScore(
+                (orientScore(obs.benchmarkId, obs.rawScore) - refSt.mean) / refSt.sd,
+              ),
+            });
+          }
+          const refFit = solveTwoWayLinearRasch(refZ, undefined, refWeights);
+
+          const passSurvivors: string[] = [];
+          for (const bmId of passIds) {
+            const bmCells = obsByBm.get(bmId) ?? [];
+            const overlap = bmCells
+              .filter((c) => refFit.thetaByConfig.has(c.configId))
+              .map((c) => ({
+                configId: c.configId,
+                provider: c.provider,
+                benchmarkRaw: orientScore(bmId, c.rawScore),
+                refTheta: refFit.thetaByConfig.get(c.configId)!,
+              }));
+            const relinked = linkBenchmarkMeanSigma(overlap, minLabs);
+            if (relinked.linked) {
+              overlapByLinkedBm.set(bmId, overlap);
+              const st = anchorStats[bmId]!;
+              st.mean = Number(relinked.mean.toFixed(6));
+              st.sd = Number(relinked.sd.toFixed(6));
+              st.anchorCount = overlap.length;
+              st.anchorLabs = new Set(overlap.map((o) => o.provider)).size;
+              if (relinked.linkVarIntercept !== undefined) {
+                st.linkVarIntercept = relinked.linkVarIntercept;
+              }
+              if (relinked.linkVarSlope !== undefined) st.linkVarSlope = relinked.linkVarSlope;
+              if (relinked.linkCovIS !== undefined) st.linkCovIS = relinked.linkCovIS;
+              passSurvivors.push(bmId);
+            } else {
+              delete anchorStats[bmId];
+              overlapByLinkedBm.delete(bmId);
+              if (!withheldBenchmarkIds.includes(bmId)) withheldBenchmarkIds.push(bmId);
+              anyWithheld = true;
+            }
+          }
+          if (passSurvivors.length > 0) {
+            finalLinkPasses.push(passSurvivors);
+            for (const bmId of passSurvivors) refSet.add(bmId);
+          }
+        }
+        const weightShift = updateUncalibratedRedundancy();
+        if (!anyWithheld && weightShift <= 1e-6) break;
+      }
+    }
+  }
 
   const raschCells: RaschCell[] = [];
   const zByConfigBm = new Map<string, number>();
@@ -2032,13 +2346,6 @@ export function aggregateDomain(
       measVarZ: cellMeasVarZ,
     });
     zByConfigBm.set(`${obs.configId}::${obs.benchmarkId}`, z);
-  }
-
-  const frozenDeltaMap = new Map<string, number>();
-  if (frozenAnchors) {
-    for (const [k, v] of Object.entries(frozenAnchors)) {
-      frozenDeltaMap.set(k, v.raschDelta);
-    }
   }
 
   // Fit and freeze calibration deltas strictly for benchmarks retained in the connected calibration component
@@ -2114,21 +2421,67 @@ export function aggregateDomain(
       );
 
       if (allPanelsPresent && nUnion >= 2) {
+        const denseRefIds = calibratedBenchmarkIds.filter(
+          (id) => !anchorStats[id]?.linkedViaMeanSigma,
+        );
+        const jackknifePasses: string[][] =
+          finalLinkPasses.length > 0 ? finalLinkPasses : [linkedCalibratedIds];
+        const idxByLinkedId = new Map(linkedCalibratedIds.map((id, idx) => [id, idx]));
+
         const reps: number[][] = [];
         for (const delId of unionConfigIds) {
           const vec = Array.from({ length: dim }, () => 0);
-          for (let k = 0; k < linkedCalibratedIds.length; k++) {
-            const panel = panelByIdx[k]!;
-            const fullP = fullParamsByIdx[k]!;
-            const dropIdx = panel.idxByConfig.get(delId);
-            if (dropIdx !== undefined) {
-              const sub = panel.overlap.filter((_, idx) => idx !== dropIdx);
-              const subP = computeMeanSigmaParams(sub);
-              vec[2 * k] = subP ? -subP.mean / subP.sd : fullP.a;
-              vec[2 * k + 1] = subP ? 1 / subP.sd : fullP.b;
-            } else {
-              vec[2 * k] = fullP.a;
-              vec[2 * k + 1] = fullP.b;
+          const delRefSet = new Set(denseRefIds);
+          const delLinkedParams = new Map<string, { mean: number; sd: number }>();
+
+          // Refit the reference Rasch scale and linked Mean-Sigma passes with delId excluded so reference uncertainty propagates
+          for (const pass of jackknifePasses) {
+            const passIds = pass.filter((id) => idxByLinkedId.has(id));
+            if (passIds.length === 0) continue;
+
+            const refWeightsDel = new Map<string, number>();
+            for (const refId of delRefSet) {
+              const refSt = anchorStats[refId];
+              if (refSt) refWeightsDel.set(refId, refSt.effectiveWeight);
+            }
+            const refZDel: RaschCell[] = [];
+            for (const obs of activeObs) {
+              if (obs.configId === delId || !delRefSet.has(obs.benchmarkId)) continue;
+              const delP = delLinkedParams.get(obs.benchmarkId);
+              const refSt = anchorStats[obs.benchmarkId];
+              const m = delP?.mean ?? refSt?.mean;
+              const s = delP?.sd ?? refSt?.sd;
+              if (m === undefined || s === undefined || s <= 0) continue;
+              refZDel.push({
+                configId: obs.configId,
+                benchmarkId: obs.benchmarkId,
+                zScore: clampZScore((orientScore(obs.benchmarkId, obs.rawScore) - m) / s),
+              });
+            }
+            const refFitDel = solveTwoWayLinearRasch(refZDel, undefined, refWeightsDel);
+
+            for (const bmId of passIds) {
+              const k = idxByLinkedId.get(bmId)!;
+              const fullP = fullParamsByIdx[k]!;
+              const bmCells = obsByBm.get(bmId) ?? [];
+              const subOverlap = bmCells
+                .filter((c) => c.configId !== delId && refFitDel.thetaByConfig.has(c.configId))
+                .map((c) => ({
+                  configId: c.configId,
+                  provider: c.provider,
+                  benchmarkRaw: orientScore(bmId, c.rawScore),
+                  refTheta: refFitDel.thetaByConfig.get(c.configId)!,
+                }));
+              const subP = computeMeanSigmaParams(subOverlap);
+              if (subP) {
+                vec[2 * k] = -subP.mean / subP.sd;
+                vec[2 * k + 1] = 1 / subP.sd;
+                delLinkedParams.set(bmId, { mean: subP.mean, sd: subP.sd });
+                delRefSet.add(bmId);
+              } else {
+                vec[2 * k] = fullP.a;
+                vec[2 * k + 1] = fullP.b;
+              }
             }
           }
           reps.push(vec);
@@ -2154,8 +2507,8 @@ export function aggregateDomain(
         for (let k = 0; k < linkedCalibratedIds.length; k++) {
           const stK = anchorStats[linkedCalibratedIds[k]!]!;
           stK.linkVarIntercept = mat[2 * k]![2 * k]!;
-          stK.linkCovIS = mat[2 * k]![2 * k + 1]!;
           stK.linkVarSlope = mat[2 * k + 1]![2 * k + 1]!;
+          stK.linkCovIS = mat[2 * k]![2 * k + 1]!;
         }
       } else {
         for (let k = 0; k < linkedCalibratedIds.length; k++) {
@@ -2239,12 +2592,17 @@ export function aggregateDomain(
 
       const resolvedSeModel = resolveSeModel(c.ciHalfWidth, c.ciLower, c.ciUpper, c.seRaw, meta);
       let rawSe: number | null = null;
-      if (
-        resolvedSeModel === "popoviciu_upper_bound" &&
-        st.popoviciuSe !== undefined &&
-        st.popoviciuSe > 0
-      ) {
-        rawSe = st.popoviciuSe;
+      if (resolvedSeModel === "popoviciu_upper_bound") {
+        if (
+          st.boundedMax !== undefined &&
+          st.sampleSize !== undefined &&
+          st.boundedMax > 0 &&
+          st.sampleSize > 0
+        ) {
+          rawSe = computeBhatiaDavisSe(c.rawScore, st.boundedMax, st.sampleSize);
+        } else if (st.popoviciuSe !== undefined && st.popoviciuSe > 0) {
+          rawSe = st.popoviciuSe;
+        }
       } else if (meta) {
         rawSe = computeMeasurementSe(
           c.rawScore,
@@ -2256,22 +2614,24 @@ export function aggregateDomain(
         );
       }
       const oriented = orientScore(c.benchmarkId, c.rawScore);
+      const rawZ = (oriented - st.mean) / st.sd;
       let sampVarZ: number;
       if (
         (resolvedSeModel === "upstream_ci" || resolvedSeModel === "upstream_se") &&
         rawSe !== null &&
         rawSe > 0
       ) {
-        const rawZ = (oriented - st.mean) / st.sd;
         sampVarZ = clippedNormalVariance(rawZ, rawSe / st.sd, Z_SCORE_MIN, Z_SCORE_MAX);
       } else {
-        // Unreported-SE benchmarks use conservative 1.0 SD z-uncertainty instead of zero
-        const seZ = rawSe !== null ? rawSe / st.sd : UNREPORTED_SE_Z;
+        // Unreported-SE benchmarks use CTT-consistent sqrt(0.5) SD uncertainty matching rho = 0.50
+        const seZ = rawSe !== null ? rawSe / st.sd : UNREPORTED_SE_Z_V2;
         sampVarZ = seZ * seZ;
       }
       sumW2SampVarZ += w * w * sampVarZ;
       if (
         st.linkedViaMeanSigma &&
+        rawZ > Z_SCORE_MIN &&
+        rawZ < Z_SCORE_MAX &&
         st.linkVarIntercept !== undefined &&
         st.linkVarSlope !== undefined &&
         st.linkCovIS !== undefined
@@ -2297,7 +2657,7 @@ export function aggregateDomain(
         sourceRowId: c.sourceRowId,
         observedHarness: c.observedHarness,
         rawScore: c.rawScore,
-        zScore: Number(z.toFixed(4)),
+        zScore: Number(z.toFixed(6)),
         seModel: resolvedSeModel,
         ...(c.seRaw !== null && c.seRaw > 0 ? { seRaw: c.seRaw } : {}),
         ciHalfWidth: effectiveCiHalfWidth,
@@ -2407,23 +2767,22 @@ export function aggregateDomain(
   }
 
   for (const p of pendingConfigs) {
-    // Morris Empirical Bayes shrinkage pulls sparse or noisy estimates toward priorMean proportionally to error variance
+    // Measurement-only Empirical Bayes shrinks stochastic measurement/link noise without penalizing newly released models for MNAR unrun benchmarks
     const totalVar = Math.max(0, p.fpcTerm + p.measTerm);
-    const shrinkage = tauModelSq / (tauModelSq + totalVar);
+    const infoReliability = tauModelSq / (tauModelSq + totalVar);
+    const shrinkage = tauModelSq / (tauModelSq + Math.max(0, p.measTerm));
     const thetaEb = priorMean + shrinkage * (p.thetaMle - priorMean);
-    const seTheta = Math.sqrt(Math.max(0, shrinkage * totalVar));
+    const samplingVarTheta = Math.max(0, shrinkage * p.measTerm);
+    const residualVarTheta = Math.max(0, shrinkage * shrinkage * p.fpcTerm);
+    const seTheta = Math.sqrt(samplingVarTheta + residualVarTheta);
 
     const score = Number((DISPLAY_BASE + DISPLAY_SPREAD * thetaEb).toFixed(2));
     const seScore = Number((DISPLAY_SPREAD * seTheta).toFixed(2));
-    const samplingSe = Number(
-      (DISPLAY_SPREAD * Math.sqrt(Math.max(0, shrinkage * p.measTerm))).toFixed(4),
-    );
-    const residualSe = Number(
-      (DISPLAY_SPREAD * Math.sqrt(Math.max(0, shrinkage * p.fpcTerm))).toFixed(4),
-    );
+    const samplingSe = Number((DISPLAY_SPREAD * Math.sqrt(samplingVarTheta)).toFixed(4));
+    const residualSe = Number((DISPLAY_SPREAD * Math.sqrt(residualVarTheta)).toFixed(4));
 
-    // Require at least half of a frontier score to come from observed data rather than the domain prior
-    const meetsCoverage = p.k >= coverageFloor && shrinkage >= MIN_FRONTIER_SHRINKAGE;
+    // Require total signal-to-variance ratio >= 0.50 so sparse noisy configs cannot enter the frontier
+    const meetsCoverage = p.k >= coverageFloor && infoReliability >= MIN_FRONTIER_SHRINKAGE;
     const result: AggregatedConfigResult = {
       configId: p.cfgId,
       provider: p.sample.provider,

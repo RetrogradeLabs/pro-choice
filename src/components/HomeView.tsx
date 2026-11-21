@@ -3,7 +3,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { MouseEvent } from "react";
-import { DOMAINS } from "@/config/benchmarks";
+import { BENCHMARKS, DOMAINS } from "@/config/benchmarks";
 import type { HomeDomainSummary, HomeSparkPoint } from "@/lib/home-summaries";
 import type { DomainId } from "@/lib/schema";
 import { domainToPathname, REPO_URL } from "@/lib/seo";
@@ -204,13 +204,13 @@ export function HomeView({ summaries, onSelectDomain }: HomeViewProps) {
       <section aria-label="How ProChoice works" className="px-5 py-8 sm:px-9 lg:px-11 lg:py-9">
         <div className="grid grid-cols-1 gap-6 text-[13px] leading-[1.65] text-(--ink-muted) sm:grid-cols-2 lg:gap-10">
           <p className="text-pretty">
-            Each composite index combines 45 active public benchmarks across nine model providers on
-            one shared score scale, paired with real dollar task cost from verified first-party API
-            pricing. Coding agent harnesses are tested separately across eight fixed open models so
-            harness quality and model quality stay distinct.
+            ProChoice combines {BENCHMARKS.length} active public benchmarks across six composite
+            indices and nine model providers on shared score scales, paired with real dollar task
+            cost from verified first-party API pricing. Coding agent harnesses are tested separately
+            across eight fixed open models so harness quality and model quality stay distinct.
           </p>
           <p className="text-pretty">
-            Rankings update daily from 18 live public benchmark and pricing sources. Read how scores
+            Rankings update daily from 17 live public benchmark and pricing sources. Read how scores
             and costs are computed on{" "}
             <Link href="/about" className="text-(--ink) underline underline-offset-4">
               About

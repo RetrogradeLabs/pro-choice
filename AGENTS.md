@@ -10,7 +10,7 @@ Canonical agent instructions for `pro-choice`. Keep this file lean and under 200
 - Commands: `bun run check` (Biome v2), `bun run lint:fast` (Oxlint), `bun run lint` (ESLint 10), `bun run typecheck`, `bun run sync`, `bun run verify`, `bun run build`.
 - Never add standalone unit, integration, or e2e test files without explicit user approval. Verify behavior through `bun run sync` and `bun run verify`.
 - Ranked LLM model leaderboards (`domains.*`) strictly allow only nine model providers: `anthropic`, `openai`, `spacexai`, `google`, `meta`, `deepseek`, `moonshot`, `alibaba`, `zhipu` (`src/config/providers.ts`). Controlled coding-agent harness evaluation (`harnessLeaderboard`) merges `FrontierHarness v1.1` (22 harnesses × 5 open control models) and `Harness Leaderboard` (12 harnesses × 4 open control models) into one unified 25-harness board across 8 distinct open control models (`mergeControlledHarnessSuites`).
-- Zero shadow candidates (`candidateBenchmarkIds` is empty across every domain): every valid benchmark contributes directly to its composite index with a frozen data-derived reliability × discrimination weight (`effectiveWeight` in `[0.10, 1.00]`).
+- Zero shadow candidates (`candidateBenchmarkIds` is empty across every domain): every valid benchmark is strictly disjoint (`datasetLineageId` unique per domain) and contributes directly to its composite index with a frozen data-derived reliability × discrimination × Kish construct-family/source redundancy weight (`effectiveWeight` in `[0.10, 1.00]`).
 - Never invent public API prices for private/unpriced models, copy scores across effort tiers, copy costs across distinct coding harnesses, mix incompatible cost axes on one frontier, or silently weaken statistical gates. Missing task costs for non-retired models with verified first-party public API pricing are estimated on the domain's homogeneous cost axis via joint-OLS + isotonic effort-ladder regression (`src/lib/math/cost.ts`) with log-normal cost uncertainty propagated through bootstrap Pareto probabilities (`src/lib/math/pareto.ts`) and disclosed in expanded row details.
 - Follow `.rules/` before editing matching files. Load a rule with `paths:` only when reading or editing a matching file.
 
@@ -18,7 +18,7 @@ Canonical agent instructions for `pro-choice`. Keep this file lean and under 200
 
 | Rule file | Scoped paths | Responsibility |
 | :--- | :--- | :--- |
-| `.rules/psychometrics-and-pareto.md` | `src/lib/**/*.{ts,tsx}`, `src/config/**/*.{ts,json}` | Equal-1.0 anchor standardization, connected linear Rasch solver, homogeneous cost axis, correlated single-line Pareto math, saturation lifecycle math, strict token-bounded aliases. |
+| `.rules/psychometrics-and-pareto.md` | `src/lib/**/*.{ts,tsx}`, `src/config/**/*.{ts,json}` | Provider-balanced anchor standardization, connected linear Rasch solver, homogeneous cost axis, correlated single-line Pareto math, saturation lifecycle math, strict token-bounded aliases. |
 | `.rules/ingestion-and-lifecycle.md` | `scripts/ingest/**/*.ts`, `.github/workflows/**/*.yml`, `data/**/*.json` | Mandatory daily source adapters, partitioned cache, strict Arena CI/battle gates, immutable MAJOR epoch baselines, full-recompute CI validation gate. |
 | `.rules/gallery-ui.md` | `src/app/**/*.{ts,tsx,css}`, `src/components/**/*.{ts,tsx}` | `sfcompute.com`-inspired gallery styling, CSS-var provider inks, WCAG AA contrast, zero-slop copy, React 19.3 + Next.js 16 PPR discipline, clipPath-revealed SVG Pareto chart and keyboard accessibility. |
 
