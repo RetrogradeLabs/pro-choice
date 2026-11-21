@@ -34,7 +34,7 @@ import type {
   ProviderId,
   SourceHealth,
 } from "@/lib/schema";
-import { domainToPathname, SITE_NAME, SITE_TITLE } from "@/lib/seo";
+import { domainToPathname, ORG_NAME, ORG_URL, REPO_URL, SITE_NAME, SITE_TITLE } from "@/lib/seo";
 import { EpochMonographDrawer } from "./EpochMonographDrawer";
 import { FrontierCatalogue } from "./FrontierCatalogue";
 import { HarnessesControlledView } from "./HarnessesView";
@@ -1210,16 +1210,24 @@ export function ProChoiceGallery({
               <Link href="/privacy" className="transition-colors hover:text-(--ink)">
                 Privacy
               </Link>
+              <a
+                href={REPO_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="transition-colors hover:text-(--ink)"
+              >
+                GitHub
+              </a>
             </div>
             <span>
               © {formatUtcDate(activeMeta.generatedAt).slice(0, 4)}{" "}
               <a
-                href="https://inretrograde.io"
+                href={ORG_URL}
                 target="_blank"
                 rel="noreferrer"
                 className="text-(--ink-muted) underline-offset-4 hover:text-(--ink) hover:underline"
               >
-                Retrograde Labs
+                {ORG_NAME}
               </a>
             </span>
           </footer>

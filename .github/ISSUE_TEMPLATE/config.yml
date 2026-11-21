@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Live Leaderboards
+    url: https://prochoice.industries
+    about: Browse all six live composite indices on prochoice.industries
+  - name: Public API & Agent Documentation
+    url: https://prochoice.industries/docs
+    about: Query /api/v1/snapshot, /api/v1/domains/{domain}, and Accept: text/markdown
+  - name: Security Vulnerability Disclosure
+    url: https://github.com/RetrogradeLabs/pro-choice/security/advisories/new
+    about: Report a security issue privately instead of opening a public issue

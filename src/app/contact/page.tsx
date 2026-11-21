@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { InfoPageShell } from "@/components/InfoPageShell";
 import { loadCachedRelease } from "@/lib/release-cache";
-import { formatUtcDate, ORG_GITHUB_URL, ORG_NAME, ORG_URL, SITE_URL } from "@/lib/seo";
+import { formatUtcDate, ORG_GITHUB_URL, ORG_NAME, ORG_URL, REPO_URL, SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Contact ProChoice",
@@ -48,6 +48,17 @@ export default async function ContactPage() {
               className="font-mono text-[13px] underline underline-offset-4 hover:text-(--ink)"
             >
               {ORG_URL}
+            </a>
+          </li>
+          <li>
+            Source repository and issue tracker:{" "}
+            <a
+              href={REPO_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="font-mono text-[13px] underline underline-offset-4 hover:text-(--ink)"
+            >
+              {REPO_URL}
             </a>
           </li>
           <li>

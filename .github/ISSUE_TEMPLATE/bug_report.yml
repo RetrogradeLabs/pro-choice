@@ -1,0 +1,26 @@
+name: Bug report
+description: Report a bug in the web UI, statistical calculations, API, or ingestion pipeline
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open https://prochoice.industries/...
+        2. Click ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "e.g., macOS 15, Chrome 131, Bun 1.4.4"

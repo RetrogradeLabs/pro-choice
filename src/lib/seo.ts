@@ -22,6 +22,8 @@ export const SITE_DESCRIPTION =
 export const ORG_NAME = "Retrograde Labs";
 export const ORG_URL = "https://inretrograde.io";
 export const ORG_GITHUB_URL = "https://github.com/RetrogradeLabs";
+export const REPO_URL = "https://github.com/RetrogradeLabs/pro-choice";
+export const CODE_LICENSE_URL = "https://opensource.org/licenses/MIT";
 export const LICENSE_URL = "https://creativecommons.org/licenses/by/4.0/";
 
 export type DomainSlug = "coding" | "writing" | "design" | "research" | "cyber" | "harnesses";
@@ -424,7 +426,20 @@ export function buildHomeJsonLd(
         url: SITE_URL,
         description: SITE_DESCRIPTION,
         inLanguage: "en-US",
+        sameAs: [REPO_URL],
         publisher: { "@id": orgId },
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "@id": `${SITE_URL}/#source`,
+        name: SITE_NAME,
+        description: SITE_DESCRIPTION,
+        codeRepository: REPO_URL,
+        url: SITE_URL,
+        programmingLanguage: ["TypeScript", "TSX"],
+        runtimePlatform: "Bun 1.4, Node.js 26, Next.js 16",
+        license: CODE_LICENSE_URL,
+        author: { "@id": orgId },
       },
       {
         "@type": "DataCatalog",
@@ -433,6 +448,7 @@ export function buildHomeJsonLd(
         description:
           "Daily benchmark composites comparing frontier language models and coding agent harnesses by score and real dollar cost.",
         url: SITE_URL,
+        sameAs: [REPO_URL],
         dateModified: snapshot.generatedAt,
         license: LICENSE_URL,
         creator: { "@id": orgId },
@@ -563,6 +579,7 @@ export function renderHomeMarkdown(
     `> ${SITE_DESCRIPTION}`,
     "",
     `- Canonical URL: ${SITE_URL}`,
+    `- Open-source repository: ${REPO_URL}`,
     `- Snapshot hash: \`${snapshot.snapshotHash}\``,
     `- Updated: ${updated}`,
     `- Public API docs: ${SITE_URL}/docs`,
@@ -707,7 +724,8 @@ export function renderStaticPageMarkdown(
       "ProChoice ingests 18 public benchmark and first-party pricing feeds daily, aligns 45 active benchmarks onto shared domain scales via equal-1.0 anchor standardization and heteroscedastic REML Empirical Bayes pooling, and computes cost-quality Pareto frontiers across six domains: Coding, Writing, Design, Research, Cyber, and Harnesses.",
       "",
       `- Organization: ${ORG_NAME} (${ORG_URL})`,
-      `- GitHub: ${ORG_GITHUB_URL}`,
+      `- Source repository: ${REPO_URL} (MIT)`,
+      `- GitHub organization: ${ORG_GITHUB_URL}`,
       `- Data license: CC BY 4.0 (${LICENSE_URL})`,
       `- API documentation: ${SITE_URL}/docs`,
       `- Snapshot updated: ${updated}`,
@@ -721,6 +739,7 @@ export function renderStaticPageMarkdown(
       `ProChoice is maintained by ${ORG_NAME}.`,
       "",
       `- Organization website: ${ORG_URL}`,
+      `- Source repository and issues: ${REPO_URL}`,
       `- GitHub organization: ${ORG_GITHUB_URL}`,
       `- Security disclosure metadata: ${SITE_URL}/.well-known/security.txt`,
       `- Public API docs: ${SITE_URL}/docs`,
@@ -802,7 +821,8 @@ export function renderLlmsTxt(
     `- [Single-domain JSON API](${SITE_URL}/api/v1/domains/coding): Typed JSON for one domain (\`coding\`, \`writing\`, \`design\`, \`research\`, \`cyber\`, \`harnesses\`).`,
     `- [OpenAPI 3.1 specification](${SITE_URL}/openapi.json): Typed schema for all REST endpoints and RFC 9457 error responses.`,
     `- [RFC 9727 API catalog](${SITE_URL}/.well-known/api-catalog): Linkset index for automated API discovery.`,
-    `- [About ProChoice](${SITE_URL}/about): Methodology overview, Retrograde Labs maintainer information, and CC BY 4.0 data license.`,
+    `- [About ProChoice](${SITE_URL}/about): Methodology overview, Retrograde Labs maintainer information, MIT source code, and CC BY 4.0 data license.`,
+    `- [Open-source repository](${REPO_URL}): Full TypeScript source, daily ingestion adapters, immutable epoch baselines, and issue tracker.`,
     `- [Contact](${SITE_URL}/contact) and [Privacy](${SITE_URL}/privacy): Maintainer contacts and data handling policy.`,
     `- [XML sitemap](${SITE_URL}/sitemap.xml): Canonical page index across all routes.`,
     "",

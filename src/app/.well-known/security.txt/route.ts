@@ -1,7 +1,9 @@
-import { ORG_URL, SITE_URL } from "@/lib/seo";
+import { ORG_URL, REPO_URL, SITE_URL } from "@/lib/seo";
 
 const SECURITY_TXT = [
+  `Contact: ${REPO_URL}/security/advisories/new`,
   `Contact: ${ORG_URL}`,
+  `Policy: ${REPO_URL}/blob/main/SECURITY.md`,
   `Canonical: ${SITE_URL}/.well-known/security.txt`,
   "Preferred-Languages: en",
   "Expires: 2027-11-21T00:00:00.000Z",

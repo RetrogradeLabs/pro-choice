@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+title: "ProChoice: Composite LLM and Coding Agent Harness Pareto Leaderboards"
+message: "If you use ProChoice rankings, methodology, or compiled benchmark snapshots in research or evaluations, please cite this repository."
+type: software
+authors:
+  - name: "Retrograde Labs"
+    website: "https://inretrograde.io"
+repository-code: "https://github.com/RetrogradeLabs/pro-choice"
+url: "https://prochoice.industries"
+license: MIT
+version: "1.0.0"
+date-released: "2026-11-21"
+abstract: "ProChoice aggregates 45 active public LLM and coding agent benchmarks across 18 daily sources into six cost-quality composite indices covering Coding, Writing, Design, Research, Cyber, and Harnesses using equal-1.0 anchor standardization, heteroscedastic REML Empirical Bayes pooling, active-set monotone effort cost regression, and bootstrap Pareto frontier analysis."
+keywords:
+  - llm-leaderboard
+  - llm-benchmarks
+  - ai-evaluation
+  - coding-agents
+  - pareto-frontier
+  - psychometrics
+  - empirical-bayes
+  - open-data

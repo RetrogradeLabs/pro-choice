@@ -6,7 +6,7 @@ import type { MouseEvent } from "react";
 import { DOMAINS } from "@/config/benchmarks";
 import type { HomeDomainSummary, HomeSparkPoint } from "@/lib/home-summaries";
 import type { DomainId } from "@/lib/schema";
-import { domainToPathname } from "@/lib/seo";
+import { domainToPathname, REPO_URL } from "@/lib/seo";
 import { ProviderMarkerIcon } from "./ProviderMarkerIcon";
 
 function isModifiedClick(e: MouseEvent<HTMLAnchorElement>): boolean {
@@ -227,14 +227,14 @@ export function HomeView({ summaries, onSelectDomain }: HomeViewProps) {
             >
               llms.txt
             </Link>
-            , or visit{" "}
+            , or inspect the open-source code on{" "}
             <a
-              href="https://github.com/RetrogradeLabs"
+              href={REPO_URL}
               target="_blank"
               rel="noreferrer"
               className="text-(--ink) underline underline-offset-4"
             >
-              Retrograde Labs on GitHub
+              GitHub
             </a>
             .
           </p>

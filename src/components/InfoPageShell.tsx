@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { DOMAINS } from "@/config/benchmarks";
-import { domainToPathname, ORG_NAME, ORG_URL } from "@/lib/seo";
+import { domainToPathname, ORG_NAME, ORG_URL, REPO_URL } from "@/lib/seo";
 
 interface InfoPageShellProps {
   title: string;
@@ -87,6 +87,9 @@ export function InfoPageShell({ title, subtitle, updatedDate, children }: InfoPa
             <Link href="/privacy" className="hover:text-(--ink)">
               Privacy
             </Link>
+            <a href={REPO_URL} target="_blank" rel="noreferrer" className="hover:text-(--ink)">
+              GitHub
+            </a>
           </div>
           <span>
             © {updatedDate.slice(0, 4)}{" "}

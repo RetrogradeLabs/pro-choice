@@ -2,7 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { InfoPageShell } from "@/components/InfoPageShell";
 import { loadCachedRelease } from "@/lib/release-cache";
-import { formatUtcDate, LICENSE_URL, ORG_GITHUB_URL, ORG_NAME, ORG_URL, SITE_URL } from "@/lib/seo";
+import {
+  CODE_LICENSE_URL,
+  formatUtcDate,
+  LICENSE_URL,
+  ORG_NAME,
+  ORG_URL,
+  REPO_URL,
+  SITE_URL,
+} from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "About ProChoice",
@@ -59,7 +67,7 @@ export default async function AboutPage() {
 
       <section className="space-y-3">
         <h2 className="font-display text-[22px] font-normal text-(--ink)">
-          Maintainer and data license
+          Open source, maintainer, and licenses
         </h2>
         <p>
           ProChoice is built and maintained by{" "}
@@ -70,24 +78,34 @@ export default async function AboutPage() {
             className="underline underline-offset-4 hover:text-(--ink)"
           >
             {ORG_NAME}
-          </a>{" "}
-          (
+          </a>
+          . The complete web app, econometric scoring math, and daily ingestion pipeline are open
+          source under the{" "}
           <a
-            href={ORG_GITHUB_URL}
+            href={CODE_LICENSE_URL}
             target="_blank"
             rel="noreferrer"
             className="underline underline-offset-4 hover:text-(--ink)"
           >
-            github.com/RetrogradeLabs
+            MIT License
+          </a>{" "}
+          at{" "}
+          <a
+            href={REPO_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-4 hover:text-(--ink)"
+          >
+            github.com/RetrogradeLabs/pro-choice
           </a>
-          ). Compiled ProChoice composite indices and API outputs are published under{" "}
+          . Compiled ProChoice composite indices and API outputs are published under{" "}
           <a
             href={LICENSE_URL}
             target="_blank"
             rel="noreferrer"
             className="underline underline-offset-4 hover:text-(--ink)"
           >
-            Creative Commons Attribution 4.0 (CC BY 4.0)
+            Creative Commons Attribution 4.0
           </a>{" "}
           with full upstream attribution to each source benchmark. See the{" "}
           <Link href="/docs" className="underline underline-offset-4 hover:text-(--ink)">

@@ -1,0 +1,37 @@
+name: Benchmark, model alias, or pricing update
+description: Propose a new public benchmark, model alias, reasoning effort default, or first-party API pricing fix
+labels: ["data"]
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Request type
+      options:
+        - Add or update model alias / effort default
+        - Fix first-party API pricing
+        - Propose public benchmark source
+        - Report upstream adapter or parsing issue
+    validations:
+      required: true
+  - type: input
+    id: domain
+    attributes:
+      label: Affected domain or model
+      placeholder: "e.g., Coding / deepseek-v4-pro-0813"
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Official source URLs
+      description: Link directly to the upstream benchmark, provider API docs, or first-party pricing page.
+      placeholder: "https://..."
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Include expected values, reasoning effort tier, and current snapshot hash if reporting a discrepancy.
+    validations:
+      required: true

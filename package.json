@@ -1,7 +1,37 @@
 {
   "name": "pro-choice",
   "version": "1.0.0",
+  "description": "Open-source LLM leaderboard and coding agent harness benchmark comparing frontier AI models by composite score and real dollar cost across six domains.",
   "private": true,
+  "license": "MIT",
+  "author": {
+    "name": "Retrograde Labs",
+    "url": "https://inretrograde.io"
+  },
+  "homepage": "https://prochoice.industries",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RetrogradeLabs/pro-choice.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RetrogradeLabs/pro-choice/issues"
+  },
+  "keywords": [
+    "llm-leaderboard",
+    "llm-benchmarks",
+    "ai-benchmarks",
+    "llm-evaluation",
+    "pareto-frontier",
+    "coding-agents",
+    "ai-agents",
+    "llm-pricing",
+    "psychometrics",
+    "empirical-bayes",
+    "nextjs",
+    "bun",
+    "open-data",
+    "retrograde-labs"
+  ],
   "type": "module",
   "packageManager": "bun@1.4.4",
   "engines": {
