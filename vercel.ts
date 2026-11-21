@@ -12,8 +12,8 @@ export const config: VercelConfig = {
   cleanUrls: true,
   trailingSlash: false,
   regions: ["iad1"],
-  installCommand: "bun install --frozen-lockfile",
-  buildCommand: "bun run build",
+  installCommand: "bash scripts/vercel-install.sh",
+  buildCommand: "$HOME/.bun/bin/bun run build",
   redirects: [
     {
       source: "/:path*",
