@@ -29,7 +29,10 @@ import {
   type RemlPriorPoint,
   type ShrinkageMode,
 } from "../../src/lib/math/aggregate.ts";
-import { canonicalizeObservation } from "../../src/lib/math/canonicalize.ts";
+import {
+  buildDynamicAliasesFromPricing,
+  canonicalizeObservation,
+} from "../../src/lib/math/canonicalize.ts";
 import {
   type DomainCostBootstrapModel,
   type PartialBasketConfigModel,
@@ -539,6 +542,9 @@ export function extractAcceptedCellsFromSources(results: readonly CachedSourceFi
   const unmapped: UnmappedRecord[] = [];
   const seenUnmapped = new Set<string>();
   const rawCellsByDomain = new Map<DomainId, ObservedCell[]>();
+  const dynamicAliases = buildDynamicAliasesFromPricing(
+    results.flatMap((r) => (r.health.sourceId === "pricing" ? r.payload.pricing : [])),
+  );
 
   const pushUnmapped = (rec: UnmappedRecord, dedupeKey: string) => {
     if (seenUnmapped.has(dedupeKey)) return;
@@ -660,7 +666,7 @@ export function extractAcceptedCellsFromSources(results: readonly CachedSourceFi
         }
       }
 
-      const outcome = canonicalizeObservation(obs);
+      const outcome = canonicalizeObservation(obs, dynamicAliases);
       if (outcome.kind === "unmapped") {
         pushUnmapped(
           {

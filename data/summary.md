@@ -1,7 +1,7 @@
 # ProChoice Daily Ingestion Summary
 
-- Generated at: 2026-11-21T20:47:49.660Z
-- Snapshot hash: `cc83b00e9d94a671`
+- Generated at: 2026-11-21T21:16:16.186Z
+- Snapshot hash: `43c4e78f820fecef`
 - Unmapped allowlisted records: 684
 
 ## Mandatory Source Health

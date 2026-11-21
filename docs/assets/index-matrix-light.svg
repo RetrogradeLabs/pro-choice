@@ -4,6 +4,9 @@
     <clipPath id="frame-clip">
       <rect x="0" y="0" width="960" height="568" rx="8" />
     </clipPath>
+    <clipPath id="name-clip">
+      <rect x="114" y="96" width="236" height="56" />
+    </clipPath>
     <style>
       .wordmark { font-family: Georgia, "Iowan Old Style", "Times New Roman", serif; font-size: 16.5px; font-weight: 500; letter-spacing: -0.02em; fill: #111111; }
       .meta { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; fill: #68655e; }
@@ -27,12 +30,10 @@
   </defs>
 
   <g clip-path="url(#frame-clip)">
-    <!-- Canvas and elevated matrix plate -->
     <rect x="0" y="0" width="960" height="48" fill="#fafaf8" />
     <rect x="0" y="48" width="960" height="484" fill="#ffffff" />
     <rect x="0" y="532" width="960" height="36" fill="#fafaf8" />
 
-    <!-- Header bar -->
     <g id="header">
       <g transform="translate(28, 12)">
         <rect x="0.75" y="0.75" width="22.5" height="22.5" rx="6" fill="#ffffff" stroke="#d4d2cb" stroke-width="1.2" />
@@ -46,13 +47,11 @@
       <line x1="0" y1="48" x2="960" y2="48" class="hairline" />
     </g>
 
-    <!-- Matrix structural hairlines -->
     <line x1="480" y1="48" x2="480" y2="532" class="hairline" />
     <line x1="0" y1="209.5" x2="960" y2="209.5" class="hairline" />
     <line x1="0" y1="371" x2="960" y2="371" class="hairline" />
     <line x1="0" y1="532" x2="960" y2="532" class="hairline" />
 
-    <!-- Row 1, Col 1: Coding -->
     <g id="cell-coding" transform="translate(0, 48)">
       <text x="28" y="36" class="domain">Coding<tspan dx="6" dy="-1" class="arrow">&#8594;</tspan></text>
       <text x="28" y="57" class="tagline">Multi-file engineering, SRE operations,</text>
@@ -82,16 +81,15 @@
 
       <text x="28" y="116" class="label">Top score</text>
       <circle cx="105" cy="112" r="3.1" fill="#b01e25" />
-      <text x="116" y="116"><tspan class="top-name">Claude Fable 5.2</tspan><tspan dx="7" class="effort">Max</tspan></text>
+      <text x="116" y="116" clip-path="url(#name-clip)"><tspan class="top-name">Claude Fable 5.2</tspan><tspan dx="7" class="effort">Max</tspan></text>
       <text x="452" y="116" text-anchor="end" class="top-val">86.0 · $26.5</text>
 
       <text x="28" y="139" class="label">Best value</text>
       <rect x="102.2" y="132.2" width="5.6" height="5.6" fill="#006955" />
-      <text x="116" y="139"><tspan class="sec-name">GPT-6.2 Sol</tspan><tspan dx="7" class="effort">Max</tspan></text>
+      <text x="116" y="139" clip-path="url(#name-clip)"><tspan class="sec-name">GPT-6.2 Sol</tspan><tspan dx="7" class="effort">Max</tspan></text>
       <text x="452" y="139" text-anchor="end" class="sec-val">71.9 · $1.01</text>
     </g>
 
-    <!-- Row 1, Col 2: Writing -->
     <g id="cell-writing" transform="translate(480, 48)">
       <text x="28" y="36" class="domain">Writing<tspan dx="6" dy="-1" class="arrow">&#8594;</tspan></text>
       <text x="28" y="57" class="tagline">Creative fiction, longform narrative,</text>
@@ -113,16 +111,15 @@
 
       <text x="28" y="116" class="label">Top score</text>
       <rect x="102.2" y="109.2" width="5.6" height="5.6" fill="#006955" />
-      <text x="116" y="116"><tspan class="top-name">GPT-6.2 Astra</tspan><tspan dx="7" class="effort">High</tspan></text>
+      <text x="116" y="116" clip-path="url(#name-clip)"><tspan class="top-name">GPT-6.2 Astra</tspan><tspan dx="7" class="effort">High</tspan></text>
       <text x="452" y="116" text-anchor="end" class="top-val">86.1 · $0.24</text>
 
       <text x="28" y="139" class="label">Best value</text>
       <circle cx="105" cy="135" r="3.1" fill="#b01e25" />
-      <text x="116" y="139"><tspan class="sec-name">Claude Opus 5.5</tspan><tspan dx="7" class="effort">High</tspan></text>
+      <text x="116" y="139" clip-path="url(#name-clip)"><tspan class="sec-name">Claude Opus 5.5</tspan><tspan dx="7" class="effort">High</tspan></text>
       <text x="452" y="139" text-anchor="end" class="sec-val">75.1 · $0.12</text>
     </g>
 
-    <!-- Row 2, Col 1: Design -->
     <g id="cell-design" transform="translate(0, 209.5)">
       <text x="28" y="36" class="domain">Design<tspan dx="6" dy="-1" class="arrow">&#8594;</tspan></text>
       <text x="28" y="57" class="tagline">Web apps, visual UI debugging, vector SVG,</text>
@@ -146,16 +143,15 @@
 
       <text x="28" y="116" class="label">Top score</text>
       <circle cx="105" cy="112" r="3.1" fill="#b01e25" />
-      <text x="116" y="116"><tspan class="top-name">Claude Opus 5.5</tspan><tspan dx="7" class="effort">Max</tspan></text>
+      <text x="116" y="116" clip-path="url(#name-clip)"><tspan class="top-name">Claude Opus 5.5</tspan><tspan dx="7" class="effort">Max</tspan></text>
       <text x="452" y="116" text-anchor="end" class="top-val">83.7 · $1.19</text>
 
       <text x="28" y="139" class="label">Best value</text>
       <rect x="102.2" y="132.2" width="5.6" height="5.6" fill="#006955" />
-      <text x="116" y="139"><tspan class="sec-name">GPT-5.6 Luna</tspan><tspan dx="7" class="effort">Max</tspan></text>
+      <text x="116" y="139" clip-path="url(#name-clip)"><tspan class="sec-name">GPT-5.6 Luna</tspan><tspan dx="7" class="effort">Max</tspan></text>
       <text x="452" y="139" text-anchor="end" class="sec-val">62.1 · $0.014</text>
     </g>
 
-    <!-- Row 2, Col 2: Research -->
     <g id="cell-research" transform="translate(480, 209.5)">
       <text x="28" y="36" class="domain">Research<tspan dx="6" dy="-1" class="arrow">&#8594;</tspan></text>
       <text x="28" y="57" class="tagline">Long-context retrieval, frontier science,</text>
@@ -184,16 +180,15 @@
 
       <text x="28" y="116" class="label">Top score</text>
       <circle cx="105" cy="112" r="3.1" fill="#b01e25" />
-      <text x="116" y="116"><tspan class="top-name">Claude Fable 5.2</tspan><tspan dx="7" class="effort">Max</tspan></text>
+      <text x="116" y="116" clip-path="url(#name-clip)"><tspan class="top-name">Claude Fable 5.2</tspan><tspan dx="7" class="effort">Max</tspan></text>
       <text x="452" y="116" text-anchor="end" class="top-val">80.1 · $26.5</text>
 
       <text x="28" y="139" class="label">Best value</text>
       <rect x="102.2" y="132.2" width="5.6" height="5.6" fill="#006955" />
-      <text x="116" y="139"><tspan class="sec-name">GPT-6.2 Sol</tspan><tspan dx="7" class="effort">High</tspan></text>
+      <text x="116" y="139" clip-path="url(#name-clip)"><tspan class="sec-name">GPT-6.2 Sol</tspan><tspan dx="7" class="effort">High</tspan></text>
       <text x="452" y="139" text-anchor="end" class="sec-val">70.4 · $0.56</text>
     </g>
 
-    <!-- Row 3, Col 1: Cyber -->
     <g id="cell-cyber" transform="translate(0, 371)">
       <text x="28" y="36" class="domain">Cyber<tspan dx="6" dy="-1" class="arrow">&#8594;</tspan></text>
       <text x="28" y="57" class="tagline">Vulnerability detection, CVE patching,</text>
@@ -217,16 +212,15 @@
 
       <text x="28" y="116" class="label">Top score</text>
       <circle cx="105" cy="112" r="3.1" fill="#b01e25" />
-      <text x="116" y="116"><tspan class="top-name">Claude Fable 5.2</tspan><tspan dx="7" class="effort">High</tspan></text>
+      <text x="116" y="116" clip-path="url(#name-clip)"><tspan class="top-name">Claude Fable 5.2</tspan><tspan dx="7" class="effort">High</tspan></text>
       <text x="452" y="116" text-anchor="end" class="top-val">81.4 · $67.0</text>
 
       <text x="28" y="139" class="label">Best value</text>
       <rect x="102.2" y="132.2" width="5.6" height="5.6" fill="#006955" />
-      <text x="116" y="139"><tspan class="sec-name">GPT-6 Sol</tspan><tspan dx="7" class="effort">Medium</tspan></text>
+      <text x="116" y="139" clip-path="url(#name-clip)"><tspan class="sec-name">GPT-6 Sol</tspan><tspan dx="7" class="effort">Medium</tspan></text>
       <text x="452" y="139" text-anchor="end" class="sec-val">66.6 · $4.57</text>
     </g>
 
-    <!-- Row 3, Col 2: Harnesses -->
     <g id="cell-harnesses" transform="translate(480, 371)">
       <text x="28" y="36" class="domain">Harnesses<tspan dx="6" dy="-1" class="arrow">&#8594;</tspan></text>
       <text x="28" y="57" class="tagline">Coding agent harnesses compared on fixed test</text>
@@ -244,16 +238,15 @@
 
       <text x="28" y="116" class="label">Top score</text>
       <circle cx="105" cy="112" r="3.1" fill="#2563eb" />
-      <text x="116" y="116"><tspan class="top-name">OpenCode</tspan><tspan dx="7" class="effort">v2.2.6</tspan></text>
+      <text x="116" y="116" clip-path="url(#name-clip)"><tspan class="top-name">OpenCode</tspan><tspan dx="7" class="effort">v2.2.6</tspan></text>
       <text x="452" y="116" text-anchor="end" class="top-val">48.0% · $0.55</text>
 
       <text x="28" y="139" class="label">Best value</text>
       <circle cx="105" cy="135" r="3.1" fill="#55534e" />
-      <text x="116" y="139"><tspan class="sec-name">Pi</tspan><tspan dx="7" class="effort">v1.4.0 / v1.2.0</tspan></text>
+      <text x="116" y="139" clip-path="url(#name-clip)"><tspan class="sec-name">Pi</tspan><tspan dx="7" class="effort">v1.4.0 / v1.2.0</tspan></text>
       <text x="452" y="139" text-anchor="end" class="sec-val">44.8% · $0.52</text>
     </g>
 
-    <!-- Footer colophon -->
     <g id="footer">
       <text x="28" y="554" class="foot-url">prochoice.industries</text>
       <text x="480" y="554" text-anchor="middle" class="foot-note">Models that cost more while scoring lower are left off the chart</text>
@@ -261,6 +254,5 @@
     </g>
   </g>
 
-  <!-- Crisp outer border -->
   <rect x="0.5" y="0.5" width="959" height="567" rx="8" fill="none" stroke="#e2e0d9" stroke-width="1" />
 </svg>

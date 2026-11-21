@@ -2,6 +2,7 @@ import { inflateRawSync } from "node:zlib";
 import Papa from "papaparse";
 import {
   isRegisteredModelExact,
+  MODEL_MAX_PREFIX_RX,
   parseStrictEffortMetadata,
   parseUniqueEffortFromText,
   resolveExplicitHarness,
@@ -93,9 +94,7 @@ function splitEpochModelVersion(raw: string): {
       const candidateBase = trimmed
         .slice(0, trimmed.length - effMatch[0].length)
         .replace(INFERENCE_HOST_SUFFIX_REGEX, "");
-      const isModelMax =
-        /^max$/i.test(effMatch[1]) &&
-        /(?:^|[^a-z0-9])(?:qwen[\s_-]*[34](?:[._-][0-9]+)?|codex)$/i.test(candidateBase);
+      const isModelMax = /^max$/i.test(effMatch[1]) && MODEL_MAX_PREFIX_RX.test(candidateBase);
       if (!isModelMax) {
         effort = effMatch[1].toLowerCase();
         trimmed = candidateBase;

@@ -51,6 +51,7 @@
     "ingest": "bun run scripts/ingest/run.ts",
     "audit:lifecycle": "bun run scripts/ingest/audit-lifecycle.ts",
     "validate:snapshot": "bun run scripts/ingest/validate-snapshot.ts",
+    "update:readme": "bun run scripts/ingest/update-readme-assets.ts",
     "sync": "bun run scripts/ingest/sync.ts"
   },
   "dependencies": {

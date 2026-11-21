@@ -1,11 +1,46 @@
 import type { RawObservation } from "../../src/lib/schema.ts";
 
-const USER_AGENT = "ProChoice-Benchmark-Bot/1.0 (+https://prochoice.ai)";
+const USER_AGENT = "ProChoice-Benchmark-Bot/2.0 (+https://prochoice.industries)";
+const MAX_FETCH_ATTEMPTS = 4;
+const MAX_RETRY_AFTER_MS = 30_000;
 
 export interface FetchOptions {
   timeoutMs?: number;
   headers?: Record<string, string>;
   rejectRedirects?: boolean;
+}
+
+class RetryableHttpError extends Error {
+  readonly retryAfterMs: number | null;
+  constructor(message: string, retryAfterMs: number | null) {
+    super(message);
+    this.retryAfterMs = retryAfterMs;
+  }
+}
+
+function parseRetryAfterMs(headerVal: string | null): number | null {
+  if (!headerVal) return null;
+  const trimmed = headerVal.trim();
+  if (/^\d+$/.test(trimmed)) {
+    return Math.min(MAX_RETRY_AFTER_MS, Math.max(500, Number(trimmed) * 1000));
+  }
+  const dateMs = Date.parse(trimmed);
+  if (Number.isFinite(dateMs)) {
+    const delta = dateMs - Date.now();
+    if (delta > 0) return Math.min(MAX_RETRY_AFTER_MS, Math.max(500, delta));
+  }
+  return null;
+}
+
+function isRetryableStatus(status: number): boolean {
+  return status === 408 || status === 429 || status >= 500;
+}
+
+function computeBackoffMs(attempt: number, retryAfterMs: number | null): number {
+  if (retryAfterMs !== null) return retryAfterMs;
+  const base = 1000 * 2.5 ** attempt;
+  const jitter = Math.floor(Math.random() * 400);
+  return Math.min(MAX_RETRY_AFTER_MS, Math.round(base + jitter));
 }
 
 async function fetchOnce(url: string, opts: FetchOptions, timeoutMs: number): Promise<Response> {
@@ -19,35 +54,67 @@ async function fetchOnce(url: string, opts: FetchOptions, timeoutMs: number): Pr
     signal: AbortSignal.timeout(timeoutMs),
   });
   if (!response.ok) {
-    throw new Error(`HTTP ${response.status} for ${url}`);
+    const retryAfter = parseRetryAfterMs(response.headers.get("retry-after"));
+    await response.body?.cancel().catch(() => undefined);
+    const msg = `HTTP ${response.status} for ${url}`;
+    if (isRetryableStatus(response.status)) {
+      throw new RetryableHttpError(msg, retryAfter);
+    }
+    throw new Error(msg);
   }
   return response;
 }
 
-export async function fetchWithTimeout(url: string, opts: FetchOptions = {}): Promise<Response> {
-  const timeoutMs = opts.timeoutMs ?? 25_000;
+async function withBackoffRetries<T>(
+  fn: () => Promise<T>,
+  isPermanentError: (err: unknown) => boolean,
+  attempt = 0,
+): Promise<T> {
   try {
-    return await fetchOnce(url, opts, timeoutMs);
+    return await fn();
   } catch (err) {
-    if (err instanceof Error && err.message.startsWith("HTTP 4")) throw err;
-    await new Promise((r) => setTimeout(r, 600));
-    return fetchOnce(url, opts, timeoutMs);
+    if (isPermanentError(err) || attempt + 1 >= MAX_FETCH_ATTEMPTS) throw err;
+    const retryAfter = err instanceof RetryableHttpError ? err.retryAfterMs : null;
+    await new Promise((r) => setTimeout(r, computeBackoffMs(attempt, retryAfter)));
+    return withBackoffRetries(fn, isPermanentError, attempt + 1);
   }
 }
 
+function isPermanentFetchError(err: unknown): boolean {
+  return (
+    err instanceof Error &&
+    !(err instanceof RetryableHttpError) &&
+    /^HTTP 4\d\d\b/.test(err.message)
+  );
+}
+
+export async function fetchWithTimeout(url: string, opts: FetchOptions = {}): Promise<Response> {
+  const timeoutMs = opts.timeoutMs ?? 25_000;
+  return withBackoffRetries(() => fetchOnce(url, opts, timeoutMs), isPermanentFetchError);
+}
+
 export async function fetchText(url: string, opts?: FetchOptions): Promise<string> {
-  const res = await fetchWithTimeout(url, opts);
-  return res.text();
+  const timeoutMs = opts?.timeoutMs ?? 25_000;
+  return withBackoffRetries(async () => {
+    const res = await fetchOnce(url, opts ?? {}, timeoutMs);
+    return res.text();
+  }, isPermanentFetchError);
 }
 
 export async function fetchJson<T>(url: string, opts?: FetchOptions): Promise<T> {
-  const res = await fetchWithTimeout(url, opts);
-  return (await res.json()) as T;
+  const timeoutMs = opts?.timeoutMs ?? 25_000;
+  return withBackoffRetries(async () => {
+    const res = await fetchOnce(url, opts ?? {}, timeoutMs);
+    return (await res.json()) as T;
+  }, isPermanentFetchError);
 }
 
 export async function fetchArrayBuffer(url: string, opts?: FetchOptions): Promise<ArrayBuffer> {
-  const res = await fetchWithTimeout(url, opts);
-  return res.arrayBuffer();
+  const timeoutMs = opts?.timeoutMs ?? 25_000;
+  return withBackoffRetries(async () => {
+    const res = await fetchOnce(url, opts ?? {}, timeoutMs);
+    return res.arrayBuffer();
+  }, isPermanentFetchError);
 }
 
 // Send Authorization only on hop 0; enforce https:// and strip credentials across up to 5 manual redirect hops
@@ -71,10 +138,11 @@ async function fetchSafeHop(
   });
 
   if (res.status >= 300 && res.status < 400) {
+    const loc = res.headers.get("location");
+    await res.body?.cancel().catch(() => undefined);
     if (hop >= MAX_REDIRECTS) {
       throw new Error(`Exceeded ${MAX_REDIRECTS} redirects for ${currentUrl.toString()}`);
     }
-    const loc = res.headers.get("location");
     if (!loc) throw new Error(`HTTP ${res.status} redirect without Location for ${currentUrl}`);
     const nextUrl = new URL(loc, currentUrl);
     if (nextUrl.protocol !== "https:") {
@@ -83,7 +151,15 @@ async function fetchSafeHop(
     return fetchSafeHop(nextUrl, hop + 1, undefined, timeoutMs);
   }
 
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${currentUrl.toString()}`);
+  if (!res.ok) {
+    const retryAfter = parseRetryAfterMs(res.headers.get("retry-after"));
+    await res.body?.cancel().catch(() => undefined);
+    const msg = `HTTP ${res.status} for ${currentUrl.toString()}`;
+    if (isRetryableStatus(res.status)) {
+      throw new RetryableHttpError(msg, retryAfter);
+    }
+    throw new Error(msg);
+  }
   return res.arrayBuffer();
 }
 
@@ -96,7 +172,13 @@ export async function fetchArrayBufferWithSafeAuth(
   if (startUrl.protocol !== "https:") {
     throw new Error(`Refusing non-HTTPS request ${startUrl.toString()}`);
   }
-  return fetchSafeHop(startUrl, 0, authHeader, timeoutMs);
+  return withBackoffRetries(
+    () => fetchSafeHop(startUrl, 0, authHeader, timeoutMs),
+    (err) =>
+      err instanceof Error &&
+      !(err instanceof RetryableHttpError) &&
+      /^HTTP 4\d\d\b|^Refusing non-HTTPS|^Exceeded \d+ redirects/.test(err.message),
+  );
 }
 
 export function extractRscText(html: string): string {

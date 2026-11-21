@@ -147,7 +147,7 @@ jobs:
           if [ -n "$BASE_REF" ] && [ "$BASE_REF" != "0000000000000000000000000000000000000000" ]; then
             ANCHOR="$BASE_REF"
             # Validate every intermediate commit in BASE_REF..HEAD with its OWN compiler/registry tree so historical releases verify accurately
-            mapfile -t LIFE_COMMITS < <(git rev-list --reverse "${BASE_REF}..HEAD" -- data/lifecycle.json)
+            mapfile -t LIFE_COMMITS < <(git rev-list --first-parent --reverse "${BASE_REF}..HEAD" -- data/lifecycle.json)
             if [ "${#LIFE_COMMITS[@]}" -gt 1 ]; then
               LAST_IDX=$((${#LIFE_COMMITS[@]} - 1))
               for ((i = 0; i < LAST_IDX; i++)); do

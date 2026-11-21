@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: prochoice-daily-ingest
@@ -93,6 +94,7 @@ jobs:
       - name: Enforce snapshot, freshness, and recompute invariants (Bun 1.4.x & Node.js 26 LTS)
         env:
           STRICT_FRESHNESS: "1"
+          MAX_SNAPSHOT_AGE_HOURS: "24"
         run: |
           if git cat-file -e "HEAD:data/lifecycle.json" 2>/dev/null; then
             git show HEAD:data/lifecycle.json > /tmp/head-lifecycle.json
@@ -132,6 +134,9 @@ jobs:
           bun run validate:snapshot
           node scripts/ingest/validate-snapshot.ts
 
+      - name: Sync README and index matrix SVGs
+        run: bun run update:readme
+
       - name: Run full lint, typecheck, and production build on new release
         run: bun run verify
 
@@ -141,20 +146,23 @@ jobs:
             cat data/summary.md >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Commit updated data when canonical snapshot, lifecycle state, or source health changed
+      - name: Commit updated data, README, and index matrix when changed
         run: |
-          CHANGED=$(bun -e '
+          ACTION=$(bun -e '
             const hasHeadSnap = (await Bun.$`git cat-file -e HEAD:data/snapshot.json`.nothrow()).exitCode === 0;
             const hasHeadLife = (await Bun.$`git cat-file -e HEAD:data/lifecycle.json`.nothrow()).exitCode === 0;
             if (!hasHeadSnap || !hasHeadLife) {
-              console.log("yes");
+              console.log("publish");
               process.exit(0);
             }
             const headSnap = JSON.parse(await Bun.$`git show HEAD:data/snapshot.json`.text());
             const nextSnap = await Bun.file("data/snapshot.json").json();
             const headLife = JSON.parse(await Bun.$`git show HEAD:data/lifecycle.json`.text());
             const nextLife = await Bun.file("data/lifecycle.json").json();
-            const stripLife = (l) => ({ audits: l.audits, crossDomainTau: l.crossDomainTau });
+            const stripLife = (l) => ({
+              audits: l.audits.map(({ ageMonths: _a, upstreamLagDays: _u, ...rest }) => rest),
+              crossDomainTau: l.crossDomainTau,
+            });
             const healthSig = (s) => s.sources.map((src) => ({
               id: src.sourceId,
               status: src.status,
@@ -178,23 +186,63 @@ jobs:
                   }
                 : null,
             }));
-            const same =
-              headSnap.snapshotHash === nextSnap.snapshotHash &&
-              JSON.stringify(stripLife(headLife)) === JSON.stringify(stripLife(nextLife)) &&
-              JSON.stringify(healthSig(headSnap)) === JSON.stringify(healthSig(nextSnap));
-            console.log(same ? "no" : "yes");
+            const readmeOrSvgChanged =
+              (await Bun.$`git diff --quiet -- README.md docs/assets/index-matrix-light.svg docs/assets/index-matrix-dark.svg`.nothrow()).exitCode !== 0;
+            const dataChanged =
+              headSnap.snapshotHash !== nextSnap.snapshotHash ||
+              JSON.stringify(stripLife(headLife)) !== JSON.stringify(stripLife(nextLife)) ||
+              JSON.stringify(healthSig(headSnap)) !== JSON.stringify(healthSig(nextSnap));
+            if (dataChanged || readmeOrSvgChanged) {
+              console.log("publish");
+              process.exit(0);
+            }
+            // Prevent GitHub from auto-disabling scheduled cron runs after 60 days without commits
+            const lastCommitEpoch = Number((await Bun.$`git log -1 --format=%ct`.text()).trim());
+            const ageDays = Number.isFinite(lastCommitEpoch)
+              ? Math.floor((Date.now() / 1000 - lastCommitEpoch) / 86400)
+              : 0;
+            console.log(ageDays >= 45 ? "keepalive" : "skip");
           ')
-          if [ "$CHANGED" = "yes" ]; then
+          if [ "$ACTION" != "skip" ]; then
             if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
               echo "ERROR: Refusing to publish automated data commits from non-main ref '${GITHUB_REF}'."
               exit 1
             fi
             git config user.name "prochoice-bot[bot]"
             git config user.email "prochoice-bot[bot]@users.noreply.github.com"
-            git add data/
-            git commit -m "chore(data): daily ProChoice benchmark snapshot and lifecycle audit"
-            # Push strictly the exact validated commit; if main advanced concurrently, fail so a fresh run validates on new HEAD
-            git push origin HEAD:main
+            if [ "$ACTION" = "publish" ]; then
+              git add data/ README.md docs/assets/index-matrix-light.svg docs/assets/index-matrix-dark.svg
+              COMMIT_MSG="chore(data): daily ProChoice benchmark snapshot and lifecycle audit"
+            else
+              FORCE_README_DATE=1 bun run update:readme
+              git add data/ README.md docs/assets/index-matrix-light.svg docs/assets/index-matrix-dark.svg
+              COMMIT_MSG="chore(data): 45-day schedule keepalive heartbeat"
+            fi
+            if git diff --cached --quiet; then
+              echo "No staged changes after filtering; skipping commit."
+              exit 0
+            fi
+            git commit -m "$COMMIT_MSG"
+            # Retry transient transport failures up to 3 times; abort immediately on concurrent non-fast-forward push
+            for attempt in 1 2 3; do
+              PUSH_OUT=$(git push origin HEAD:main 2>&1) && break
+              echo "$PUSH_OUT" >&2
+              if echo "$PUSH_OUT" | grep -qiE "non-fast-forward|fetch first|rejected"; then
+                echo "ERROR: main advanced concurrently; failing so next run validates fresh HEAD." >&2
+                exit 1
+              fi
+              if [ "$attempt" -eq 3 ]; then
+                exit 1
+              fi
+              sleep $((attempt * 5))
+            done
           else
-            echo "Canonical snapshot hash, lifecycle audits, and source health unchanged; skipping commit."
+            echo "Canonical snapshot hash, lifecycle audits, source health, and README assets unchanged; skipping commit."
           fi
+
+      - name: Sync automated health alert issue
+        if: always() && github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JOB_STATUS: ${{ job.status }}
+        run: bun run scripts/ingest/health-alert.ts

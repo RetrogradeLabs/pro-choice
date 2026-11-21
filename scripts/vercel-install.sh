@@ -29,7 +29,7 @@ if [[ ! -x "${BUN_BIN}" ]] || [[ "$("${BUN_BIN}" --version 2>/dev/null || true)"
   TMP_DIR="$(mktemp -d)"
   trap 'rm -rf "${TMP_DIR}"' EXIT
   ARCHIVE="${TMP_DIR}/${ASSET}.zip"
-  curl -fsSL "https://github.com/oven-sh/bun/releases/download/bun-v${BUN_VERSION}/${ASSET}.zip" -o "${ARCHIVE}"
+  curl -fsSL --connect-timeout 15 --max-time 120 --retry 3 --retry-delay 2 --retry-all-errors "https://github.com/oven-sh/bun/releases/download/bun-v${BUN_VERSION}/${ASSET}.zip" -o "${ARCHIVE}"
   printf '%s  %s\n' "${EXPECTED_SHA}" "${ARCHIVE}" | sha256sum -c -
   unzip -q "${ARCHIVE}" -d "${TMP_DIR}"
   mkdir -p "${BUN_INSTALL}/bin"

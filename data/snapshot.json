@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-21T20:47:49.660Z",
-  "snapshotHash": "cc83b00e9d94a671",
+  "generatedAt": "2026-11-21T21:16:16.186Z",
+  "snapshotHash": "43c4e78f820fecef",
   "sources": [
     {
       "sourceId": "artificial-analysis",
       "label": "Artificial Analysis Frontier Suite",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 990,
       "license": "Public Benchmarks / Attribution Required",
@@ -22,7 +22,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -32,7 +32,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -42,7 +42,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -52,7 +52,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -62,7 +62,7 @@
           "rejectedCount": 2,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -72,7 +72,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -82,7 +82,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -92,7 +92,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -102,7 +102,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -112,7 +112,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -122,7 +122,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -132,7 +132,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -142,7 +142,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -152,7 +152,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -162,7 +162,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -172,7 +172,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -182,7 +182,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -192,8 +192,8 @@
       "sourceId": "aikido",
       "label": "Aikido Arena Real-World CVE Detection",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 13,
       "license": "Public Research Leaderboard / Attribution Required",
@@ -207,7 +207,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -217,8 +217,8 @@
       "sourceId": "cwe-bench",
       "label": "Collinear CWE-bench v2 (250 Public + Held-Out)",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 20,
       "license": "Apache-2.0",
@@ -232,7 +232,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -242,8 +242,8 @@
       "sourceId": "cyber-arena",
       "label": "CyberArena Attack-Defense CTF (mc-v1)",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 14,
       "license": "Public Research Leaderboard / Attribution Required",
@@ -257,7 +257,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -267,8 +267,8 @@
       "sourceId": "epoch",
       "label": "Epoch AI Benchmark Hub (6 Frontier Benchmarks)",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 444,
       "license": "CC-BY-4.0",
@@ -282,7 +282,7 @@
           "rejectedCount": 1,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -292,7 +292,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -302,7 +302,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -312,7 +312,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -322,7 +322,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -332,7 +332,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -342,8 +342,8 @@
       "sourceId": "frontier-harness",
       "label": "FrontierHarness Eval v1.1 (TB 2.1 + TB 4.0)",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 130,
       "license": "Public Research Leaderboard / Attribution Required",
@@ -357,7 +357,7 @@
           "rejectedCount": 53,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -367,8 +367,8 @@
       "sourceId": "lmarena",
       "label": "LMArena Style-Controlled & Agent Parquet Leaderboards",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 803,
       "license": "Apache-2.0 / CC-BY-4.0",
@@ -382,7 +382,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -392,7 +392,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -402,7 +402,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -412,7 +412,7 @@
           "rejectedCount": 2,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -422,8 +422,8 @@
       "sourceId": "tbench",
       "label": "Terminal-Bench 4.1 Live Harness Board",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 54,
       "license": "Apache-2.0",
@@ -437,7 +437,7 @@
           "rejectedCount": 1,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -447,8 +447,8 @@
       "sourceId": "harness-leaderboard",
       "label": "Harness Leaderboard (TB 2.1 + DeepSWE)",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 65,
       "license": "Apache-2.0",
@@ -462,7 +462,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -472,8 +472,8 @@
       "sourceId": "livebench",
       "label": "LiveBench 2.0 Long-Agentic",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 38,
       "license": "Apache-2.0",
@@ -487,7 +487,7 @@
           "rejectedCount": 1,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -497,8 +497,8 @@
       "sourceId": "vals",
       "label": "Vals AI Frontier Suite (10 Benchmarks)",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 602,
       "license": "Public Benchmarks / Attribution Required",
@@ -512,7 +512,7 @@
           "rejectedCount": 1,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -522,7 +522,7 @@
           "rejectedCount": 2,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -532,7 +532,7 @@
           "rejectedCount": 2,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -542,7 +542,7 @@
           "rejectedCount": 6,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -552,7 +552,7 @@
           "rejectedCount": 6,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -562,7 +562,7 @@
           "rejectedCount": 2,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -572,7 +572,7 @@
           "rejectedCount": 1,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -582,7 +582,7 @@
           "rejectedCount": 1,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -592,7 +592,7 @@
           "rejectedCount": 4,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -602,7 +602,7 @@
           "rejectedCount": 6,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -612,8 +612,8 @@
       "sourceId": "vulcanbench",
       "label": "VulcanBench SWE v4 Agent Stacks",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 91,
       "license": "Public Research Leaderboard / Attribution Required",
@@ -627,7 +627,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -637,8 +637,8 @@
       "sourceId": "designarena",
       "label": "DesignArena Visual Arenas (Website, SVG, 3D, GameDev)",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 686,
       "license": "Public Leaderboard / Attribution Required",
@@ -652,7 +652,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": "Upstream btStdErr null on 167 rows; conservatively down-weighted by reliability model"
         },
         {
@@ -662,7 +662,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": "Upstream btStdErr null on 173 rows; conservatively down-weighted by reliability model"
         },
         {
@@ -672,7 +672,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": "Upstream btStdErr null on 143 rows; conservatively down-weighted by reliability model"
         },
         {
@@ -682,7 +682,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": "Upstream btStdErr null on 203 rows; conservatively down-weighted by reliability model"
         }
       ],
@@ -692,8 +692,8 @@
       "sourceId": "writing-feeds",
       "label": "Lech Mazur & EQ-Bench v3 Creative and Longform Writing Feeds",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 356,
       "license": "MIT / Public Research",
@@ -707,7 +707,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -717,7 +717,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -727,7 +727,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -737,8 +737,8 @@
       "sourceId": "scale-seal",
       "label": "Scale SEAL (PRBench Finance & Legal)",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 97,
       "license": "Public Research Leaderboard",
@@ -752,7 +752,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -762,7 +762,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -772,8 +772,8 @@
       "sourceId": "surge",
       "label": "Surge AI Frontier Benchmarks (7 Benchmarks)",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 240,
       "license": "Public Research Leaderboards / Attribution Required",
@@ -787,7 +787,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -797,7 +797,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -807,7 +807,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -817,7 +817,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -827,7 +827,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -837,7 +837,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         },
         {
@@ -847,7 +847,7 @@
           "rejectedCount": 0,
           "consecutiveDropDays": 0,
           "lastLowCountDate": null,
-          "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+          "lastHealthyAt": "2026-11-21T21:16:16.186Z",
           "message": null
         }
       ],
@@ -857,8 +857,8 @@
       "sourceId": "pricing",
       "label": "First-Party API Pricing (LiteLLM Verified SKUs)",
       "status": "ok",
-      "fetchedAt": "2026-11-21T20:47:49.660Z",
-      "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+      "fetchedAt": "2026-11-21T21:16:16.186Z",
+      "lastHealthyAt": "2026-11-21T21:16:16.186Z",
       "staleDays": 0,
       "rowCount": 71,
       "license": "MIT / Public API",
@@ -872,7 +872,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-21T20:47:49.660Z",
+        "lastHealthyAt": "2026-11-21T21:16:16.186Z",
         "message": null
       }
     }
@@ -89543,7 +89543,7 @@
   },
   "harnessLeaderboard": {
     "sourceVersion": "1.1-1xhh2cu+0.1.11",
-    "upstreamGeneratedAt": "2026-11-21T20:46:51Z",
+    "upstreamGeneratedAt": "2026-11-21T21:14:41Z",
     "sourceUrl": "https://frontierharness.org/leaderboard/v1.1/",
     "slices": [
       {

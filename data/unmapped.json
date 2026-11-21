@@ -1261,7 +1261,7 @@
     "rawModelName": "Qwen2.5-Max",
     "rawProvider": "alibaba",
     "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen2.5"
+    "reason": "unresolved_allowlisted_model:Qwen2.5-Max"
   },
   {
     "sourceId": "lmarena",

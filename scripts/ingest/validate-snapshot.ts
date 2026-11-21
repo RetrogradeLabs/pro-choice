@@ -52,6 +52,7 @@ import type { CachedSourceFile } from "./types.ts";
 const DEFAULT_DATA_DIR = path.join(process.cwd(), "data");
 const ALLOWLIST = new Set<ProviderId>(ALL_PROVIDER_IDS);
 const MAX_STALE_DAYS = 7;
+const MAX_LONG_STALE_BENCHMARK_SOURCES = 2;
 const FUTURE_CLOCK_SKEW_MS = 60_000;
 
 export interface ValidateSnapshotOptions {
@@ -123,13 +124,43 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
   }
 
   const strictFreshness = process.env.STRICT_FRESHNESS === "1";
+  const maxSnapshotAgeHoursRaw = process.env.MAX_SNAPSHOT_AGE_HOURS?.trim() ?? "";
+  let maxSnapshotAgeHours: number | null = null;
+  if (maxSnapshotAgeHoursRaw.length > 0) {
+    const parsedHours = /^\d+(?:\.\d+)?$/.test(maxSnapshotAgeHoursRaw)
+      ? Number(maxSnapshotAgeHoursRaw)
+      : Number.NaN;
+    if (Number.isFinite(parsedHours) && parsedHours > 0) {
+      maxSnapshotAgeHours = parsedHours;
+    } else {
+      failures.push(`Invalid MAX_SNAPSHOT_AGE_HOURS='${maxSnapshotAgeHoursRaw}'`);
+    }
+  }
   const nowMs = Date.now();
   const generatedMs = Date.parse(snapshot.generatedAt);
   if (!Number.isFinite(generatedMs)) {
     failures.push(`Invalid snapshot.generatedAt '${snapshot.generatedAt}'`);
-  } else if (generatedMs > nowMs + FUTURE_CLOCK_SKEW_MS) {
-    failures.push(`Future snapshot.generatedAt '${snapshot.generatedAt}'`);
+  } else {
+    if (generatedMs > nowMs + FUTURE_CLOCK_SKEW_MS) {
+      failures.push(`Future snapshot.generatedAt '${snapshot.generatedAt}'`);
+    }
+    if (
+      strictFreshness &&
+      maxSnapshotAgeHours !== null &&
+      nowMs - generatedMs > maxSnapshotAgeHours * 3_600_000
+    ) {
+      failures.push(
+        `Snapshot '${snapshot.generatedAt}' is older than live MAX_SNAPSHOT_AGE_HOURS=${maxSnapshotAgeHours}h`,
+      );
+    }
   }
+  const freshnessAnchorMs = Number.isFinite(generatedMs) ? generatedMs : nowMs;
+  const longStaleNonPricingSources: {
+    sourceId: string;
+    staleDays: number;
+    lastHealthyAt: string;
+  }[] = [];
+  const freshSourceIds = new Set<string>();
 
   const rawCaches = await Promise.all(
     MANDATORY_ADAPTERS.map(async (adapter) => {
@@ -276,13 +307,6 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
             failures.push(
               `Source ${adapter.id}: invalid or future upstreamGeneratedAt '${parsedRawHlb.data.upstreamGeneratedAt}'`,
             );
-          } else if (strictFreshness) {
-            const upAgeDays = Math.max(0, Math.floor((nowMs - upMs) / (1000 * 60 * 60 * 24)));
-            if (upAgeDays > 14) {
-              failures.push(
-                `Source ${adapter.id}: upstream harness board stale (${upAgeDays}d since ${parsedRawHlb.data.upstreamGeneratedAt}, limit 14d)`,
-              );
-            }
           }
         }
       }
@@ -315,19 +339,56 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
         } else if (healthyMs > nowMs + FUTURE_CLOCK_SKEW_MS) {
           failures.push(`Source ${adapter.id} has future lastHealthyAt '${snapSrc.lastHealthyAt}'`);
         } else {
+          // Anchor source staleness to snapshot.generatedAt so historical CI verification never rots with wall-clock time
           const derivedStaleDays = Math.max(
             0,
-            Math.floor((nowMs - healthyMs) / (1000 * 60 * 60 * 24)),
+            Math.floor((freshnessAnchorMs - healthyMs) / (1000 * 60 * 60 * 24)),
           );
-          if (
-            strictFreshness &&
-            (snapSrc.staleDays > MAX_STALE_DAYS || derivedStaleDays > MAX_STALE_DAYS)
-          ) {
-            failures.push(
-              `Source ${adapter.id} stale (${derivedStaleDays}d since ${snapSrc.lastHealthyAt}, limit ${MAX_STALE_DAYS}d)`,
-            );
+          const effectiveStaleDays = Math.max(snapSrc.staleDays, derivedStaleDays);
+          if (effectiveStaleDays <= MAX_STALE_DAYS) {
+            freshSourceIds.add(adapter.id);
+          } else if (strictFreshness) {
+            if (adapter.expectsPricing) {
+              failures.push(
+                `Critical pricing source '${adapter.id}' stale (${effectiveStaleDays}d since ${snapSrc.lastHealthyAt}, limit ${MAX_STALE_DAYS}d)`,
+              );
+            } else {
+              longStaleNonPricingSources.push({
+                sourceId: adapter.id,
+                staleDays: effectiveStaleDays,
+                lastHealthyAt: snapSrc.lastHealthyAt,
+              });
+            }
           }
         }
+      }
+    }
+  }
+
+  // Quorum + per-domain liveness: tolerate up to 2 dead/redesigned third-party feeds without freezing healthy domains
+  if (strictFreshness) {
+    if (longStaleNonPricingSources.length > MAX_LONG_STALE_BENCHMARK_SOURCES) {
+      failures.push(
+        `Too many stale benchmark sources (${longStaleNonPricingSources.length} > ${MAX_LONG_STALE_BENCHMARK_SOURCES} limit): ${longStaleNonPricingSources.map((s) => `${s.sourceId}=${s.staleDays}d`).join(", ")}`,
+      );
+    }
+    const controlledHarnessSources = MANDATORY_ADAPTERS.filter((a) => a.expectsHarnessLeaderboard);
+    if (
+      controlledHarnessSources.length > 0 &&
+      !controlledHarnessSources.some((a) => freshSourceIds.has(a.id))
+    ) {
+      failures.push(
+        `Controlled harness board has 0 fresh sources within ${MAX_STALE_DAYS}d (${controlledHarnessSources.map((a) => a.id).join(", ")})`,
+      );
+    }
+    for (const meta of DOMAINS) {
+      const domainSourceIds = new Set(
+        BENCHMARKS.filter((b) => b.domainId === meta.id && b.weight > 0).map((b) => b.sourceId),
+      );
+      if (domainSourceIds.size > 0 && ![...domainSourceIds].some((id) => freshSourceIds.has(id))) {
+        failures.push(
+          `Domain '${meta.id}' has 0 fresh benchmark sources within ${MAX_STALE_DAYS}d (${[...domainSourceIds].join(", ")})`,
+        );
       }
     }
   }

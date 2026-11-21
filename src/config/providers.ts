@@ -47,7 +47,7 @@ export const PROVIDERS: readonly ProviderMeta[] = [
     cssVar: "var(--prov-openai)",
     inkLight: "oklch(0.45 0.12 178)",
     inkDark: "oklch(0.74 0.13 176)",
-    aliases: ["openai", "chatgpt", "gpt", "o3", "o4"],
+    aliases: ["openai", "chatgpt", "gpt", "o3", "o4", "o5"],
   },
   {
     id: "google",

@@ -1,6 +1,12 @@
 import { isRetiredPurchaseSku } from "../../../src/config/providers.ts";
 import { compareAscii } from "../../../src/lib/math/aggregate.ts";
-import { resolveModelSlugFromString } from "../../../src/lib/math/canonicalize.ts";
+import {
+  buildDynamicAliasesFromPricing,
+  isRegisteredModelExact,
+  parseDynamicFrontierSku,
+  parseUniqueEffortFromText,
+  resolveModelSlugFromString,
+} from "../../../src/lib/math/canonicalize.ts";
 import type { PricingRecord, ProviderId } from "../../../src/lib/schema.ts";
 import { fetchJson, parseNonNegative, parseStrictPositiveInt } from "../http.ts";
 import type { PartitionStats, SourceAdapter } from "../types.ts";
@@ -64,6 +70,7 @@ export const pricingAdapter: SourceAdapter = {
     }
 
     const bySlug = new Map<string, PricingRecord | "conflict">();
+    const datedDynamicCandidates: PricingRecord[] = [];
     const sortedEntries = Object.entries(llRes.value).toSorted(([a], [b]) => compareAscii(a, b));
 
     for (const [modelKey, info] of sortedEntries) {
@@ -75,8 +82,12 @@ export const pricingAdapter: SourceAdapter = {
 
       // Restrict moving-endpoint rollover strictly to exact undated live endpoint keys so historical dated SKUs stay retired
       const trimmedKey = modelKey.trim();
+      const strippedKey = trimmedKey.includes("/")
+        ? trimmedKey.slice(trimmedKey.indexOf("/") + 1).trim()
+        : trimmedKey;
       let targetSlug: string | null = null;
       let resolvedReleaseDate: string | null = null;
+      let isDatedDynamicSku = false;
       if (
         firstPartyProvider === "deepseek" &&
         /^(?:deepseek\/)?deepseek-(?:flash|v4\.1-flash)$/i.test(trimmedKey)
@@ -98,10 +109,22 @@ export const pricingAdapter: SourceAdapter = {
         targetSlug = "qwen3.8-max-0902";
         resolvedReleaseDate = "2026-09-02";
       } else {
-        const resolved = resolveModelSlugFromString(trimmedKey, firstPartyProvider);
-        if (!resolved || resolved.provider !== firstPartyProvider) continue;
-        targetSlug = resolved.modelSlug;
-        resolvedReleaseDate = resolved.releaseDate;
+        // Never strip effort suffixes off unregistered LiteLLM SKU keys onto static base models
+        const keyEff = !isRegisteredModelExact(strippedKey)
+          ? parseUniqueEffortFromText(strippedKey, true)
+          : { effort: null, ambiguous: false };
+        if (keyEff.effort !== null || keyEff.ambiguous) continue;
+        const staticResolved = resolveModelSlugFromString(trimmedKey, firstPartyProvider);
+        if (staticResolved && staticResolved.provider === firstPartyProvider) {
+          targetSlug = staticResolved.modelSlug;
+          resolvedReleaseDate = staticResolved.releaseDate;
+        } else {
+          const dynResolved = parseDynamicFrontierSku(trimmedKey, firstPartyProvider);
+          if (!dynResolved || dynResolved.provider !== firstPartyProvider) continue;
+          targetSlug = dynResolved.modelSlug;
+          resolvedReleaseDate = dynResolved.releaseDate;
+          isDatedDynamicSku = dynResolved.isDatedSku;
+        }
       }
 
       pricingStats.attempted++;
@@ -147,6 +170,11 @@ export const pricingAdapter: SourceAdapter = {
         sourceId: "litellm",
       };
 
+      if (isDatedDynamicSku) {
+        datedDynamicCandidates.push(candidate);
+        continue;
+      }
+
       const existing = bySlug.get(targetSlug);
       if (existing === undefined) {
         bySlug.set(targetSlug, candidate);
@@ -156,11 +184,61 @@ export const pricingAdapter: SourceAdapter = {
           Math.abs(existing.outputPer1mUsd - candidate.outputPer1mUsd) > 1e-4;
         if (pricesConflict) {
           bySlug.set(targetSlug, "conflict");
-        } else if (existing.contextWindow === null && candidate.contextWindow !== null) {
-          bySlug.set(targetSlug, { ...existing, contextWindow: candidate.contextWindow });
+        } else {
+          const mergedContext = existing.contextWindow ?? candidate.contextWindow;
+          const mergedRelease =
+            existing.releaseDate && candidate.releaseDate
+              ? compareAscii(existing.releaseDate, candidate.releaseDate) <= 0
+                ? existing.releaseDate
+                : candidate.releaseDate
+              : (existing.releaseDate ?? candidate.releaseDate);
+          if (mergedContext !== existing.contextWindow || mergedRelease !== existing.releaseDate) {
+            bySlug.set(targetSlug, {
+              ...existing,
+              contextWindow: mergedContext,
+              releaseDate: mergedRelease,
+            });
+          }
         }
       }
     }
+
+    // Reconcile dated dynamic SKUs after undated live SKUs so historical price cuts never wipe out live tariffs
+    const sortedDatedDynamic = datedDynamicCandidates.toSorted((a, b) => {
+      const dateCmp = compareAscii(b.releaseDate ?? "", a.releaseDate ?? "");
+      return dateCmp !== 0 ? dateCmp : compareAscii(a.apiSku ?? "", b.apiSku ?? "");
+    });
+    for (const candidate of sortedDatedDynamic) {
+      const existing = bySlug.get(candidate.modelSlug);
+      if (existing === "conflict") continue;
+      if (existing === undefined) {
+        bySlug.set(candidate.modelSlug, candidate);
+        continue;
+      }
+      const pricesMatch =
+        Math.abs(existing.inputPer1mUsd - candidate.inputPer1mUsd) <= 1e-4 &&
+        Math.abs(existing.outputPer1mUsd - candidate.outputPer1mUsd) <= 1e-4;
+      if (pricesMatch) {
+        const mergedContext = existing.contextWindow ?? candidate.contextWindow;
+        const mergedRelease =
+          existing.releaseDate && candidate.releaseDate
+            ? compareAscii(existing.releaseDate, candidate.releaseDate) >= 0
+              ? existing.releaseDate
+              : candidate.releaseDate
+            : (existing.releaseDate ?? candidate.releaseDate);
+        if (mergedContext !== existing.contextWindow || mergedRelease !== existing.releaseDate) {
+          bySlug.set(candidate.modelSlug, {
+            ...existing,
+            contextWindow: mergedContext,
+            releaseDate: mergedRelease,
+          });
+        }
+      }
+    }
+
+    const dynamicAliases = buildDynamicAliasesFromPricing(
+      [...bySlug.values()].filter((rec): rec is PricingRecord => rec !== "conflict"),
+    );
 
     // Prefer OpenRouter's published total context_length (LiteLLM max_input_tokens can report input-only caps); never import third-party prices
     if (orRes.status === "fulfilled" && Array.isArray(orRes.value?.data)) {
@@ -173,7 +251,7 @@ export const pricingAdapter: SourceAdapter = {
         try {
           const id = item.id.trim();
           if (!id || id.includes(":")) continue;
-          const resolved = resolveModelSlugFromString(id, null);
+          const resolved = resolveModelSlugFromString(id, null, dynamicAliases);
           if (!resolved) continue;
           const existing = bySlug.get(resolved.modelSlug);
           if (!existing || existing === "conflict" || existing.provider !== resolved.provider) {

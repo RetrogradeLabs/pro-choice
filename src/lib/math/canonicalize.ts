@@ -1,9 +1,10 @@
 import rawAliases from "../../config/aliases.json" with { type: "json" };
 import { HARNESSES } from "../../config/harnesses.ts";
-import { PROVIDERS } from "../../config/providers.ts";
+import { isRetiredPurchaseSku, PROVIDERS } from "../../config/providers.ts";
 import type {
   HarnessId,
   HarnessRegime,
+  PricingRecord,
   ProviderId,
   RawObservation,
   ReasoningEffort,
@@ -20,7 +21,7 @@ interface AliasEntry {
   patterns: readonly string[];
 }
 
-interface CompiledAlias {
+export interface CompiledAlias {
   provider: ProviderId;
   modelSlug: string;
   displayName: string;
@@ -29,7 +30,14 @@ interface CompiledAlias {
   requireExplicitEffort: boolean;
   revisionStamps: readonly string[];
   regexes: readonly RegExp[];
+  isDynamic?: boolean;
 }
+
+// Model families whose product tier name ends in "Max" (distinct from the reasoning effort tier "max")
+export const MODEL_MAX_PREFIX_RX =
+  /(?:^|[^a-z0-9])(?:qwen[\s_-]*\d+(?:[._-][0-9]+)?(?:[\s_-]+coder)?|kimi[\s_-]*k\d+(?:[._-][0-9]+)?|glm[\s_-]+\d+(?:[._-][0-9]+)?|codex)$/i;
+const MODEL_MAX_NAME_RX =
+  /(?:^|[^a-z0-9])(?:qwen[\s_-]*\d+(?:[._-][0-9]+)?(?:[\s_-]+coder)?|kimi[\s_-]*k\d+(?:[._-][0-9]+)?|glm[\s_-]+\d+(?:[._-][0-9]+)?|codex)[\s_-]+max(?=$|[^a-z0-9])/g;
 
 const ALIAS_ENTRIES: readonly AliasEntry[] = rawAliases as AliasEntry[];
 
@@ -58,7 +66,7 @@ const NON_ALLOWLIST_PROVIDER_REGEX =
   /\b(mistral|cohere|amazon|nova|nvidia|nemotron|thinking\s*machines|inkling|reflection|beam|minimax|stepfun|xiaomi|mimo|bytedance|doubao|seed|tencent|hunyuan|baidu|ernie|perplexity|reka|ai21|ibm|granite|microsoft|mai-|phi-|upstage|solar|liquid|lg\s*ai|allenai|olmo|nous|inception|mercury|arcee|servicenow|openbmb|sarvam|naver|sk\s*telecom|tii|falcon|cursor[\s_-]+(?:small|fast|composer)|fireworks)\b/i;
 
 const ALLOWLIST_NAME_HINT_REGEX =
-  /^(?:claude|fable|opus|sonnet|haiku|gpt|o3|o4|astra|gemini|gemma|grok|muse|llama|deepseek|kimi|qwen|glm)(?=[\s\d._-]|$)/i;
+  /^(?:claude|fable|opus|sonnet|haiku|gpt|o[3-9]|astra|gemini|gemma|grok|muse|llama|deepseek|kimi|qwen|glm)(?=[\s\d._-]|$)/i;
 
 // Manual token-budget suffixes (e.g. "Thinking 16K", "High+32K", "budget:32K", "budget=32K") are distinct API controls from adaptive effort tiers
 const MANUAL_TOKEN_BUDGET_REGEX = /(?:^|[\s_(,:;/+=-])(\d+k)(?=$|[\s_),:;/+=-])/i;
@@ -153,10 +161,7 @@ export function parseUniqueEffortFromText(
   const withoutXhigh = lower.replace(/\b(xhigh|x[\s_-]?high|extra[\s_-]?high)\b/g, " ");
   if (/\bmax\b/.test(withoutXhigh)) {
     const hasExplicitParenMax = /\([^)]*\bmax\b[^)]*\)/.test(withoutXhigh);
-    const strippedModelMax = withoutXhigh.replace(
-      /(?:^|[^a-z0-9])(?:qwen[\s_-]*[34](?:[._-][0-9]+)?|codex)[\s_-]+max(?=$|[^a-z0-9])/g,
-      " ",
-    );
+    const strippedModelMax = withoutXhigh.replace(MODEL_MAX_NAME_RX, " ");
     if (!guardModelMax || hasExplicitParenMax || /\bmax\b/.test(strippedModelMax)) {
       concrete.add("max");
     }
@@ -219,7 +224,7 @@ export function resolveExplicitHarness(
 }
 
 function isValidCalendarStamp(stamp: string): boolean {
-  const iso = stamp.match(/^(202\d)-(\d{2})-(\d{2})$/);
+  const iso = stamp.match(/^(20\d{2})-(\d{2})-(\d{2})$/);
   if (iso) {
     const y = Number(iso[1]);
     const mo = Number(iso[2]);
@@ -227,7 +232,7 @@ function isValidCalendarStamp(stamp: string): boolean {
     const dt = new Date(Date.UTC(y, mo - 1, d));
     return dt.getUTCFullYear() === y && dt.getUTCMonth() + 1 === mo && dt.getUTCDate() === d;
   }
-  const compact = stamp.match(/^(202\d)(\d{2})(\d{2})$/);
+  const compact = stamp.match(/^(20\d{2})(\d{2})(\d{2})$/);
   if (compact) {
     const y = Number(compact[1]);
     const mo = Number(compact[2]);
@@ -248,15 +253,30 @@ function isValidCalendarStamp(stamp: string): boolean {
 function extractDateStamps(raw: string): string[] {
   const stamps: string[] = [];
   for (const m of raw.matchAll(
-    /(?:^|[\s_(,:;/-])(202\d-\d{2}-\d{2}|202\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])|(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))(?=$|[\s_),:;/+-])/g,
+    /(?:^|[\s_(,:;/-])(20\d{2}-\d{2}-\d{2}|20\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])|(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))(?=$|[\s_),:;/+-])/g,
   )) {
     if (m[1] && isValidCalendarStamp(m[1])) stamps.push(m[1]);
   }
   return stamps;
 }
 
+const DYNAMIC_RELEASE_FLOOR = "2026-11-21";
+
 function dateStampMatchesAlias(stamp: string, alias: CompiledAlias): boolean {
   if (alias.revisionStamps.includes(stamp)) return true;
+  if (alias.isDynamic && alias.releaseDate === null) {
+    // Undated dynamically discovered SKUs admit valid post-v2.0.0 ISO/compact dates (and MMDD on Alibaba/DeepSeek)
+    if (/^20\d{2}-\d{2}-\d{2}$/.test(stamp)) return stamp >= DYNAMIC_RELEASE_FLOOR;
+    const compact = stamp.match(/^(20\d{2})(\d{2})(\d{2})$/);
+    if (compact) return `${compact[1]}-${compact[2]}-${compact[3]}` >= DYNAMIC_RELEASE_FLOOR;
+    if (
+      (alias.provider === "alibaba" || alias.provider === "deepseek") &&
+      /^(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])$/.test(stamp)
+    ) {
+      return true;
+    }
+    return false;
+  }
   if (!alias.releaseDate) return false;
   const iso = alias.releaseDate.slice(0, 10);
   const compact = iso.replaceAll("-", "");
@@ -264,32 +284,307 @@ function dateStampMatchesAlias(stamp: string, alias: CompiledAlias): boolean {
   return stamp === iso || stamp === compact || stamp === mmdd;
 }
 
-export function isRegisteredModelExact(rawName: string): boolean {
+const STATIC_SLUG_SET = new Set(ALIAS_ENTRIES.map((e) => `${e.provider}:${e.modelSlug}`));
+
+const DYNAMIC_DISALLOWED_TOKEN_RX =
+  /(?:^|[-_/:])(none|minimal|low|medium|med|high|xhigh|extra-high|thinking|reasoning|effort|chat|instruct|it|latest|preview|exp|experimental|beta|alpha|audio|tts|realtime|image|video|embed|embedding|moderation|whisper|transcribe|search|deep-research|batch|finetune|computer-use|customtools|multi-agent|robotics|omni|highspeed|contributor|vision|vl|mythos|legacy|deprecated|auto|router)(?:$|[-_/:])/i;
+
+function isPostV2FrontierSlug(provider: ProviderId, slug: string): boolean {
+  if (DYNAMIC_DISALLOWED_TOKEN_RX.test(slug)) return false;
+  if (provider === "anthropic") {
+    const m = slug.match(/^claude-(?:(?:fable|opus|sonnet|haiku|[a-z]{3,})-)?(\d+)(?:\.(\d+))?$/);
+    if (!m) return false;
+    const major = Number(m[1]);
+    const minor = m[2] !== undefined ? Number(m[2]) : 0;
+    if (major >= 6) return true;
+    if (major === 5 && slug.startsWith("claude-fable-")) return minor >= 3;
+    if (major === 5 && /^claude-(?:opus|sonnet|haiku)-/.test(slug)) return minor >= 6;
+    return false;
+  }
+  if (provider === "openai") {
+    const gpt = slug.match(
+      /^gpt-(\d+)(?:\.(\d+))?(?:-(?:codex-max|(?:astra|sol|terra|luna|pro|mini|nano|codex|flash)(?:-(?:pro|mini|nano))?))?$/,
+    );
+    if (gpt) {
+      const major = Number(gpt[1]);
+      const minor = gpt[2] !== undefined ? Number(gpt[2]) : 0;
+      return major >= 7 || (major === 6 && minor >= 3);
+    }
+    return /^o(?:[5-9]|\d{2,})(?:-(?:mini|pro|nano))?$/.test(slug);
+  }
+  if (provider === "google") {
+    const gem = slug.match(
+      /^gemini-(\d+)(?:\.(\d+))?(?:-(?:pro|flash|ultra|flash-lite|lite|nano))?$/,
+    );
+    if (gem) {
+      const major = Number(gem[1]);
+      const minor = gem[2] !== undefined ? Number(gem[2]) : 0;
+      if (major >= 5 || (major === 4 && minor >= 1)) return true;
+      if (major === 4 && minor === 0 && /-(?:pro|flash|ultra|flash-lite)$/.test(slug)) return true;
+    }
+    return /^gemini-4-(?!hydrogen$|argon$|carbon$|neon$|pro$|flash$|ultra$)[a-z]{3,}(?:-(?:lite|flash|pro|ultra))?$/.test(
+      slug,
+    );
+  }
+  if (provider === "spacexai") {
+    const m = slug.match(/^grok-(\d+)(?:\.(\d+))?(?:-(?:fast|mini|heavy|pro|code))?$/);
+    if (!m) return false;
+    const major = Number(m[1]);
+    const minor = m[2] !== undefined ? Number(m[2]) : 0;
+    if (major === 4 && m[2] === "20") return false;
+    return major >= 5 || (major === 4 && minor >= 8);
+  }
+  if (provider === "meta") {
+    const llama = slug.match(
+      /^llama-(\d+)(?:\.(\d+))?(?:-(?:scout|maverick|behemoth|mini|pro|flash|turbo|lite))?(?:-\d+b(?:-a?\d+b)?)?$/,
+    );
+    if (llama) return Number(llama[1]) >= 5;
+    const spark = slug.match(/^muse-spark-(\d+)(?:\.(\d+))?$/);
+    if (spark) {
+      const major = Number(spark[1]);
+      const minor = spark[2] !== undefined ? Number(spark[2]) : 0;
+      return major >= 2 || (major === 1 && minor >= 4);
+    }
+    const museKnown = slug.match(/^muse-(?:ember|wonder)-(\d+)(?:\.(\d+))?$/);
+    if (museKnown) return Number(museKnown[1]) >= 2;
+    const museNamed = slug.match(/^muse-(?!spark-|ember-|wonder-)[a-z]{3,}-(\d+)(?:\.(\d+))?$/);
+    if (museNamed) return Number(museNamed[1]) >= 1;
+    return /^muse-(?:[2-9]|\d{2,})(?:\.\d+)?$/.test(slug);
+  }
+  if (provider === "deepseek") {
+    const v = slug.match(/^deepseek-v(\d+)(?:\.(\d+))?(?:-(?:pro|flash|lite|speciale))?$/);
+    if (v) {
+      const major = Number(v[1]);
+      const minor = v[2] !== undefined ? Number(v[2]) : 0;
+      return major >= 5 || (major === 4 && minor >= 2);
+    }
+    const r = slug.match(/^deepseek-r(\d+)(?:\.(\d+))?$/);
+    return Boolean(r && Number(r[1]) >= 2);
+  }
+  if (provider === "moonshot") {
+    const m = slug.match(/^kimi-k(\d+)(?:\.(\d+))?(?:-(?:pro|code|flash|mini|max))?$/);
+    if (!m) return false;
+    const major = Number(m[1]);
+    const minor = m[2] !== undefined ? Number(m[2]) : 0;
+    return major >= 4 || (major === 3 && minor >= 2);
+  }
+  if (provider === "alibaba") {
+    const m = slug.match(
+      /^qwen(\d+)(?:\.(\d+))?(?:-(?:max|plus|flash|turbo|coder)(?:-(?:plus|max|flash|turbo))?|-\d+b(?:-a\d+b)?)?$/,
+    );
+    if (!m) return false;
+    return Number(m[1]) >= 4;
+  }
+  if (provider === "zhipu") {
+    const m = slug.match(/^glm-(\d+)(?:\.(\d+))?(?:-(?:flash|air|plus|pro|max|turbo|code))?$/);
+    if (!m) return false;
+    const major = Number(m[1]);
+    const minor = m[2] !== undefined ? Number(m[2]) : 0;
+    return major >= 6 || (major === 5 && minor >= 4);
+  }
+  return false;
+}
+
+function formatDynamicDisplayName(slug: string): string {
+  const UPPER_TOKENS: Readonly<Record<string, string>> = {
+    gpt: "GPT",
+    glm: "GLM",
+    deepseek: "DeepSeek",
+  };
+  return slug
+    .split("-")
+    .map((part, idx) => {
+      if (idx === 0 && /^qwen\d/.test(part)) return `Qwen${part.slice(4)}`;
+      if (idx === 0 && /^o\d+$/.test(part)) return part;
+      if (part in UPPER_TOKENS) return UPPER_TOKENS[part]!;
+      if (/^(?:\d+b|a\d+b|[vrk]\d)/.test(part)) return part.toUpperCase();
+      if (/^\d/.test(part)) return part;
+      return `${part[0]!.toUpperCase()}${part.slice(1)}`;
+    })
+    .join(" ")
+    .replace(/\b(GPT|GLM) (\d)/g, "$1-$2");
+}
+
+function buildDynamicSlugRegex(provider: ProviderId, slug: string): RegExp[] {
+  const parts = slug.split("-");
+  const escaped = parts
+    .map((part, idx) => {
+      if (provider === "alibaba" && idx === 0 && /^qwen(\d+(?:\.\d+)?)$/.test(part)) {
+        const ver = part.slice(4).replaceAll(".", "[._-]");
+        return `qwen[\\s_-]*${ver}`;
+      }
+      if (
+        provider === "openai" &&
+        idx === 0 &&
+        part === "gpt" &&
+        parts[1] &&
+        /^\d/.test(parts[1])
+      ) {
+        return "gpt";
+      }
+      return part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replaceAll("\\.", "[._-]");
+    })
+    .join("[\\s_-]+")
+    .replace(/^gpt\[\\s_-\]\+(\d)/, "gpt[\\s_-]*$1");
+  const patterns = [new RegExp(`^(?:${escaped})$`, "i")];
+  // Only generate family-prefixed short aliases when a named Claude tier follows "claude-" (never bare digits for claude-6)
+  if (provider === "anthropic" && /^claude-[a-z]/.test(slug)) {
+    const shortEscaped = escaped.replace(/^claude\[\\s_-\]\+/, "");
+    patterns.push(new RegExp(`^(?:${shortEscaped})$`, "i"));
+  }
+  return patterns;
+}
+
+export interface ParsedDynamicFrontierSku {
+  provider: ProviderId;
+  modelSlug: string;
+  displayName: string;
+  releaseDate: string | null;
+  isDatedSku: boolean;
+}
+
+// Deterministically admit post-v2.0.0 frontier models backed by verified first-party LiteLLM SKUs
+export function parseDynamicFrontierSku(
+  rawSku: string,
+  provider: ProviderId,
+): ParsedDynamicFrontierSku | null {
+  const trimmed = rawSku.trim();
+  if (!trimmed || /^ft:/i.test(trimmed)) return null;
+  const slashIdx = trimmed.indexOf("/");
+  if (slashIdx > 0) {
+    const prefixProv = resolveAllowlistedProvider(trimmed.slice(0, slashIdx));
+    if (prefixProv !== provider) return null;
+  }
+  const stripped = slashIdx > 0 ? trimmed.slice(slashIdx + 1).trim() : trimmed;
+  if (!stripped || DYNAMIC_DISALLOWED_TOKEN_RX.test(stripped)) return null;
+
+  let releaseDate: string | null = null;
+  let isDatedSku = false;
+  let base = stripped.toLowerCase().replace(/[\s_]+/g, "-");
+  const isoMatch = base.match(/-(20\d{2}-\d{2}-\d{2})$/);
+  const compactMatch = !isoMatch ? base.match(/-(20\d{2})(\d{2})(\d{2})$/) : null;
+  const mmddMatch =
+    !isoMatch && !compactMatch && (provider === "alibaba" || provider === "deepseek")
+      ? base.match(/-((?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))$/)
+      : null;
+  if (isoMatch?.[1] && isValidCalendarStamp(isoMatch[1])) {
+    releaseDate = isoMatch[1];
+    isDatedSku = true;
+    base = base.slice(0, isoMatch.index);
+  } else if (compactMatch?.[1] && compactMatch[2] && compactMatch[3]) {
+    const iso = `${compactMatch[1]}-${compactMatch[2]}-${compactMatch[3]}`;
+    if (isValidCalendarStamp(iso)) {
+      releaseDate = iso;
+      isDatedSku = true;
+      base = base.slice(0, compactMatch.index);
+    }
+  } else if (mmddMatch?.[1] && isValidCalendarStamp(mmddMatch[1])) {
+    isDatedSku = true;
+    base = base.slice(0, mmddMatch.index);
+  }
+
+  // Anthropic first-party API SKUs encode minor versions with hyphens (e.g. claude-opus-6-1 -> claude-opus-6.1)
+  if (provider === "anthropic") {
+    base = base.replace(/^claude-(?:([a-z]+)-)?(\d+)-(\d+)$/, (_m, fam, maj, min) =>
+      fam ? `claude-${fam}-${maj}.${min}` : `claude-${maj}.${min}`,
+    );
+  }
+  if (provider === "alibaba") {
+    base = base.replace(/^qwen-(\d)/, "qwen$1");
+  }
+  if (provider === "openai") {
+    base = base.replace(/^gpt(\d)/, "gpt-$1");
+  }
+  // Normalize redundant .0 minor suffixes (e.g. claude-opus-6.0 -> claude-opus-6)
+  base = base.replace(/(\d+)\.0(?=-|$)/g, "$1");
+
+  if (STATIC_SLUG_SET.has(`${provider}:${base}`) || isRetiredPurchaseSku(provider, base)) {
+    return null;
+  }
+  if (COMPILED_ALIASES.some((entry) => entry.regexes.some((rx) => rx.test(base)))) {
+    return null;
+  }
+  if (!isPostV2FrontierSlug(provider, base)) return null;
+
+  return {
+    provider,
+    modelSlug: base,
+    displayName: formatDynamicDisplayName(base),
+    releaseDate,
+    isDatedSku,
+  };
+}
+
+export function buildDynamicAliasesFromPricing(
+  pricing: readonly PricingRecord[],
+): readonly CompiledAlias[] {
+  const out: CompiledAlias[] = [];
+  const seen = new Set<string>();
+  for (const rec of pricing) {
+    if (rec.sourceId !== "litellm" || rec.servingProvider !== rec.provider || !rec.apiSku) continue;
+    const key = `${rec.provider}:${rec.modelSlug}`;
+    if (
+      STATIC_SLUG_SET.has(key) ||
+      seen.has(key) ||
+      isRetiredPurchaseSku(rec.provider, rec.modelSlug)
+    ) {
+      continue;
+    }
+    if (!isPostV2FrontierSlug(rec.provider, rec.modelSlug)) continue;
+    seen.add(key);
+    const skuMmdd = rec.apiSku.match(/-((?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))$/)?.[1];
+    const revisionStamps = skuMmdd && isValidCalendarStamp(skuMmdd) ? [skuMmdd] : [];
+    // Require explicit effort on dynamically discovered models so bare rows never misattribute provider defaults
+    out.push({
+      provider: rec.provider,
+      modelSlug: rec.modelSlug,
+      displayName: formatDynamicDisplayName(rec.modelSlug),
+      releaseDate: rec.releaseDate,
+      defaultEffort: "high",
+      requireExplicitEffort: true,
+      revisionStamps,
+      regexes: buildDynamicSlugRegex(rec.provider, rec.modelSlug),
+      isDynamic: true,
+    });
+  }
+  return out;
+}
+
+export function isRegisteredModelExact(
+  rawName: string,
+  dynamicAliases?: readonly CompiledAlias[],
+): boolean {
   const cleaned = rawName
     .trim()
     .replace(/^[a-z0-9._-]+\//i, "")
     .replace(/[*⁂§†‡¶^※]+/g, "")
     .trim();
   if (!cleaned) return false;
-  return COMPILED_ALIASES.some((entry) => entry.regexes.some((rx) => rx.test(cleaned)));
+  return (
+    COMPILED_ALIASES.some((entry) => entry.regexes.some((rx) => rx.test(cleaned))) ||
+    Boolean(dynamicAliases?.some((entry) => entry.regexes.some((rx) => rx.test(cleaned))))
+  );
 }
 
 // Strip trailing effort tokens iteratively right-to-left while preserving complete registered SKUs (e.g. Qwen3.7 Max)
-function stripTrailingEffortTokens(input: string): string {
+function stripTrailingEffortTokens(
+  input: string,
+  dynamicAliases?: readonly CompiledAlias[],
+): string {
   let cur = input;
   const trailingEffortToken =
     /[\s_-]+(without[\s_-]+(?:reasoning|thinking)|non[\s_-]?reasoning|no[\s_-]?reasoning|non[\s_-]?thinking|no[\s_-]?thinking|nonthinking|none|thinking|minimal|low|medium|extra[\s_-]?high|x[\s_-]?high|xhigh|high|max|effort|reasoning|unknown)$/i;
   while (true) {
-    if (COMPILED_ALIASES.some((entry) => entry.regexes.some((rx) => rx.test(cur)))) {
+    if (
+      COMPILED_ALIASES.some((entry) => entry.regexes.some((rx) => rx.test(cur))) ||
+      dynamicAliases?.some((entry) => entry.regexes.some((rx) => rx.test(cur)))
+    ) {
       break;
     }
     const m = cur.match(trailingEffortToken);
     if (!m || m.index === undefined) break;
     const before = cur.slice(0, m.index).trim();
-    if (
-      /^max$/i.test(m[1] ?? "") &&
-      /(?:^|[^a-z0-9])(?:qwen[\s_-]*[34](?:[._-][0-9]+)?|codex)$/i.test(before)
-    ) {
+    if (/^max$/i.test(m[1] ?? "") && MODEL_MAX_PREFIX_RX.test(before)) {
       break;
     }
     cur = before;
@@ -297,7 +592,10 @@ function stripTrailingEffortTokens(input: string): string {
   return cur;
 }
 
-function cleanModelNameForMatch(rawModelName: string): {
+function cleanModelNameForMatch(
+  rawModelName: string,
+  dynamicAliases?: readonly CompiledAlias[],
+): {
   preDateBase: string;
   reorderedPreDateBase: string | null;
   cleanedBase: string;
@@ -329,7 +627,7 @@ function cleanModelNameForMatch(rawModelName: string): {
       if (kept.length === 0) return "";
       if (
         kept.every((part) =>
-          /^(?:202\d-\d{2}-\d{2}|202\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])|(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))$/.test(
+          /^(?:20\d{2}-\d{2}-\d{2}|20\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])|(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))$/.test(
             part,
           ),
         )
@@ -340,18 +638,18 @@ function cleanModelNameForMatch(rawModelName: string): {
     })
     .replace(/\s+/g, " ")
     .trim();
-  s = stripTrailingEffortTokens(s);
+  s = stripTrailingEffortTokens(s, dynamicAliases);
 
   const preDateBase = s;
   const trailingDateMatch = s.match(
-    /[\s_-]+(202\d-\d{2}-\d{2}|202\d(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])|(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))$/,
+    /[\s_-]+(20\d{2}-\d{2}-\d{2}|20\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])|(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))$/,
   );
   // Strip trailing valid revision stamp and any effort token preceding it (e.g. "Qwen3.7 Max High 0517" -> "Qwen3.7 Max 0517")
   const hasTrailingValidDate = Boolean(
     trailingDateMatch?.[1] && isValidCalendarStamp(trailingDateMatch[1]),
   );
   const cleanedBase = hasTrailingValidDate
-    ? stripTrailingEffortTokens(s.slice(0, trailingDateMatch!.index).trim())
+    ? stripTrailingEffortTokens(s.slice(0, trailingDateMatch!.index).trim(), dynamicAliases)
     : s;
   const reorderedPreDateBase =
     hasTrailingValidDate && `${cleanedBase} ${trailingDateMatch![1]!}` !== preDateBase
@@ -361,7 +659,8 @@ function cleanModelNameForMatch(rawModelName: string): {
   return { preDateBase, reorderedPreDateBase, cleanedBase, strippedDateStamps, manualBudgetToken };
 }
 
-function matchAlias(
+function matchAliasInList(
+  aliases: readonly CompiledAlias[],
   preDateBase: string,
   reorderedPreDateBase: string | null,
   cleanedBase: string,
@@ -369,22 +668,42 @@ function matchAlias(
   alias: CompiledAlias;
   matchedExactDate: boolean;
 } | null {
-  // Prefer dedicated dated revision aliases (e.g. deepseek-v4.1-flash-1017, qwen3.7-max-0517) before stripping date stamps
-  const exact = COMPILED_ALIASES.find((entry) => entry.regexes.some((rx) => rx.test(preDateBase)));
+  const exact = aliases.find((entry) => entry.regexes.some((rx) => rx.test(preDateBase)));
   if (exact) return { alias: exact, matchedExactDate: true };
 
   if (reorderedPreDateBase) {
-    const reordered = COMPILED_ALIASES.find((entry) =>
+    const reordered = aliases.find((entry) =>
       entry.regexes.some((rx) => rx.test(reorderedPreDateBase)),
     );
     if (reordered) return { alias: reordered, matchedExactDate: true };
   }
 
   if (cleanedBase !== preDateBase) {
-    const stripped = COMPILED_ALIASES.find((entry) =>
-      entry.regexes.some((rx) => rx.test(cleanedBase)),
-    );
+    const stripped = aliases.find((entry) => entry.regexes.some((rx) => rx.test(cleanedBase)));
     if (stripped) return { alias: stripped, matchedExactDate: false };
+  }
+  return null;
+}
+
+function matchAlias(
+  preDateBase: string,
+  reorderedPreDateBase: string | null,
+  cleanedBase: string,
+  dynamicAliases?: readonly CompiledAlias[],
+): {
+  alias: CompiledAlias;
+  matchedExactDate: boolean;
+} | null {
+  // Prefer curated static aliases unconditionally before verified dynamically discovered post-v2.0.0 SKUs
+  const staticHit = matchAliasInList(
+    COMPILED_ALIASES,
+    preDateBase,
+    reorderedPreDateBase,
+    cleanedBase,
+  );
+  if (staticHit) return staticHit;
+  if (dynamicAliases && dynamicAliases.length > 0) {
+    return matchAliasInList(dynamicAliases, preDateBase, reorderedPreDateBase, cleanedBase);
   }
   return null;
 }
@@ -435,7 +754,10 @@ function resolveAttributedProvider(
   return { ok: true, provider: explicitProvider ?? prefixProvider };
 }
 
-export function canonicalizeObservation(obs: RawObservation): CanonicalizeOutcome {
+export function canonicalizeObservation(
+  obs: RawObservation,
+  dynamicAliases?: readonly CompiledAlias[],
+): CanonicalizeOutcome {
   if (/\bdaybreak\b/i.test(`${obs.rawModelName} ${obs.rawEffort ?? ""}`.replace(/_/g, " "))) {
     return { kind: "rejected", reason: "gated_non_public_variant:daybreak" };
   }
@@ -446,7 +768,7 @@ export function canonicalizeObservation(obs: RawObservation): CanonicalizeOutcom
   const attributedProvider = attribution.provider;
 
   const { preDateBase, reorderedPreDateBase, cleanedBase, strippedDateStamps, manualBudgetToken } =
-    cleanModelNameForMatch(obs.rawModelName);
+    cleanModelNameForMatch(obs.rawModelName, dynamicAliases);
   if (!cleanedBase) {
     return { kind: "rejected", reason: "empty_model_name" };
   }
@@ -467,7 +789,7 @@ export function canonicalizeObservation(obs: RawObservation): CanonicalizeOutcom
     return { kind: "rejected", reason: "non_allowlisted_model" };
   }
 
-  const matched = matchAlias(preDateBase, reorderedPreDateBase, cleanedBase);
+  const matched = matchAlias(preDateBase, reorderedPreDateBase, cleanedBase, dynamicAliases);
 
   if (!matched) {
     if (attributedProvider || ALLOWLIST_NAME_HINT_REGEX.test(cleanedBase)) {
@@ -562,6 +884,7 @@ export function canonicalizeObservation(obs: RawObservation): CanonicalizeOutcom
 export function resolveModelSlugFromString(
   rawModelName: string,
   rawProvider?: string | null,
+  dynamicAliases?: readonly CompiledAlias[],
 ): {
   provider: ProviderId;
   modelSlug: string;
@@ -573,11 +896,11 @@ export function resolveModelSlugFromString(
   const attributedProvider = attribution.provider;
 
   const { preDateBase, reorderedPreDateBase, cleanedBase, strippedDateStamps, manualBudgetToken } =
-    cleanModelNameForMatch(rawModelName);
+    cleanModelNameForMatch(rawModelName, dynamicAliases);
   if (!cleanedBase || manualBudgetToken) return null;
   if (!attributedProvider && NON_ALLOWLIST_PROVIDER_REGEX.test(cleanedBase)) return null;
 
-  const matched = matchAlias(preDateBase, reorderedPreDateBase, cleanedBase);
+  const matched = matchAlias(preDateBase, reorderedPreDateBase, cleanedBase, dynamicAliases);
   if (!matched) return null;
   if (attributedProvider && attributedProvider !== matched.alias.provider) return null;
   for (const stamp of strippedDateStamps) {

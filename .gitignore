@@ -19,6 +19,7 @@ npm-debug.log*
 next-env.d.ts
 
 # Local sync staging, atomic generations & recovery scratch
+/data/*.tmp
 /data/.sync-stage.*
 /data/.sync-backup.*
 /data/.sync-commit.json
@@ -26,7 +27,15 @@ next-env.d.ts
 /data/.generations/
 /data/.current-generation.json
 /data/.current-generation.json.*
+/data/epochs/*.tmp
+/data/epochs/.manifest.*
 /data/epochs/.pending.*
 /data/epochs/.publish.*
 /data/epochs/.publish.lock.db*
+/data/raw/.shrink-state.json
+/data/raw/.shrink-state.json.*
+/data/raw/.raw-swap.json
+/data/raw/.raw-swap.json.*
+/data/raw/*.tmp
+/data/raw/*.bak
 .vercel

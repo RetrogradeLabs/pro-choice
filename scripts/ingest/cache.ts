@@ -899,7 +899,7 @@ export async function refreshMandatorySource(
         ? liveHlb.slices.reduce((acc, s) => acc + s.entries.length, 0)
         : 0;
 
-      // Reject upstream timestamp rollbacks or stale mirrors (> 14d older than fetch time)
+      // Reject upstream timestamp rollbacks or future timestamps; completed periodic studies stay valid once live HTTP succeeds
       const upstreamRollback =
         liveHlb !== null &&
         prevHlb !== undefined &&
@@ -907,17 +907,18 @@ export async function refreshMandatorySource(
           const cmp = compareIsoInstants(liveHlb.upstreamGeneratedAt, prevHlb.upstreamGeneratedAt);
           return cmp === null || cmp < 0;
         })();
-      const upstreamAgeDays =
-        liveHlb !== null
-          ? (() => {
-              const upMs = parseStrictUtcDateMs(liveHlb.upstreamGeneratedAt);
-              const nMs = Date.parse(nowIso);
-              return upMs !== null && Number.isFinite(nMs)
-                ? Math.floor((nMs - upMs) / (1000 * 60 * 60 * 24))
-                : null;
-            })()
-          : null;
-      const upstreamTooOld = upstreamAgeDays !== null && upstreamAgeDays > 14;
+      const upstreamFutureOrInvalid =
+        liveHlb !== null &&
+        (() => {
+          if (parseStrictUtcDateMs(liveHlb.upstreamGeneratedAt) === null) return true;
+          const upExactMs = Date.parse(liveHlb.upstreamGeneratedAt);
+          const nowExactMs = Date.parse(nowIso);
+          return (
+            !Number.isFinite(upExactMs) ||
+            !Number.isFinite(nowExactMs) ||
+            upExactMs > nowExactMs + 60_000
+          );
+        })();
 
       const hlbShrunk =
         liveHlb !== null &&
@@ -933,7 +934,7 @@ export async function refreshMandatorySource(
         !hlbEndpointErrored &&
         !hlbSchemaFailed &&
         !upstreamRollback &&
-        !upstreamTooOld &&
+        !upstreamFutureOrInvalid &&
         hlbShrunk
       ) {
         if (existingHlbShrink?.confirmed && existingHlbShrink.baselineRowCount === prevHlbRows) {
@@ -967,6 +968,16 @@ export async function refreshMandatorySource(
             };
           }
         }
+      } else if (
+        existingHlbShrink?.confirmed &&
+        existingHlbShrink.baselineRowCount === prevHlbRows &&
+        (hlbEndpointErrored ||
+          liveHlb === null ||
+          hlbSchemaFailed ||
+          upstreamRollback ||
+          upstreamFutureOrInvalid)
+      ) {
+        shrinkCheckpoints[hlbKey] = existingHlbShrink;
       }
 
       const hlbFailed =
@@ -974,7 +985,7 @@ export async function refreshMandatorySource(
         liveHlb === null ||
         hlbSchemaFailed ||
         upstreamRollback ||
-        upstreamTooOld ||
+        upstreamFutureOrInvalid ||
         (hlbShrunk && !confirmedHlbShrink);
 
       if (hlbFailed || liveHlb === null) {
@@ -988,8 +999,8 @@ export async function refreshMandatorySource(
                 ? `harness board rejection ${(hlbRejectRate * 100).toFixed(0)}%`
                 : upstreamRollback
                   ? `upstream timestamp rolled back (${liveHlb.upstreamGeneratedAt} < ${prevHlb?.upstreamGeneratedAt})`
-                  : upstreamTooOld
-                    ? `upstream harness board stale (${upstreamAgeDays}d old)`
+                  : upstreamFutureOrInvalid
+                    ? `upstream timestamp invalid or future (${liveHlb.upstreamGeneratedAt})`
                     : `harness board shrunk from ${prevHlbRows} rows (${prevHlb?.slices.length} slices) to ${liveHlbRows} rows (${liveHlb.slices.length} slices) (day ${hlbDropDays}/${SHRINK_CONFIRMATION_DAYS})`;
 
         if (prevHlb) {

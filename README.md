@@ -19,7 +19,7 @@ Open-source LLM leaderboard and coding agent harness benchmark by [Retrograde La
 
 ## Live composite indices
 
-Snapshot `cc83b00e9d94a671`, updated `2026-11-21` from 17 live public benchmark and first-party pricing feeds across 59 active benchmarks with unique dataset lineages within each domain. Default model picks cover the five Western providers shown on initial load; toggle DeepSeek, Moonshot, Alibaba, and Zhipu on [prochoice.industries](https://prochoice.industries) to compare all nine.
+Snapshot `43c4e78f820fecef`, updated `2026-11-21` from 17 live public benchmark and first-party pricing feeds across 59 active benchmarks with unique dataset lineages within each domain. Default model picks cover the five Western providers shown on initial load; toggle DeepSeek, Moonshot, Alibaba, and Zhipu on [prochoice.industries](https://prochoice.industries) to compare all nine.
 
 | Composite index | Active benchmarks | Budget | Best value | Top score |
 | :--- | :---: | :--- | :--- | :--- |
