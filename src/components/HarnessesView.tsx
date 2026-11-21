@@ -264,7 +264,7 @@ export function HarnessesControlledView({
           }
           animate={{ opacity: 1, x: 0 }}
           transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.18, ease: EASE }}
-          className={`grid grid-cols-1 divide-y divide-[var(--border)] border-t border-[var(--border)] ${
+          className={`grid grid-cols-1 divide-y divide-(--border) border-t border-(--border) ${
             picks.length === 3 ? "md:grid-cols-3" : picks.length === 2 ? "md:grid-cols-2" : ""
           } md:divide-x md:divide-y-0`}
         >
@@ -277,15 +277,13 @@ export function HarnessesControlledView({
                 onPointerEnter={() => setHoveredId(h.harnessId)}
                 onPointerLeave={() => setHoveredId(null)}
                 className={`relative flex flex-col justify-between px-5 py-6 transition-colors duration-150 sm:px-7 lg:first:pl-11 lg:last:pr-11 ${
-                  isHighlighted
-                    ? "bg-[var(--subtle)]"
-                    : "bg-[var(--surface)] hover:bg-[var(--subtle)]/70"
+                  isHighlighted ? "bg-(--subtle)" : "bg-(--surface) hover:bg-(--subtle)/70"
                 }`}
               >
                 {item.accent ? (
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[var(--interactive)]"
+                    className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-(--interactive)"
                   />
                 ) : null}
 
@@ -293,17 +291,15 @@ export function HarnessesControlledView({
                   <div className="flex items-center justify-between gap-2 text-[11.5px]">
                     <span
                       className={
-                        item.accent
-                          ? "font-medium text-[var(--interactive)]"
-                          : "text-[var(--ink-faint)]"
+                        item.accent ? "font-medium text-(--interactive)" : "text-(--ink-faint)"
                       }
                     >
                       {item.tag}
                     </span>
-                    <span className="text-[var(--ink-muted)]">{h.vendor}</span>
+                    <span className="text-(--ink-muted)">{h.vendor}</span>
                   </div>
 
-                  <h2 className="mt-2.5 font-display text-[22px] leading-[1.15] font-normal tracking-[-0.02em] text-[var(--ink)]">
+                  <h2 className="mt-2.5 font-display text-[22px] leading-[1.15] font-normal tracking-[-0.02em] text-(--ink)">
                     <button
                       type="button"
                       onClick={() => selectHarnessRow(h.harnessId, true)}
@@ -313,7 +309,7 @@ export function HarnessesControlledView({
                     </button>
                   </h2>
 
-                  <p className="mt-1 font-mono text-[11px] text-[var(--ink-faint)]">
+                  <p className="mt-1 font-mono text-[11px] text-(--ink-faint)">
                     {formatVersionLabel(h.version) ?? "Latest"}
                     {h.costPerPassUsd !== null
                       ? ` · ${formatCost(h.costPerPassUsd, "usd_per_task")} / solved`
@@ -321,19 +317,19 @@ export function HarnessesControlledView({
                   </p>
                 </div>
 
-                <div className="mt-5 flex items-baseline justify-between gap-3 border-t border-[var(--border)]/60 pt-3 font-mono tabular">
+                <div className="mt-5 flex items-baseline justify-between gap-3 border-t border-(--border)/60 pt-3 font-mono tabular">
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-[18px] font-medium tracking-[-0.02em] text-[var(--ink)]">
+                    <span className="text-[18px] font-medium tracking-[-0.02em] text-(--ink)">
                       {h.passRate.toFixed(1)}%
                     </span>
-                    <span className="text-[10.5px] text-[var(--ink-faint)]">pass rate</span>
+                    <span className="text-[10.5px] text-(--ink-faint)">pass rate</span>
                   </div>
 
                   <div className="flex items-baseline gap-1 text-right">
-                    <span className="text-[14.5px] font-medium text-[var(--ink)]">
+                    <span className="text-[14.5px] font-medium text-(--ink)">
                       {formatCost(h.costPerTrialUsd, "usd_per_task")}
                     </span>
-                    <span className="text-[10.5px] text-[var(--ink-faint)]">/ run</span>
+                    <span className="text-[10.5px] text-(--ink-faint)">/ run</span>
                   </div>
                 </div>
               </article>
@@ -345,12 +341,12 @@ export function HarnessesControlledView({
       {/* Clean Tufte Pareto chart for Controlled Harnesses */}
       <section
         aria-label="Harness Pareto frontier chart"
-        className="border-t border-[var(--border)] bg-[var(--bg)]"
+        className="border-t border-(--border) bg-(--bg)"
       >
         <figure
           ref={containerRef}
           aria-label="Coding-agent harness pass rate versus cost per run"
-          className="relative w-full border-b border-[var(--border)] bg-[var(--bg)]"
+          className="relative w-full border-b border-(--border) bg-(--bg)"
           onPointerLeave={() => setHoveredId(null)}
         >
           <div className="relative h-[400px] w-full">
@@ -571,7 +567,7 @@ export function HarnessesControlledView({
                     animate={{ opacity: 1, scale: 1 }}
                     {...(prefersReducedMotion ? {} : { exit: { opacity: 0, scale: 0.97 } })}
                     transition={{ duration: 0.11, ease: EASE }}
-                    className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[var(--border-strong)] bg-[var(--surface)]/95 px-2.5 py-1 text-[12px] shadow-[var(--shadow-button)] backdrop-blur-sm"
+                    className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-(--border-strong) bg-(--surface)/95 px-2.5 py-1 text-[12px] shadow-(--shadow-button) backdrop-blur-sm"
                   >
                     <span
                       aria-hidden="true"
@@ -582,13 +578,13 @@ export function HarnessesControlledView({
                           : "var(--ink-muted)",
                       }}
                     />
-                    <span className="font-medium text-[var(--ink)]">{hoveredEntry.name}</span>
+                    <span className="font-medium text-(--ink)">{hoveredEntry.name}</span>
                     {formatVersionLabel(hoveredEntry.version) ? (
                       <>
-                        <span aria-hidden="true" className="text-[var(--ink-faint)]">
+                        <span aria-hidden="true" className="text-(--ink-faint)">
                           ·
                         </span>
-                        <span className="font-mono text-[10.5px] text-[var(--ink-faint)]">
+                        <span className="font-mono text-[10.5px] text-(--ink-faint)">
                           {formatVersionLabel(hoveredEntry.version)}
                         </span>
                       </>
@@ -602,7 +598,7 @@ export function HarnessesControlledView({
       </section>
 
       {/* Clean Harness Comparison Table */}
-      <section aria-label="Harness rankings" className="bg-[var(--bg)]">
+      <section aria-label="Harness rankings" className="bg-(--bg)">
         {(() => {
           const presentCols = HARNESS_BENCHMARK_COLS.filter((col) =>
             entries.some((e) => e.benchmarks.some((b) => col.matchIds.includes(b.benchmarkId))),
@@ -623,7 +619,7 @@ export function HarnessesControlledView({
                   <col style={{ width: "12.5%" }} />
                 </colgroup>
                 <thead>
-                  <tr className="border-b border-[var(--border)] bg-[var(--subtle)] font-mono text-[11px] font-normal text-[var(--ink-faint)]">
+                  <tr className="border-b border-(--border) bg-(--subtle) font-mono text-[11px] font-normal text-(--ink-faint)">
                     <th className="py-2.5 pl-5 pr-3 font-normal whitespace-nowrap sm:pl-9 lg:pl-11">
                       Harness
                     </th>
@@ -661,10 +657,8 @@ export function HarnessesControlledView({
                           id={`harness-${encodeURIComponent(entry.harnessId)}`}
                           onPointerEnter={() => setHoveredId(entry.harnessId)}
                           onPointerLeave={() => setHoveredId(null)}
-                          className={`scroll-mt-16 border-b border-[var(--border)] transition-[background-color] duration-150 last:border-b-0 ${
-                            expanded || hovered
-                              ? "bg-[var(--subtle)]"
-                              : "hover:bg-[var(--subtle)]/70"
+                          className={`scroll-mt-16 border-b border-(--border) transition-[background-color] duration-150 last:border-b-0 ${
+                            expanded || hovered ? "bg-(--subtle)" : "hover:bg-(--subtle)/70"
                           }`}
                         >
                           <td className="py-2.5 pl-5 pr-3 sm:pl-9 lg:pl-11">
@@ -676,33 +670,31 @@ export function HarnessesControlledView({
                             >
                               <ChevronRight
                                 aria-hidden="true"
-                                className={`h-3.5 w-3.5 shrink-0 text-[var(--ink-faint)] transition-transform duration-150 ${
+                                className={`h-3.5 w-3.5 shrink-0 text-(--ink-faint) transition-transform duration-150 ${
                                   expanded ? "rotate-90" : ""
                                 }`}
                               />
                               <span
                                 className={`truncate font-medium ${
-                                  entry.onFrontier
-                                    ? "text-[var(--ink)]"
-                                    : "text-[var(--ink-secondary)]"
+                                  entry.onFrontier ? "text-(--ink)" : "text-(--ink-secondary)"
                                 }`}
                               >
                                 {entry.name}
                               </span>
                               {formatVersionLabel(entry.version) ? (
-                                <span className="shrink-0 whitespace-nowrap font-mono text-[10.5px] text-[var(--ink-faint)]">
+                                <span className="shrink-0 whitespace-nowrap font-mono text-[10.5px] text-(--ink-faint)">
                                   {formatVersionLabel(entry.version)}
                                 </span>
                               ) : null}
                               {entry.onFrontier ? (
-                                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--interactive)]" />
+                                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-(--interactive)" />
                               ) : null}
                             </button>
                           </td>
-                          <td className="px-3 py-2.5 whitespace-nowrap text-[var(--ink-muted)]">
+                          <td className="px-3 py-2.5 whitespace-nowrap text-(--ink-muted)">
                             {entry.vendor}
                           </td>
-                          <td className="px-3 py-2.5 text-right font-mono font-medium whitespace-nowrap text-[var(--ink)]">
+                          <td className="px-3 py-2.5 text-right font-mono font-medium whitespace-nowrap text-(--ink)">
                             {entry.passRate.toFixed(1)}%
                           </td>
                           {presentCols.map((col) => {
@@ -710,21 +702,21 @@ export function HarnessesControlledView({
                             return (
                               <td
                                 key={col.id}
-                                className="px-3 py-2.5 text-right font-mono whitespace-nowrap text-[var(--ink-secondary)]"
+                                className="px-3 py-2.5 text-right font-mono whitespace-nowrap text-(--ink-secondary)"
                               >
                                 {val !== null ? `${val.toFixed(1)}%` : "N/A"}
                               </td>
                             );
                           })}
-                          <td className="px-3 py-2.5 text-right font-mono whitespace-nowrap text-[var(--ink)]">
+                          <td className="px-3 py-2.5 text-right font-mono whitespace-nowrap text-(--ink)">
                             {formatCost(entry.costPerTrialUsd, "usd_per_task")}
                           </td>
-                          <td className="px-3 py-2.5 text-right font-mono whitespace-nowrap text-[var(--ink-muted)]">
+                          <td className="px-3 py-2.5 text-right font-mono whitespace-nowrap text-(--ink-muted)">
                             {entry.costPerPassUsd !== null
                               ? formatCost(entry.costPerPassUsd, "usd_per_task")
                               : "N/A"}
                           </td>
-                          <td className="py-2.5 pl-3 pr-5 text-right font-mono whitespace-nowrap text-[var(--ink-muted)] sm:pr-9 lg:pr-11">
+                          <td className="py-2.5 pl-3 pr-5 text-right font-mono whitespace-nowrap text-(--ink-muted) sm:pr-9 lg:pr-11">
                             {entry.passAll3Rate !== null
                               ? `${entry.passAll3Rate.toFixed(1)}%`
                               : "N/A"}
@@ -732,7 +724,7 @@ export function HarnessesControlledView({
                         </tr>
 
                         {expanded ? (
-                          <tr className="border-b border-[var(--border)] bg-[var(--subtle)] last:border-b-0">
+                          <tr className="border-b border-(--border) bg-(--subtle) last:border-b-0">
                             <td
                               colSpan={6 + presentCols.length}
                               aria-label={`${entry.name} benchmark details`}
@@ -749,10 +741,10 @@ export function HarnessesControlledView({
                                     {entry.benchmarks.map((bm) => (
                                       <div
                                         key={bm.benchmarkId}
-                                        className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-3"
+                                        className="rounded-md border border-(--border) bg-(--surface) p-3"
                                       >
                                         <div className="flex items-start justify-between gap-2">
-                                          <span className="text-[12px] font-medium text-[var(--ink)]">
+                                          <span className="text-[12px] font-medium text-(--ink)">
                                             {bm.name}
                                           </span>
                                           <a
@@ -760,20 +752,20 @@ export function HarnessesControlledView({
                                             target="_blank"
                                             rel="noreferrer"
                                             aria-label={`Open ${bm.name}`}
-                                            className="text-[var(--ink-faint)] hover:text-[var(--ink)]"
+                                            className="text-(--ink-faint) hover:text-(--ink)"
                                           >
                                             <ExternalLink className="h-3.5 w-3.5" />
                                           </a>
                                         </div>
                                         <div className="mt-2 flex items-baseline justify-between font-mono tabular">
-                                          <span className="text-[14px] font-medium text-[var(--ink)]">
+                                          <span className="text-[14px] font-medium text-(--ink)">
                                             {bm.passRate.toFixed(1)}%
                                           </span>
-                                          <span className="text-[11px] text-[var(--ink-muted)]">
+                                          <span className="text-[11px] text-(--ink-muted)">
                                             {formatCost(bm.costPerTrialUsd, "usd_per_task")} / run
                                           </span>
                                         </div>
-                                        <div className="mt-1 font-mono text-[10.5px] text-[var(--ink-faint)]">
+                                        <div className="mt-1 font-mono text-[10.5px] text-(--ink-faint)">
                                           {bm.nTasks} tasks
                                           {bm.ciLower !== null && bm.ciUpper !== null
                                             ? ` · ${bm.ciIsUpperBound ? "CI upper bound" : "95% CI"} [${bm.ciLower.toFixed(1)}, ${bm.ciUpper.toFixed(1)}]%`
@@ -782,25 +774,21 @@ export function HarnessesControlledView({
                                       </div>
                                     ))}
 
-                                    <div className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-3 font-mono text-[11px] tabular">
-                                      <div className="font-sans text-[12px] font-medium text-[var(--ink)]">
+                                    <div className="rounded-md border border-(--border) bg-(--surface) p-3 font-mono text-[11px] tabular">
+                                      <div className="font-sans text-[12px] font-medium text-(--ink)">
                                         Run profile
                                       </div>
-                                      <div className="mt-2 space-y-1 text-[var(--ink-muted)]">
+                                      <div className="mt-2 space-y-1 text-(--ink-muted)">
                                         <div className="flex justify-between">
-                                          <span className="text-[var(--ink-faint)]">
-                                            Tokens / run
-                                          </span>
+                                          <span className="text-(--ink-faint)">Tokens / run</span>
                                           <span>{formatTokens(entry.tokensPerTrial)}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                          <span className="text-[var(--ink-faint)]">Mean time</span>
+                                          <span className="text-(--ink-faint)">Mean time</span>
                                           <span>{formatDuration(entry.agentSecondsPerTrial)}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                          <span className="text-[var(--ink-faint)]">
-                                            Scored runs
-                                          </span>
+                                          <span className="text-(--ink-faint)">Scored runs</span>
                                           <span>{entry.nScored.toLocaleString("en-US")}</span>
                                         </div>
                                       </div>

@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { API_COMMON_HEADERS, methodNotAllowedProblem, problemJson } from "@/lib/api-response";
 import { loadRelease } from "@/lib/data";
 
 function matchesIfNoneMatch(header: string | null, strongEtag: string): boolean {
@@ -10,9 +11,6 @@ function matchesIfNoneMatch(header: string | null, strongEtag: string): boolean 
     .map((part) => part.trim().replace(/^W\//, ""))
     .some((tag) => tag === strongEtag);
 }
-
-const LINK_HEADER =
-  '</openapi.json>; rel="service-desc"; type="application/openapi+json", </llms.txt>; rel="service-doc"; type="text/markdown"';
 
 export async function GET(request: Request) {
   // Read request headers outside try/catch so Next.js 16 cacheComponents dynamic bailout propagates cleanly
@@ -32,8 +30,7 @@ export async function GET(request: Request) {
           "Cache-Control": cacheControl,
           "CDN-Cache-Control": cdnCacheControl,
           ETag: etag,
-          Link: LINK_HEADER,
-          "Access-Control-Allow-Origin": "*",
+          ...API_COMMON_HEADERS,
         },
       });
     }
@@ -45,12 +42,31 @@ export async function GET(request: Request) {
         "Cache-Control": cacheControl,
         "CDN-Cache-Control": cdnCacheControl,
         ETag: etag,
-        Link: LINK_HEADER,
-        "Access-Control-Allow-Origin": "*",
+        ...API_COMMON_HEADERS,
       },
     });
   } catch (err) {
     console.error("Failed to serve ProChoice snapshot:", err);
-    return Response.json({ error: "Snapshot unavailable" }, { status: 500 });
+    return problemJson({
+      status: 500,
+      code: "snapshot_unavailable",
+      title: "Snapshot Unavailable",
+      detail: "The latest compiled ProChoice snapshot could not be loaded.",
+      resolution: "Retry shortly or inspect https://prochoice.industries/docs.",
+      instance: "/api/snapshot",
+    });
   }
+}
+
+export function POST() {
+  return methodNotAllowedProblem("/api/snapshot");
+}
+export function PUT() {
+  return methodNotAllowedProblem("/api/snapshot");
+}
+export function PATCH() {
+  return methodNotAllowedProblem("/api/snapshot");
+}
+export function DELETE() {
+  return methodNotAllowedProblem("/api/snapshot");
 }

@@ -100,9 +100,9 @@ export function VerdictPlacards({
     return (
       <section
         aria-label="Top Pareto picks"
-        className="border-t border-[var(--border)] px-5 py-6 sm:px-9 lg:px-11"
+        className="border-t border-(--border) px-5 py-6 sm:px-9 lg:px-11"
       >
-        <p className="text-[13px] text-[var(--ink-muted)]">
+        <p className="text-[13px] text-(--ink-muted)">
           {subject} priced frontier models {filterContext}.
         </p>
       </section>
@@ -145,7 +145,7 @@ export function VerdictPlacards({
   return (
     <section
       aria-label="Top Pareto picks"
-      className={`grid grid-cols-1 divide-y divide-[var(--border)] border-t border-[var(--border)] ${gridCols} md:divide-x md:divide-y-0`}
+      className={`grid grid-cols-1 divide-y divide-(--border) border-t border-(--border) ${gridCols} md:divide-x md:divide-y-0`}
     >
       {placards.map((item) => {
         const cfg = item.config;
@@ -166,15 +166,13 @@ export function VerdictPlacards({
             onPointerEnter={() => onHoverConfig(cfg.id)}
             onPointerLeave={() => onHoverConfig(null)}
             className={`relative flex flex-col justify-between px-5 py-6 transition-colors sm:px-7 lg:first:pl-11 lg:last:pr-11 ${
-              isSelected || isHovered
-                ? "bg-[var(--subtle)]"
-                : "bg-[var(--surface)] hover:bg-[var(--subtle)]/70"
+              isSelected || isHovered ? "bg-(--subtle)" : "bg-(--surface) hover:bg-(--subtle)/70"
             }`}
           >
             {item.accent ? (
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[var(--interactive)]"
+                className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-(--interactive)"
               />
             ) : null}
 
@@ -182,20 +180,18 @@ export function VerdictPlacards({
               <div className="flex items-center justify-between gap-2 text-[11.5px]">
                 <span
                   className={
-                    item.accent
-                      ? "font-medium text-[var(--interactive)]"
-                      : "text-[var(--ink-faint)]"
+                    item.accent ? "font-medium text-(--interactive)" : "text-(--ink-faint)"
                   }
                 >
                   {item.tag}
                 </span>
-                <span className="inline-flex items-center gap-1.5 text-[var(--ink-muted)]">
+                <span className="inline-flex items-center gap-1.5 text-(--ink-muted)">
                   <ProviderMarkerIcon provider={cfg.provider} size={9} />
                   <span>{pMeta.shortName}</span>
                 </span>
               </div>
 
-              <h2 className="mt-2.5 font-display text-[22px] leading-[1.15] font-normal tracking-[-0.02em] text-[var(--ink)]">
+              <h2 className="mt-2.5 font-display text-[22px] leading-[1.15] font-normal tracking-[-0.02em] text-(--ink)">
                 <button
                   type="button"
                   aria-current={isSelected ? "true" : undefined}
@@ -206,24 +202,24 @@ export function VerdictPlacards({
                 </button>
               </h2>
 
-              <p className="mt-1 min-h-[16px] font-mono text-[11px] text-[var(--ink-faint)]">
+              <p className="mt-1 min-h-[16px] font-mono text-[11px] text-(--ink-faint)">
                 {subtitleParts.join(" · ")}
               </p>
             </div>
 
-            <div className="mt-5 flex items-baseline justify-between gap-3 border-t border-[var(--border)]/60 pt-3 font-mono tabular">
+            <div className="mt-5 flex items-baseline justify-between gap-3 border-t border-(--border)/60 pt-3 font-mono tabular">
               <div className="flex items-baseline gap-1.5">
-                <span className="text-[18px] font-medium tracking-[-0.02em] text-[var(--ink)]">
+                <span className="text-[18px] font-medium tracking-[-0.02em] text-(--ink)">
                   {formatScore(cfg.score)}
                 </span>
-                <span className="text-[10.5px] text-[var(--ink-faint)]">score</span>
+                <span className="text-[10.5px] text-(--ink-faint)">score</span>
               </div>
 
               <div className="flex items-baseline gap-1 text-right">
-                <span className="text-[14.5px] font-medium text-[var(--ink)]">
+                <span className="text-[14.5px] font-medium text-(--ink)">
                   {formatCost(cfg.effectiveCostUsd, costUnit)}
                 </span>
-                <span className="text-[10.5px] text-[var(--ink-faint)]">/ task</span>
+                <span className="text-[10.5px] text-(--ink-faint)">/ task</span>
               </div>
             </div>
           </article>

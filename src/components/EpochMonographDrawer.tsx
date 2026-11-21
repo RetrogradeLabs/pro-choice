@@ -43,32 +43,32 @@ function statusBadge(status: BenchmarkAudit["status"]): { label: string; tone: s
     case "healthy":
       return {
         label: "Healthy",
-        tone: "border-[var(--healthy)]/40 text-[var(--healthy)]",
+        tone: "border-(--healthy)/40 text-(--healthy)",
       };
     case "warning":
       return {
         label: "Watchlist",
-        tone: "border-[var(--warning)]/40 text-[var(--warning)]",
+        tone: "border-(--warning)/40 text-(--warning)",
       };
     case "retire_trigger":
       return {
         label: "Needs review",
-        tone: "border-[var(--danger)]/40 text-[var(--danger)]",
+        tone: "border-(--danger)/40 text-(--danger)",
       };
     case "probation_ready":
       return {
         label: "Ready",
-        tone: "border-[var(--healthy)]/40 text-[var(--healthy)]",
+        tone: "border-(--healthy)/40 text-(--healthy)",
       };
     case "probation_wait":
       return {
         label: "Pending",
-        tone: "border-[var(--border)] text-[var(--ink-muted)]",
+        tone: "border-(--border) text-(--ink-muted)",
       };
     case "insufficient":
       return {
         label: "Few providers",
-        tone: "border-[var(--warning)]/40 text-[var(--warning)]",
+        tone: "border-(--warning)/40 text-(--warning)",
       };
   }
 }
@@ -134,14 +134,14 @@ export function EpochMonographDrawer({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[1px] transition-opacity duration-200 ease-out data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
-        <Dialog.Popup className="fixed inset-y-0 right-0 z-50 flex w-full max-w-2xl flex-col border-l border-[var(--border)] bg-[var(--surface)] text-[var(--ink)] shadow-2xl transition-transform duration-200 ease-out data-[ending-style]:translate-x-full data-[starting-style]:translate-x-full">
-          <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] px-6 py-5">
+        <Dialog.Backdrop className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[1px] transition-opacity duration-200 ease-out data-ending-style:opacity-0 data-starting-style:opacity-0" />
+        <Dialog.Popup className="fixed inset-y-0 right-0 z-50 flex w-full max-w-2xl flex-col border-l border-(--border) bg-(--surface) text-(--ink) shadow-2xl transition-transform duration-200 ease-out data-ending-style:translate-x-full data-starting-style:translate-x-full">
+          <div className="flex items-start justify-between gap-4 border-b border-(--border) px-6 py-5">
             <div>
-              <Dialog.Title className="font-display text-[26px] leading-tight font-normal text-[var(--ink)]">
+              <Dialog.Title className="font-display text-[26px] leading-tight font-normal text-(--ink)">
                 {meta.indexTitle} methodology
               </Dialog.Title>
-              <Dialog.Description className="mt-1 font-mono text-[11.5px] text-[var(--ink-muted)] tabular">
+              <Dialog.Description className="mt-1 font-mono text-[11.5px] text-(--ink-muted) tabular">
                 {isControlledHarnesses
                   ? `Updated ${formatUtcDate(harnessLeaderboard.upstreamGeneratedAt)} · ${controlledHarnessCount} harnesses · ${controlledModelSlices.length} test models`
                   : `Updated ${formatUtcDate(generatedAt)} · ${activeBenchmarks.length} benchmarks`}
@@ -150,7 +150,7 @@ export function EpochMonographDrawer({
 
             <Dialog.Close
               aria-label="Close methodology"
-              className="cursor-pointer rounded-md p-1.5 text-[var(--ink-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--ink)]"
+              className="cursor-pointer rounded-md p-1.5 text-(--ink-muted) hover:bg-(--surface-hover) hover:text-(--ink)"
             >
               <X className="h-4 w-4" />
             </Dialog.Close>
@@ -158,9 +158,9 @@ export function EpochMonographDrawer({
 
           <div className="flex-1 space-y-8 overflow-y-auto overscroll-contain px-6 py-6">
             <section className="space-y-3">
-              <h3 className="text-[12px] font-medium text-[var(--ink)]">How scores work</h3>
+              <h3 className="text-[12px] font-medium text-(--ink)">How scores work</h3>
               {isControlledHarnesses ? (
-                <div className="space-y-2.5 text-[13px] leading-relaxed text-[var(--ink-secondary)]">
+                <div className="space-y-2.5 text-[13px] leading-relaxed text-(--ink-secondary)">
                   <p>
                     This view isolates the coding agent harness by running different harnesses on
                     the same open-weight test models. It combines FrontierHarness v1.1 and Harness
@@ -183,7 +183,7 @@ export function EpochMonographDrawer({
                   </p>
                 </div>
               ) : (
-                <div className="space-y-2.5 text-[13px] leading-relaxed text-[var(--ink-secondary)]">
+                <div className="space-y-2.5 text-[13px] leading-relaxed text-(--ink-secondary)">
                   <p>
                     Different benchmarks use different units, such as percentages, Elo ratings, or
                     rubric points, and few models are tested on every benchmark. Averaging raw
@@ -215,65 +215,61 @@ export function EpochMonographDrawer({
               )}
 
               {isControlledHarnesses ? (
-                <div className="space-y-2 rounded-md border border-[var(--border)] bg-[var(--subtle)] p-3 font-mono text-[11.5px] tabular">
+                <div className="space-y-2 rounded-md border border-(--border) bg-(--subtle) p-3 font-mono text-[11.5px] tabular">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <span className="text-[10.5px] text-[var(--ink-faint)]">Pass rate</span>
-                    <span className="text-right text-[var(--ink)]">
+                    <span className="text-[10.5px] text-(--ink-faint)">Pass rate</span>
+                    <span className="text-right text-(--ink)">
                       Weighted pass rate (%) across Terminal-Bench 2.1, Terminal-Bench 4.0, and
                       DeepSWE v1.1
                     </span>
                   </div>
-                  <div className="flex flex-wrap items-baseline justify-between gap-2 border-t border-[var(--border)] pt-2">
-                    <span className="text-[10.5px] text-[var(--ink-faint)]">Cost per run</span>
-                    <span className="text-right text-[var(--ink)]">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2 border-t border-(--border) pt-2">
+                    <span className="text-[10.5px] text-(--ink-faint)">Cost per run</span>
+                    <span className="text-right text-(--ink)">
                       Measured token cost per run on one common cost scale (USD, log scale)
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 border-t border-[var(--border)] pt-2">
+                  <div className="grid grid-cols-2 gap-2 border-t border-(--border) pt-2">
                     <div>
-                      <span className="block text-[10.5px] text-[var(--ink-faint)]">Harnesses</span>
-                      <span className="font-medium text-[var(--ink)]">
-                        {controlledHarnessCount}
-                      </span>
+                      <span className="block text-[10.5px] text-(--ink-faint)">Harnesses</span>
+                      <span className="font-medium text-(--ink)">{controlledHarnessCount}</span>
                     </div>
                     <div>
-                      <span className="block text-[10.5px] text-[var(--ink-faint)]">
-                        Test models
-                      </span>
-                      <span className="font-medium text-[var(--ink)]">
+                      <span className="block text-[10.5px] text-(--ink-faint)">Test models</span>
+                      <span className="font-medium text-(--ink)">
                         {controlledModelSlices.map((s) => s.label).join(", ")}
                       </span>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="space-y-2 rounded-md border border-[var(--border)] bg-[var(--subtle)] p-3 font-mono text-[11.5px] tabular">
+                <div className="space-y-2 rounded-md border border-(--border) bg-(--subtle) p-3 font-mono text-[11.5px] tabular">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <span className="text-[10.5px] text-[var(--ink-faint)]">Reference scale</span>
-                    <span className="text-[var(--ink)]">
+                    <span className="text-[10.5px] text-(--ink-faint)">Reference scale</span>
+                    <span className="text-(--ink)">
                       50 = anchor-benchmark mean across {anchorProviderCount} domain providers, 15
                       pts = 1 anchor SD
                     </span>
                   </div>
-                  <div className="flex flex-wrap items-baseline justify-between gap-2 border-t border-[var(--border)] pt-2">
-                    <span className="text-[10.5px] text-[var(--ink-faint)]">Cost per task</span>
-                    <span className="text-right text-[var(--ink)]">{meta.costAxisLabel}</span>
+                  <div className="flex flex-wrap items-baseline justify-between gap-2 border-t border-(--border) pt-2">
+                    <span className="text-[10.5px] text-(--ink-faint)">Cost per task</span>
+                    <span className="text-right text-(--ink)">{meta.costAxisLabel}</span>
                   </div>
                   <div
-                    className={`grid gap-2 border-t border-[var(--border)] pt-2 ${
+                    className={`grid gap-2 border-t border-(--border) pt-2 ${
                       hasArenaBenchmarks ? "grid-cols-2" : "grid-cols-1"
                     }`}
                   >
                     <div>
-                      <span className="block text-[10.5px] text-[var(--ink-faint)]">Providers</span>
-                      <span className="font-medium text-[var(--ink)]">{anchorProviderCount}</span>
+                      <span className="block text-[10.5px] text-(--ink-faint)">Providers</span>
+                      <span className="font-medium text-(--ink)">{anchorProviderCount}</span>
                     </div>
                     {hasArenaBenchmarks ? (
                       <div>
-                        <span className="block text-[10.5px] text-[var(--ink-faint)]">
+                        <span className="block text-[10.5px] text-(--ink-faint)">
                           Crowd-arena filter
                         </span>
-                        <span className="font-medium text-[var(--ink)]">
+                        <span className="font-medium text-(--ink)">
                           {domain.domainId === "design_code"
                             ? "<= 25 Elo · >= 300 votes, or >= 1,000 without SE"
                             : "<= 25 Elo · >= 300 votes"}
@@ -288,10 +284,10 @@ export function EpochMonographDrawer({
             {!isControlledHarnesses ? (
               <>
                 <section className="space-y-3">
-                  <h3 className="text-[12px] font-medium text-[var(--ink)]">
+                  <h3 className="text-[12px] font-medium text-(--ink)">
                     Benchmarks ({activeBenchmarks.length})
                   </h3>
-                  <p className="text-[12.5px] leading-relaxed text-[var(--ink-secondary)]">
+                  <p className="text-[12.5px] leading-relaxed text-(--ink-secondary)">
                     Every benchmark below counts directly toward this domain&apos;s score. Weight
                     ranges from 0.10 to 1.00 based on measurement precision and how clearly the
                     benchmark separates top providers.
@@ -305,21 +301,21 @@ export function EpochMonographDrawer({
                         ? statusBadge(audit.status)
                         : {
                             label: "Unaudited",
-                            tone: "border-[var(--border)] text-[var(--ink-muted)]",
+                            tone: "border-(--border) text-(--ink-muted)",
                           };
 
                       return (
                         <div
                           key={bm.id}
-                          className="rounded-md border border-[var(--border)] bg-[var(--bg)] p-4"
+                          className="rounded-md border border-(--border) bg-(--bg) p-4"
                         >
                           <div className="flex flex-wrap items-start justify-between gap-2">
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="text-[13.5px] font-medium text-[var(--ink)]">
+                                <span className="text-[13.5px] font-medium text-(--ink)">
                                   {bm.name}
                                 </span>
-                                <span className="font-mono text-[11px] text-[var(--ink-faint)]">
+                                <span className="font-mono text-[11px] text-(--ink-faint)">
                                   v{bm.version}
                                 </span>
                                 <a
@@ -327,19 +323,19 @@ export function EpochMonographDrawer({
                                   target="_blank"
                                   rel="noreferrer"
                                   aria-label={`Open ${bm.name}`}
-                                  className="text-[var(--ink-faint)] hover:text-[var(--ink)]"
+                                  className="text-(--ink-faint) hover:text-(--ink)"
                                 >
                                   <ExternalLink className="h-3.5 w-3.5" />
                                 </a>
                               </div>
                               {anchor ? (
-                                <p className="mt-0.5 font-mono text-[11px] text-[var(--ink-faint)] tabular">
+                                <p className="mt-0.5 font-mono text-[11px] text-(--ink-faint) tabular">
                                   Weight {anchor.effectiveWeight.toFixed(2)} · Average{" "}
                                   {anchor.mean.toFixed(1)} · Spread {anchor.sd.toFixed(1)} ·{" "}
                                   {anchor.anchorLabs} providers
                                 </p>
                               ) : (
-                                <p className="mt-0.5 font-mono text-[11px] text-[var(--warning)]">
+                                <p className="mt-0.5 font-mono text-[11px] text-(--warning)">
                                   Excluded from score
                                 </p>
                               )}
@@ -353,30 +349,30 @@ export function EpochMonographDrawer({
                           </div>
 
                           {audit && anchor ? (
-                            <div className="mt-3 grid grid-cols-3 gap-2 border-t border-[var(--border)] pt-3 font-mono text-[11px] tabular">
+                            <div className="mt-3 grid grid-cols-3 gap-2 border-t border-(--border) pt-3 font-mono text-[11px] tabular">
                               <div>
-                                <span className="block text-[10px] text-[var(--ink-faint)]">
+                                <span className="block text-[10px] text-(--ink-faint)">
                                   Precision
                                 </span>
-                                <span className="text-[var(--ink)]">
+                                <span className="text-(--ink)">
                                   {Math.round(anchor.reliability * 100)}%
                                 </span>
                               </div>
                               <div>
-                                <span className="block text-[10px] text-[var(--ink-faint)]">
+                                <span className="block text-[10px] text-(--ink-faint)">
                                   Top-provider separation
                                 </span>
-                                <span className="text-[var(--ink)]">
+                                <span className="text-(--ink)">
                                   {audit.separability !== null
                                     ? `${Math.round(audit.separability * 100)}%`
                                     : "N/A"}
                                 </span>
                               </div>
                               <div>
-                                <span className="block text-[10px] text-[var(--ink-faint)]">
+                                <span className="block text-[10px] text-(--ink-faint)">
                                   Peer rank agreement
                                 </span>
-                                <span className="text-[var(--ink)]">
+                                <span className="text-(--ink)">
                                   {audit.itemRestTau !== null
                                     ? audit.itemRestTau.toFixed(2)
                                     : "N/A"}
@@ -391,20 +387,20 @@ export function EpochMonographDrawer({
                 </section>
 
                 <section className="space-y-2.5">
-                  <h3 className="text-[12px] font-medium text-[var(--ink)]">
+                  <h3 className="text-[12px] font-medium text-(--ink)">
                     Models left off the chart ({provisionalConfigs.length})
                   </h3>
-                  <p className="text-[12.5px] leading-relaxed text-[var(--ink-secondary)]">
+                  <p className="text-[12.5px] leading-relaxed text-(--ink-secondary)">
                     {domain.domainId === "harnesses"
                       ? "A model stays off the chart if it is no longer available to buy, has no public API price, ran in a harness with no measured run costs, or has too little benchmark precision for a reliable score."
                       : "A model stays off the chart if it is no longer available to buy, has no public API price, or has too little benchmark precision for a reliable score."}
                   </p>
                   {provisionalConfigs.length === 0 ? (
-                    <p className="font-mono text-[11px] text-[var(--ink-faint)]">
+                    <p className="font-mono text-[11px] text-(--ink-faint)">
                       None in the current provider selection.
                     </p>
                   ) : (
-                    <div className="divide-y divide-[var(--border)] rounded-md border border-[var(--border)] font-mono text-[11px] tabular">
+                    <div className="divide-y divide-(--border) rounded-md border border-(--border) font-mono text-[11px] tabular">
                       {provisionalConfigs.map((cfg) => {
                         const explicitHarness =
                           domain.domainId === "harnesses" &&
@@ -441,22 +437,22 @@ export function EpochMonographDrawer({
                             className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2"
                           >
                             <div className="min-w-0">
-                              <span className="font-sans text-[12.5px] font-medium text-[var(--ink)]">
+                              <span className="font-sans text-[12.5px] font-medium text-(--ink)">
                                 {explicitHarness
                                   ? `${explicitHarness} + ${cfg.displayName}`
                                   : cfg.displayName}
                               </span>
-                              <span className="ml-1.5 text-[var(--ink-faint)]">
+                              <span className="ml-1.5 text-(--ink-faint)">
                                 {PROVIDER_BY_ID[cfg.provider].shortName} ·{" "}
                                 {formatEffort(cfg.effort)}
                               </span>
                             </div>
-                            <div className="flex items-center gap-2 text-[var(--ink-muted)]">
+                            <div className="flex items-center gap-2 text-(--ink-muted)">
                               <span>{formatScore(cfg.score)}</span>
                               <span>
                                 {cfg.coverageCount}/{cfg.activeBenchmarkCount}
                               </span>
-                              <span className="text-[var(--ink-faint)]">{heldOutReason}</span>
+                              <span className="text-(--ink-faint)">{heldOutReason}</span>
                             </div>
                           </div>
                         );
@@ -468,11 +464,11 @@ export function EpochMonographDrawer({
             ) : null}
 
             <section className="space-y-2.5">
-              <h3 className="text-[12px] font-medium text-[var(--ink)]">Data sources</h3>
-              <p className="text-[12.5px] leading-relaxed text-[var(--ink-secondary)]">
+              <h3 className="text-[12px] font-medium text-(--ink)">Data sources</h3>
+              <p className="text-[12.5px] leading-relaxed text-(--ink-secondary)">
                 Every source below refreshes daily from its public leaderboard.
               </p>
-              <div className="divide-y divide-[var(--border)] rounded-md border border-[var(--border)] font-mono text-[11px] tabular">
+              <div className="divide-y divide-(--border) rounded-md border border-(--border) font-mono text-[11px] tabular">
                 {domainSources.map(({ src, role }) => (
                   <div
                     key={src.sourceId}
@@ -483,20 +479,20 @@ export function EpochMonographDrawer({
                         href={src.sourceUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="font-sans text-[12.5px] font-medium text-[var(--ink)] hover:underline"
+                        className="font-sans text-[12.5px] font-medium text-(--ink) hover:underline"
                       >
                         {src.label}
                       </a>
-                      <span className="block text-[10.5px] text-[var(--ink-faint)]">
+                      <span className="block text-[10.5px] text-(--ink-faint)">
                         {src.rowCount} rows · {src.license} · {formatUtcDate(src.lastHealthyAt)}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="rounded border border-[var(--healthy)]/40 px-2 py-0.5 text-[10.5px] text-[var(--healthy)]">
+                      <span className="rounded border border-(--healthy)/40 px-2 py-0.5 text-[10.5px] text-(--healthy)">
                         {role}
                       </span>
                       {src.status !== "ok" ? (
-                        <span className="rounded border border-[var(--warning)]/40 px-2 py-0.5 text-[10.5px] text-[var(--warning)]">
+                        <span className="rounded border border-(--warning)/40 px-2 py-0.5 text-[10.5px] text-(--warning)">
                           Stale {src.staleDays}d
                         </span>
                       ) : null}

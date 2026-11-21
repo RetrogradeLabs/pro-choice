@@ -97,32 +97,30 @@ export function PrunedCatalogue({
     .toSorted((a, b) => (b.costRatio ?? 0) - (a.costRatio ?? 0) || b.scoreDeficit - a.scoreDeficit);
 
   return (
-    <section aria-label="Pruned models" className="border-t border-[var(--border)] bg-[var(--bg)]">
+    <section aria-label="Pruned models" className="border-t border-(--border) bg-(--bg)">
       <button
         type="button"
         aria-expanded={open}
         onClick={() => onOpenChange(!open)}
-        className="flex w-full cursor-pointer items-center justify-between px-5 py-3.5 text-left transition-colors hover:bg-[var(--subtle)] sm:px-9 lg:px-11"
+        className="flex w-full cursor-pointer items-center justify-between px-5 py-3.5 text-left transition-colors hover:bg-(--subtle) sm:px-9 lg:px-11"
       >
-        <span className="flex items-center gap-2 text-[13px] font-medium text-[var(--ink)]">
+        <span className="flex items-center gap-2 text-[13px] font-medium text-(--ink)">
           <ChevronRight
             aria-hidden="true"
-            className={`h-3.5 w-3.5 text-[var(--ink-faint)] transition-transform duration-150 ${open ? "rotate-90" : ""}`}
+            className={`h-3.5 w-3.5 text-(--ink-faint) transition-transform duration-150 ${open ? "rotate-90" : ""}`}
           />
           <span>Pruned</span>
-          <span className="font-mono font-normal text-[var(--ink-faint)]">
-            · {prunedRows.length}
-          </span>
+          <span className="font-mono font-normal text-(--ink-faint)">· {prunedRows.length}</span>
         </span>
       </button>
 
       <Activity mode={open ? "visible" : "hidden"}>
         {prunedRows.length === 0 ? (
-          <div className="border-t border-[var(--border)] px-5 py-5 text-[13px] text-[var(--ink-muted)] sm:px-9 lg:px-11">
+          <div className="border-t border-(--border) px-5 py-5 text-[13px] text-(--ink-muted) sm:px-9 lg:px-11">
             No dominated models in this selection.
           </div>
         ) : (
-          <div className="overflow-x-auto border-t border-[var(--border)]">
+          <div className="overflow-x-auto border-t border-(--border)">
             <table className="w-full min-w-[680px] table-fixed border-collapse text-left text-[12.5px] tabular">
               <colgroup>
                 <col className="w-[33%]" />
@@ -132,7 +130,7 @@ export function PrunedCatalogue({
                 <col className="w-[18%]" />
               </colgroup>
               <thead>
-                <tr className="border-b border-[var(--border)] bg-[var(--subtle)] font-mono text-[11px] text-[var(--ink-faint)]">
+                <tr className="border-b border-(--border) bg-(--subtle) font-mono text-[11px] text-(--ink-faint)">
                   <th className="py-2.5 pl-5 pr-3 font-normal whitespace-nowrap sm:pl-9 lg:pl-11">
                     Pruned
                   </th>
@@ -156,8 +154,8 @@ export function PrunedCatalogue({
                     <Fragment key={row.pruned.id}>
                       <tr
                         id={rowDomId}
-                        className={`scroll-mt-16 border-b border-[var(--border)] transition-[background-color] duration-150 last:border-b-0 ${
-                          expanded ? "bg-[var(--subtle)]" : "hover:bg-[var(--subtle)]/70"
+                        className={`scroll-mt-16 border-b border-(--border) transition-[background-color] duration-150 last:border-b-0 ${
+                          expanded ? "bg-(--subtle)" : "hover:bg-(--subtle)/70"
                         }`}
                       >
                         <td className="py-2.5 pl-5 pr-3 sm:pl-9 lg:pl-11">
@@ -169,7 +167,7 @@ export function PrunedCatalogue({
                           >
                             <ChevronRight
                               aria-hidden="true"
-                              className={`h-3.5 w-3.5 shrink-0 text-[var(--ink-faint)] transition-transform duration-150 ${
+                              className={`h-3.5 w-3.5 shrink-0 text-(--ink-faint) transition-transform duration-150 ${
                                 expanded ? "rotate-90" : ""
                               }`}
                             />
@@ -180,19 +178,19 @@ export function PrunedCatalogue({
                             />
                             {isHarnessDomain && prunedHarness ? (
                               <>
-                                <span className="shrink-0 whitespace-nowrap text-[var(--ink-secondary)] line-through decoration-[var(--ink-faint)]">
+                                <span className="shrink-0 whitespace-nowrap text-(--ink-secondary) line-through decoration-(--ink-faint)">
                                   {prunedHarness}
                                 </span>
-                                <span className="truncate font-mono text-[11px] text-[var(--ink-faint)]">
+                                <span className="truncate font-mono text-[11px] text-(--ink-faint)">
                                   + {row.pruned.displayName} · {formatEffort(row.pruned.effort)}
                                 </span>
                               </>
                             ) : (
                               <>
-                                <span className="truncate text-[var(--ink-secondary)] line-through decoration-[var(--ink-faint)]">
+                                <span className="truncate text-(--ink-secondary) line-through decoration-(--ink-faint)">
                                   {row.pruned.displayName}
                                 </span>
-                                <span className="shrink-0 whitespace-nowrap font-mono text-[11px] text-[var(--ink-faint)]">
+                                <span className="shrink-0 whitespace-nowrap font-mono text-[11px] text-(--ink-faint)">
                                   {formatEffort(row.pruned.effort)}
                                   {prunedHarness ? ` · ${prunedHarness}` : ""}
                                 </span>
@@ -200,33 +198,33 @@ export function PrunedCatalogue({
                             )}
                           </button>
                         </td>
-                        <td className="px-3 py-2.5 text-right font-mono text-[var(--ink-muted)]">
+                        <td className="px-3 py-2.5 text-right font-mono text-(--ink-muted)">
                           {formatScore(row.pruned.score)}
                         </td>
-                        <td className="px-3 py-2.5 text-right font-mono whitespace-nowrap text-[var(--ink-muted)]">
+                        <td className="px-3 py-2.5 text-right font-mono whitespace-nowrap text-(--ink-muted)">
                           {formatCost(row.pruned.effectiveCostUsd, costUnit)}
                         </td>
                         <td className="px-3 py-2.5">
                           {isHarnessDomain && winnerHarness ? (
                             <>
-                              <span className="font-medium text-[var(--ink)]">{winnerHarness}</span>
-                              <span className="ml-1.5 font-mono text-[11px] text-[var(--ink-muted)]">
+                              <span className="font-medium text-(--ink)">{winnerHarness}</span>
+                              <span className="ml-1.5 font-mono text-[11px] text-(--ink-muted)">
                                 + {row.winner.displayName} · {formatEffort(row.winner.effort)}
                               </span>
                             </>
                           ) : (
                             <>
-                              <span className="font-medium text-[var(--ink)]">
+                              <span className="font-medium text-(--ink)">
                                 {row.winner.displayName}
                               </span>
-                              <span className="ml-1.5 font-mono text-[11px] text-[var(--ink-muted)]">
+                              <span className="ml-1.5 font-mono text-[11px] text-(--ink-muted)">
                                 {formatEffort(row.winner.effort)}
                                 {winnerHarness ? ` · ${winnerHarness}` : ""}
                               </span>
                             </>
                           )}
                         </td>
-                        <td className="py-2.5 pl-3 pr-5 text-right font-mono text-[11.5px] whitespace-nowrap text-[var(--danger)] sm:pr-9 lg:pr-11">
+                        <td className="py-2.5 pl-3 pr-5 text-right font-mono text-[11.5px] whitespace-nowrap text-(--danger) sm:pr-9 lg:pr-11">
                           -{row.scoreDeficit.toFixed(1)} pts ·{" "}
                           {row.costRatio !== null
                             ? `${row.costRatio.toFixed(2)}x cost`
@@ -235,7 +233,7 @@ export function PrunedCatalogue({
                       </tr>
 
                       {expanded ? (
-                        <tr className="border-b border-[var(--border)] bg-[var(--subtle)] last:border-b-0">
+                        <tr className="border-b border-(--border) bg-(--subtle) last:border-b-0">
                           <td
                             id={`${rowDomId}-details`}
                             aria-label={`${isHarnessDomain && prunedHarness ? `${prunedHarness} + ` : ""}${row.pruned.displayName} benchmark details`}
@@ -270,7 +268,7 @@ export function PrunedCatalogue({
                                   const isPartialBasket = (row.pruned.costFixedFloorUsd ?? 0) > 0;
                                   return (
                                     <>
-                                      <p className="mb-3 text-[11.5px] leading-relaxed text-[var(--ink-muted)]">
+                                      <p className="mb-3 text-[11.5px] leading-relaxed text-(--ink-muted)">
                                         {rawWeightedAvg !== null && pullPct >= 2
                                           ? `Weighted average ${rawWeightedAvg.toFixed(1)} is pulled ${pullPct}% toward the domain average (${domainAvg.toFixed(1)}) to give ${formatScore(row.pruned.score)} across ${row.pruned.coverageCount} of ${row.pruned.activeBenchmarkCount} benchmarks.`
                                           : `Combined score ${formatScore(row.pruned.score)} across ${row.pruned.coverageCount} of ${row.pruned.activeBenchmarkCount} benchmarks.`}
@@ -307,10 +305,10 @@ export function PrunedCatalogue({
                                           return (
                                             <div
                                               key={bm.benchmarkId}
-                                              className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-3"
+                                              className="rounded-md border border-(--border) bg-(--surface) p-3"
                                             >
                                               <div className="flex items-start justify-between gap-2">
-                                                <span className="text-[12px] font-medium text-[var(--ink)]">
+                                                <span className="text-[12px] font-medium text-(--ink)">
                                                   {bMeta?.name ?? bm.benchmarkId}
                                                 </span>
                                                 <a
@@ -318,28 +316,28 @@ export function PrunedCatalogue({
                                                   target="_blank"
                                                   rel="noreferrer"
                                                   aria-label={`Open ${bMeta?.name ?? bm.benchmarkId}`}
-                                                  className="text-[var(--ink-faint)] hover:text-[var(--ink)]"
+                                                  className="text-(--ink-faint) hover:text-(--ink)"
                                                 >
                                                   <ExternalLink className="h-3.5 w-3.5" />
                                                 </a>
                                               </div>
 
                                               <div className="mt-2 flex items-baseline justify-between font-mono tabular">
-                                                <span className="text-[14px] font-medium text-[var(--ink)]">
+                                                <span className="text-[14px] font-medium text-(--ink)">
                                                   {formatRawMetric(
                                                     bm.rawScore,
                                                     bMeta?.scale ?? "percent",
                                                   )}
                                                 </span>
                                                 {tileCostLabel ? (
-                                                  <span className="text-[11px] text-[var(--ink-muted)]">
+                                                  <span className="text-[11px] text-(--ink-muted)">
                                                     {tileCostLabel}
                                                   </span>
                                                 ) : null}
                                               </div>
 
                                               {adjScore !== null && weightSharePct !== null ? (
-                                                <div className="mt-1 font-mono text-[10.5px] text-[var(--ink-secondary)] tabular">
+                                                <div className="mt-1 font-mono text-[10.5px] text-(--ink-secondary) tabular">
                                                   {adjScore.toFixed(1)} converted score ·{" "}
                                                   {weightSharePct}% weight
                                                 </div>
@@ -352,7 +350,7 @@ export function PrunedCatalogue({
                                               (bm.refusalRate !== undefined &&
                                                 bm.refusalRate !== null &&
                                                 bm.refusalRate > 0) ? (
-                                                <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 font-mono text-[10.5px] text-[var(--ink-faint)]">
+                                                <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 font-mono text-[10.5px] text-(--ink-faint)">
                                                   <span>
                                                     {[
                                                       tileHarness,

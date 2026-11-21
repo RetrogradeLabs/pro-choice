@@ -667,9 +667,9 @@ export function ParetoPlate({
     return (
       <section
         aria-label="Pareto frontier chart"
-        className="border-t border-[var(--border)] px-5 py-12 text-center sm:px-9"
+        className="border-t border-(--border) px-5 py-12 text-center sm:px-9"
       >
-        <p className="text-[13px] text-[var(--ink-muted)]">
+        <p className="text-[13px] text-(--ink-muted)">
           No priced frontier models match the selected providers and filters.
         </p>
       </section>
@@ -677,14 +677,11 @@ export function ParetoPlate({
   }
 
   return (
-    <section
-      aria-label="Pareto frontier chart"
-      className="border-t border-[var(--border)] bg-[var(--bg)]"
-    >
+    <section aria-label="Pareto frontier chart" className="border-t border-(--border) bg-(--bg)">
       <figure
         ref={containerRef}
         aria-label={`${meta.label} score versus cost Pareto frontier`}
-        className="relative w-full border-b border-[var(--border)] bg-[var(--bg)]"
+        className="relative w-full border-b border-(--border) bg-(--bg)"
         onPointerLeave={() => {
           downRef.current = null;
           lastClientPosRef.current = null;
@@ -1122,32 +1119,32 @@ export function ParetoPlate({
                   animate={{ opacity: 1, scale: 1 }}
                   {...(prefersReducedMotion ? {} : { exit: { opacity: 0, scale: 0.97 } })}
                   transition={{ duration: 0.11, ease: EASE }}
-                  className="inline-flex max-w-[380px] items-center gap-1.5 whitespace-nowrap rounded-md border border-[var(--border-strong)] bg-[var(--surface)]/95 px-2.5 py-1 text-[12px] shadow-[var(--shadow-button)] backdrop-blur-sm"
+                  className="inline-flex max-w-[380px] items-center gap-1.5 whitespace-nowrap rounded-md border border-(--border-strong) bg-(--surface)/95 px-2.5 py-1 text-[12px] shadow-(--shadow-button) backdrop-blur-sm"
                 >
                   <ProviderMarkerIcon provider={activeHoveredNode.provider} size={9} />
                   {isHarnessDomain && activeHoveredHarness ? (
                     <>
-                      <span className="shrink-0 font-medium text-[var(--ink)]">
+                      <span className="shrink-0 font-medium text-(--ink)">
                         {activeHoveredHarness}
                       </span>
-                      <span aria-hidden="true" className="text-[var(--ink-faint)]">
+                      <span aria-hidden="true" className="text-(--ink-faint)">
                         +
                       </span>
-                      <span className="truncate text-[var(--ink-secondary)]">
+                      <span className="truncate text-(--ink-secondary)">
                         {activeHoveredNode.cfg.displayName}
                       </span>
                     </>
                   ) : (
-                    <span className="truncate font-medium text-[var(--ink)]">
+                    <span className="truncate font-medium text-(--ink)">
                       {activeHoveredNode.cfg.displayName}
                     </span>
                   )}
                   {activeHoveredEffort ? (
                     <>
-                      <span aria-hidden="true" className="text-[var(--ink-faint)]">
+                      <span aria-hidden="true" className="text-(--ink-faint)">
                         ·
                       </span>
-                      <span className="shrink-0 font-mono text-[10.5px] text-[var(--ink-faint)]">
+                      <span className="shrink-0 font-mono text-[10.5px] text-(--ink-faint)">
                         {activeHoveredEffort}
                       </span>
                     </>
@@ -1161,7 +1158,7 @@ export function ParetoPlate({
         {/* Fixed-height zero-scrollbar spend-cap readout strip below the chart */}
         <div
           data-budget-readout="true"
-          className="flex h-10 items-center gap-x-2.5 overflow-hidden whitespace-nowrap border-t border-[var(--border)] bg-[var(--subtle)]/50 px-5 font-mono text-[11px] tabular sm:px-9 lg:px-11"
+          className="flex h-10 items-center gap-x-2.5 overflow-hidden whitespace-nowrap border-t border-(--border) bg-(--subtle)/50 px-5 font-mono text-[11px] tabular sm:px-9 lg:px-11"
         >
           <span id={spendHelpId} className="sr-only">
             Use Left, Right, Home, and End keys to compare qualifying models across spend caps, or
@@ -1189,7 +1186,7 @@ export function ParetoPlate({
             data-spend-stepper="true"
             aria-describedby={spendHelpId}
             onKeyDown={handleSpendKeyDown}
-            className="shrink-0 cursor-default rounded px-0 py-0.5 text-left text-[var(--ink-faint)] outline-none focus-visible:ring-1 focus-visible:ring-[var(--border-strong)]"
+            className="shrink-0 cursor-default rounded px-0 py-0.5 text-left text-(--ink-faint) outline-none focus-visible:ring-1 focus-visible:ring-(--border-strong)"
           >
             {effectiveBudget !== null
               ? `Best <= ${formatSpendCap(effectiveBudget, domain.costUnit)}:`
@@ -1198,7 +1195,7 @@ export function ParetoPlate({
           {effectiveBudget !== null ? (
             <>
               {budgetPicks.length === 0 ? (
-                <span className="shrink-0 text-[var(--ink-muted)]">
+                <span className="shrink-0 text-(--ink-muted)">
                   No frontier model fits below this cap.
                 </span>
               ) : (
@@ -1217,40 +1214,40 @@ export function ParetoPlate({
                         type="button"
                         data-budget-pick="true"
                         onClick={() => onSelectConfig(cfg.id)}
-                        className={`${visClass} min-w-0 shrink cursor-pointer items-center gap-1.5 rounded px-1.5 py-0.5 text-[var(--ink)] transition-colors hover:bg-[var(--surface-hover)]`}
+                        className={`${visClass} min-w-0 shrink cursor-pointer items-center gap-1.5 rounded px-1.5 py-0.5 text-(--ink) transition-colors hover:bg-(--surface-hover)`}
                       >
                         <ProviderMarkerIcon provider={provider} size={9} />
                         {isHarnessDomain && harnessTag ? (
                           <>
                             <span className="shrink-0 font-sans font-medium">{harnessTag}</span>
-                            <span className="truncate font-sans text-[var(--ink-secondary)]">
+                            <span className="truncate font-sans text-(--ink-secondary)">
                               + {cfg.displayName}
                             </span>
                           </>
                         ) : (
                           <span className="truncate font-sans font-medium">{cfg.displayName}</span>
                         )}
-                        <span className="shrink-0 text-[var(--ink-faint)]">
+                        <span className="shrink-0 text-(--ink-faint)">
                           {formatEffort(cfg.effort)}
                         </span>
-                        <span className="shrink-0 text-[var(--ink-muted)]">
+                        <span className="shrink-0 text-(--ink-muted)">
                           {formatScore(cfg.score)}
                         </span>
                       </button>
                     );
                   })}
                   {budgetPicks.length > 1 ? (
-                    <span className="shrink-0 text-[10.5px] text-[var(--ink-faint)] sm:hidden">
+                    <span className="shrink-0 text-[10.5px] text-(--ink-faint) sm:hidden">
                       +{budgetPicks.length - 1}
                     </span>
                   ) : null}
                   {budgetPicks.length > 2 ? (
-                    <span className="hidden shrink-0 text-[10.5px] text-[var(--ink-faint)] sm:inline lg:hidden">
+                    <span className="hidden shrink-0 text-[10.5px] text-(--ink-faint) sm:inline lg:hidden">
                       +{budgetPicks.length - 2}
                     </span>
                   ) : null}
                   {budgetPicks.length > 3 ? (
-                    <span className="hidden shrink-0 text-[10.5px] text-[var(--ink-faint)] lg:inline">
+                    <span className="hidden shrink-0 text-[10.5px] text-(--ink-faint) lg:inline">
                       +{budgetPicks.length - 3} more
                     </span>
                   ) : null}
@@ -1264,7 +1261,7 @@ export function ParetoPlate({
                     spendStepperRef.current?.focus();
                     setHoverBudgetState(null);
                   }}
-                  className="ml-auto shrink-0 cursor-pointer rounded border border-[var(--border)] px-1.5 py-0.5 text-[10.5px] text-[var(--ink-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--ink)]"
+                  className="ml-auto shrink-0 cursor-pointer rounded border border-(--border) px-1.5 py-0.5 text-[10.5px] text-(--ink-muted) hover:bg-(--surface-hover) hover:text-(--ink)"
                 >
                   Clear
                 </button>

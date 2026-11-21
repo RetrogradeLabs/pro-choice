@@ -71,6 +71,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
+    site: "@retrogradelabs",
+    creator: "@retrogradelabs",
   },
 };
 
@@ -101,7 +103,7 @@ export default function RootLayout({
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: static inline theme initializer before first paint */}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
       </head>
-      <body className="relative min-h-screen bg-[var(--bg)] font-sans text-[var(--ink)] antialiased selection:bg-[var(--selection-bg)] selection:text-[var(--selection-fg)]">
+      <body className="relative min-h-screen bg-(--bg) font-sans text-(--ink) antialiased selection:bg-(--selection-bg) selection:text-(--selection-fg)">
         <div className="isolate">{children}</div>
       </body>
     </html>

@@ -1,9 +1,8 @@
 import type { VercelConfig } from "@vercel/config/v1";
 import { routes } from "@vercel/config/v1";
 
-const ACCEPT_MARKDOWN_REGEX = ".*[Tt][Ee][Xx][Tt]/[Mm][Aa][Rr][Kk][Dd][Oo][Ww][Nn].*";
-const DISCOVERY_LINK_HEADER =
-  '</llms.txt>; rel="describedby"; type="text/markdown", </.well-known/api-catalog>; rel="api-catalog", </sitemap.xml>; rel="sitemap"; type="application/xml"';
+const VARY_PAGE_VALUE =
+  "Accept, rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch";
 
 export const config: VercelConfig = {
   framework: "nextjs",
@@ -19,6 +18,11 @@ export const config: VercelConfig = {
       source: "/:path*",
       has: [{ type: "host", value: "www.prochoice.industries" }],
       destination: "https://prochoice.industries/:path*",
+      permanent: true,
+    },
+    {
+      source: "/developers",
+      destination: "/docs",
       permanent: true,
     },
     {
@@ -72,21 +76,12 @@ export const config: VercelConfig = {
   rewrites: [
     {
       source: "/index.md",
-      destination: "/api/markdown",
+      destination: "/api/markdown/home",
     },
     {
-      source: "/:domain(coding|writing|design|research|cyber|harnesses).md",
-      destination: "/api/markdown?d=:domain",
-    },
-    {
-      source: "/",
-      has: [{ type: "header", key: "accept", value: ACCEPT_MARKDOWN_REGEX }],
-      destination: "/api/markdown",
-    },
-    {
-      source: "/:domain(coding|writing|design|research|cyber|harnesses)",
-      has: [{ type: "header", key: "accept", value: ACCEPT_MARKDOWN_REGEX }],
-      destination: "/api/markdown?d=:domain",
+      source:
+        "/:domain(coding|writing|design|research|cyber|harnesses|docs|about|contact|privacy).md",
+      destination: "/api/markdown/:domain",
     },
   ],
   headers: [
@@ -122,11 +117,12 @@ export const config: VercelConfig = {
       immutable: true,
     }),
     {
-      source: "/(coding|writing|design|research|cyber|harnesses)?",
-      headers: [
-        { key: "Link", value: DISCOVERY_LINK_HEADER },
-        { key: "Vary", value: "Accept" },
-      ],
+      source: "/",
+      headers: [{ key: "Vary", value: VARY_PAGE_VALUE }],
+    },
+    {
+      source: "/(coding|writing|design|research|cyber|harnesses|docs|about|contact|privacy)",
+      headers: [{ key: "Vary", value: VARY_PAGE_VALUE }],
     },
     {
       source:
@@ -141,7 +137,7 @@ export const config: VercelConfig = {
     },
     {
       source:
-        "/(api/.*|llms\\.txt|llms-full\\.txt|openapi\\.json|sitemap\\.xml|robots\\.txt|\\.well-known/.*|(?:index|coding|writing|design|research|cyber|harnesses)\\.md)",
+        "/(api/.*|llms\\.txt|llms-full\\.txt|openapi\\.json|sitemap\\.xml|robots\\.txt|\\.well-known/.*|(?:index|coding|writing|design|research|cyber|harnesses|docs|about|contact|privacy)\\.md)",
       headers: [{ key: "Cross-Origin-Resource-Policy", value: "cross-origin" }],
     },
   ],

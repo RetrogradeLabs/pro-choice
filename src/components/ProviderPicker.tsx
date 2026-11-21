@@ -62,7 +62,7 @@ export function ProviderPicker({
                 {showDivider ? (
                   <span
                     aria-hidden="true"
-                    className="mx-1.5 hidden h-3.5 w-px bg-[var(--border)] sm:inline-block"
+                    className="mx-1.5 hidden h-3.5 w-px bg-(--border) sm:inline-block"
                   />
                 ) : null}
 
@@ -86,8 +86,8 @@ export function ProviderPicker({
                   }}
                   className={`inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-md border px-2.5 text-[12.5px] transition-all duration-150 select-none active:scale-[0.98] ${
                     selected
-                      ? "border-[var(--border-strong)] bg-[var(--surface)] font-medium text-[var(--ink)]"
-                      : "border-transparent bg-transparent font-normal text-[var(--ink-faint)] hover:bg-[var(--surface-hover)] hover:text-[var(--ink)]"
+                      ? "border-(--border-strong) bg-(--surface) font-medium text-(--ink)"
+                      : "border-transparent bg-transparent font-normal text-(--ink-faint) hover:bg-(--surface-hover) hover:text-(--ink)"
                   }`}
                 >
                   <span className={selected ? "opacity-100" : "opacity-45"}>
@@ -104,12 +104,12 @@ export function ProviderPicker({
           <button
             type="button"
             onClick={allSelected ? onResetProviders : onSelectAllProviders}
-            className="h-7 cursor-pointer rounded-md px-2 text-[var(--ink-faint)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--ink)]"
+            className="h-7 cursor-pointer rounded-md px-2 text-(--ink-faint) transition-colors hover:bg-(--surface-hover) hover:text-(--ink)"
           >
             {allSelected ? "Reset" : `All ${allProviders.length}`}
           </button>
 
-          <span aria-hidden="true" className="h-3 w-px bg-[var(--border)]" />
+          <span aria-hidden="true" className="h-3 w-px bg-(--border)" />
 
           <button
             type="button"
@@ -117,14 +117,14 @@ export function ProviderPicker({
             onClick={() => onTogglePruned(!showPruned)}
             className={`inline-flex h-7 cursor-pointer items-center gap-1.5 rounded-md border px-2 transition-colors select-none ${
               showPruned
-                ? "border-[var(--border-strong)] bg-[var(--subtle)] font-medium text-[var(--ink)]"
-                : "border-transparent text-[var(--ink-faint)] hover:bg-[var(--surface-hover)] hover:text-[var(--ink)]"
+                ? "border-(--border-strong) bg-(--subtle) font-medium text-(--ink)"
+                : "border-transparent text-(--ink-faint) hover:bg-(--surface-hover) hover:text-(--ink)"
             }`}
           >
             <span
               aria-hidden="true"
               className={`h-1.5 w-1.5 rotate-45 border ${
-                showPruned ? "border-[var(--ink)] bg-[var(--ink)]" : "border-[var(--ink-faint)]"
+                showPruned ? "border-(--ink) bg-(--ink)" : "border-(--ink-faint)"
               }`}
             />
             <span>Pruned</span>
@@ -133,15 +133,15 @@ export function ProviderPicker({
       </div>
 
       {showHarnessFilter && onSelectHarness ? (
-        <div className="flex flex-wrap items-center gap-1 border-t border-[var(--border)]/70 pt-2.5 text-[12px]">
+        <div className="flex flex-wrap items-center gap-1 border-t border-(--border)/70 pt-2.5 text-[12px]">
           <button
             type="button"
             aria-pressed={harnessFilter === "all"}
             onClick={() => onSelectHarness("all")}
             className={`h-7 cursor-pointer rounded-md border px-2.5 transition-colors ${
               harnessFilter === "all"
-                ? "border-[var(--border-strong)] bg-[var(--surface)] font-medium text-[var(--ink)]"
-                : "border-transparent text-[var(--ink-faint)] hover:bg-[var(--surface-hover)] hover:text-[var(--ink)]"
+                ? "border-(--border-strong) bg-(--surface) font-medium text-(--ink)"
+                : "border-transparent text-(--ink-faint) hover:bg-(--surface-hover) hover:text-(--ink)"
             }`}
           >
             Best harness
@@ -159,13 +159,13 @@ export function ProviderPicker({
                 onClick={() => onSelectHarness(h.id)}
                 className={`h-7 cursor-pointer rounded-md border px-2.5 transition-colors ${
                   active
-                    ? "border-[var(--border-strong)] bg-[var(--surface)] font-medium text-[var(--ink)]"
-                    : "border-transparent text-[var(--ink-faint)] hover:bg-[var(--surface-hover)] hover:text-[var(--ink)]"
+                    ? "border-(--border-strong) bg-(--surface) font-medium text-(--ink)"
+                    : "border-transparent text-(--ink-faint) hover:bg-(--surface-hover) hover:text-(--ink)"
                 }`}
               >
                 <span>{label}</span>
                 {!hasAny ? (
-                  <span className="ml-1 font-mono text-[10.5px] text-[var(--ink-faint)]">0</span>
+                  <span className="ml-1 font-mono text-[10.5px] text-(--ink-faint)">0</span>
                 ) : null}
               </button>
             );

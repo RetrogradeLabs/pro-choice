@@ -29,3 +29,4 @@ next-env.d.ts
 /data/epochs/.pending.*
 /data/epochs/.publish.*
 /data/epochs/.publish.lock.db*
+.vercel

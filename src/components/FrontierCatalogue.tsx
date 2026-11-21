@@ -76,12 +76,9 @@ export function FrontierCatalogue({
   const colSpan = 5;
 
   return (
-    <section
-      aria-label="Frontier configurations"
-      className="border-t border-[var(--border)] bg-[var(--bg)]"
-    >
+    <section aria-label="Frontier configurations" className="border-t border-(--border) bg-(--bg)">
       {rows.length === 0 ? (
-        <div className="px-5 py-6 text-[13px] text-[var(--ink-muted)] sm:px-9 lg:px-11">
+        <div className="px-5 py-6 text-[13px] text-(--ink-muted) sm:px-9 lg:px-11">
           No surviving frontier models in this selection.
         </div>
       ) : (
@@ -95,7 +92,7 @@ export function FrontierCatalogue({
               <col className="w-[22%]" />
             </colgroup>
             <thead>
-              <tr className="border-b border-[var(--border)] bg-[var(--subtle)] font-mono text-[11px] font-normal text-[var(--ink-faint)]">
+              <tr className="border-b border-(--border) bg-(--subtle) font-mono text-[11px] font-normal text-(--ink-faint)">
                 <th className="py-2.5 pl-5 pr-3 font-normal whitespace-nowrap sm:pl-9 lg:pl-11">
                   {isHarnessDomain ? "Harness + model" : "Model"}
                 </th>
@@ -137,8 +134,8 @@ export function FrontierCatalogue({
                       id={rowDomId}
                       onPointerEnter={() => onHoverConfig(config.id)}
                       onPointerLeave={() => onHoverConfig(null)}
-                      className={`scroll-mt-16 border-b border-[var(--border)] transition-[background-color] duration-150 last:border-b-0 ${
-                        expanded || hovered ? "bg-[var(--subtle)]" : "hover:bg-[var(--subtle)]/70"
+                      className={`scroll-mt-16 border-b border-(--border) transition-[background-color] duration-150 last:border-b-0 ${
+                        expanded || hovered ? "bg-(--subtle)" : "hover:bg-(--subtle)/70"
                       }`}
                     >
                       <td className="py-2.5 pl-5 pr-3 sm:pl-9 lg:pl-11">
@@ -150,36 +147,36 @@ export function FrontierCatalogue({
                         >
                           <ChevronRight
                             aria-hidden="true"
-                            className={`h-3.5 w-3.5 shrink-0 text-[var(--ink-faint)] transition-transform duration-150 ${
+                            className={`h-3.5 w-3.5 shrink-0 text-(--ink-faint) transition-transform duration-150 ${
                               expanded ? "rotate-90" : ""
                             }`}
                           />
                           {isHarnessDomain && harnessName ? (
                             <>
-                              <span className="shrink-0 whitespace-nowrap font-medium text-[var(--ink)]">
+                              <span className="shrink-0 whitespace-nowrap font-medium text-(--ink)">
                                 {harnessName}
                               </span>
-                              <span className="truncate text-[var(--ink-secondary)]">
+                              <span className="truncate text-(--ink-secondary)">
                                 + {config.displayName}
                               </span>
                               {effortLabel ? (
-                                <span className="shrink-0 whitespace-nowrap rounded bg-[var(--subtle)] px-1.5 py-0.5 font-mono text-[10.5px] text-[var(--ink-muted)] ring-1 ring-inset ring-[var(--border)]">
+                                <span className="shrink-0 whitespace-nowrap rounded bg-(--subtle) px-1.5 py-0.5 font-mono text-[10.5px] text-(--ink-muted) ring-1 ring-inset ring-(--border)">
                                   {effortLabel}
                                 </span>
                               ) : null}
                             </>
                           ) : (
                             <>
-                              <span className="truncate font-medium text-[var(--ink)]">
+                              <span className="truncate font-medium text-(--ink)">
                                 {config.displayName}
                               </span>
                               {effortLabel ? (
-                                <span className="shrink-0 whitespace-nowrap rounded bg-[var(--subtle)] px-1.5 py-0.5 font-mono text-[10.5px] text-[var(--ink-muted)] ring-1 ring-inset ring-[var(--border)]">
+                                <span className="shrink-0 whitespace-nowrap rounded bg-(--subtle) px-1.5 py-0.5 font-mono text-[10.5px] text-(--ink-muted) ring-1 ring-inset ring-(--border)">
                                   {effortLabel}
                                 </span>
                               ) : null}
                               {harnessName ? (
-                                <span className="shrink-0 whitespace-nowrap font-mono text-[11px] text-[var(--ink-faint)]">
+                                <span className="shrink-0 whitespace-nowrap font-mono text-[11px] text-(--ink-faint)">
                                   {harnessName}
                                 </span>
                               ) : null}
@@ -189,27 +186,27 @@ export function FrontierCatalogue({
                       </td>
 
                       <td className="px-3 py-2.5 whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1.5 text-[var(--ink-secondary)]">
+                        <span className="inline-flex items-center gap-1.5 text-(--ink-secondary)">
                           <ProviderMarkerIcon provider={provider} size={9} />
                           {pMeta.shortName}
                         </span>
                       </td>
 
-                      <td className="px-3 py-2.5 text-right font-mono font-medium whitespace-nowrap text-[var(--ink)]">
+                      <td className="px-3 py-2.5 text-right font-mono font-medium whitespace-nowrap text-(--ink)">
                         {formatScore(config.score)}
                       </td>
 
-                      <td className="px-3 py-2.5 text-right font-mono whitespace-nowrap text-[var(--ink)]">
+                      <td className="px-3 py-2.5 text-right font-mono whitespace-nowrap text-(--ink)">
                         {formatCost(config.effectiveCostUsd, costUnit)}
                       </td>
 
-                      <td className="py-2.5 pl-3 pr-5 text-right font-mono whitespace-nowrap text-[var(--ink-muted)] sm:pr-9 lg:pr-11">
+                      <td className="py-2.5 pl-3 pr-5 text-right font-mono whitespace-nowrap text-(--ink-muted) sm:pr-9 lg:pr-11">
                         {formatPricePer1m(config.inputPer1mUsd, config.outputPer1mUsd)}
                       </td>
                     </tr>
 
                     {expanded ? (
-                      <tr className="border-b border-[var(--border)] bg-[var(--subtle)] last:border-b-0">
+                      <tr className="border-b border-(--border) bg-(--subtle) last:border-b-0">
                         <td
                           id={`${rowDomId}-details`}
                           aria-label={`${config.displayName} benchmark details`}
@@ -243,7 +240,7 @@ export function FrontierCatalogue({
                                 const isPartialBasket = (config.costFixedFloorUsd ?? 0) > 0;
                                 return (
                                   <>
-                                    <p className="mb-3 text-[11.5px] leading-relaxed text-[var(--ink-muted)]">
+                                    <p className="mb-3 text-[11.5px] leading-relaxed text-(--ink-muted)">
                                       Each benchmark uses its own units, and few models run every
                                       benchmark. Shared models put all benchmarks on one common
                                       score scale, and this model&apos;s score combines the
@@ -282,10 +279,10 @@ export function FrontierCatalogue({
                                         return (
                                           <div
                                             key={bm.benchmarkId}
-                                            className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-3"
+                                            className="rounded-md border border-(--border) bg-(--surface) p-3"
                                           >
                                             <div className="flex items-start justify-between gap-2">
-                                              <span className="text-[12px] font-medium text-[var(--ink)]">
+                                              <span className="text-[12px] font-medium text-(--ink)">
                                                 {bMeta?.name ?? bm.benchmarkId}
                                               </span>
                                               <a
@@ -293,28 +290,28 @@ export function FrontierCatalogue({
                                                 target="_blank"
                                                 rel="noreferrer"
                                                 aria-label={`Open ${bMeta?.name ?? bm.benchmarkId}`}
-                                                className="text-[var(--ink-faint)] hover:text-[var(--ink)]"
+                                                className="text-(--ink-faint) hover:text-(--ink)"
                                               >
                                                 <ExternalLink className="h-3.5 w-3.5" />
                                               </a>
                                             </div>
 
                                             <div className="mt-2 flex items-baseline justify-between font-mono tabular">
-                                              <span className="text-[14px] font-medium text-[var(--ink)]">
+                                              <span className="text-[14px] font-medium text-(--ink)">
                                                 {formatRawMetric(
                                                   bm.rawScore,
                                                   bMeta?.scale ?? "percent",
                                                 )}
                                               </span>
                                               {tileCostLabel ? (
-                                                <span className="text-[11px] text-[var(--ink-muted)]">
+                                                <span className="text-[11px] text-(--ink-muted)">
                                                   {tileCostLabel}
                                                 </span>
                                               ) : null}
                                             </div>
 
                                             {adjScore !== null && weightSharePct !== null ? (
-                                              <div className="mt-1 font-mono text-[10.5px] text-[var(--ink-secondary)] tabular">
+                                              <div className="mt-1 font-mono text-[10.5px] text-(--ink-secondary) tabular">
                                                 {adjScore.toFixed(1)} converted score ·{" "}
                                                 {weightSharePct}% weight
                                               </div>
@@ -327,7 +324,7 @@ export function FrontierCatalogue({
                                             (bm.refusalRate !== undefined &&
                                               bm.refusalRate !== null &&
                                               bm.refusalRate > 0) ? (
-                                              <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 font-mono text-[10.5px] text-[var(--ink-faint)]">
+                                              <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 font-mono text-[10.5px] text-(--ink-faint)">
                                                 <span>
                                                   {[
                                                     tileHarness,

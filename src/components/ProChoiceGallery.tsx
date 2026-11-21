@@ -188,7 +188,7 @@ function BrandMark() {
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden="true"
-      className="shrink-0 text-[var(--ink)] transition-transform duration-200 group-hover:scale-[1.04]"
+      className="shrink-0 text-(--ink) transition-transform duration-200 group-hover:scale-[1.04]"
     >
       <rect
         x="0.75"
@@ -755,9 +755,9 @@ export function ProChoiceGallery({
       : homeSummaries;
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
+    <div className="min-h-screen bg-(--bg) text-(--ink)">
       {/* Mobile sticky top bar */}
-      <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--bg)]/95 backdrop-blur-sm lg:hidden">
+      <header className="sticky top-0 z-30 border-b border-(--border) bg-(--bg)/95 backdrop-blur-sm lg:hidden">
         <div className="flex items-center justify-between px-4 py-3">
           <Link
             href="/"
@@ -778,14 +778,14 @@ export function ProChoiceGallery({
             type="button"
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             onClick={toggleTheme}
-            className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-md text-[var(--ink-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--ink)]"
+            className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-md text-(--ink-muted) hover:bg-(--surface-hover) hover:text-(--ink)"
           >
             {isDark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
           </button>
         </div>
         <nav
           aria-label="Domains"
-          className="no-scrollbar flex gap-1 overflow-x-auto border-t border-[var(--border)]/70 px-3 py-1.5 text-[13px]"
+          className="no-scrollbar flex gap-1 overflow-x-auto border-t border-(--border)/70 px-3 py-1.5 text-[13px]"
         >
           {DOMAINS.map((d) => {
             const active = !isHome && activeDomainId === d.id;
@@ -802,8 +802,8 @@ export function ProChoiceGallery({
                 }}
                 className={`shrink-0 cursor-pointer rounded-md px-2.5 py-1 transition-colors ${
                   active
-                    ? "bg-[var(--subtle)] font-medium text-[var(--ink)]"
-                    : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                    ? "bg-(--subtle) font-medium text-(--ink)"
+                    : "text-(--ink-muted) hover:text-(--ink)"
                 }`}
               >
                 {d.shortLabel}
@@ -829,7 +829,7 @@ export function ProChoiceGallery({
               className="group flex cursor-pointer items-center gap-2 text-left"
             >
               <BrandMark />
-              <span className="font-display text-[17px] font-medium tracking-[-0.02em] text-[var(--ink)]">
+              <span className="font-display text-[17px] font-medium tracking-[-0.02em] text-(--ink)">
                 prochoice
               </span>
             </Link>
@@ -852,9 +852,7 @@ export function ProChoiceGallery({
                       handleSelectDomain(d.id);
                     }}
                     className={`relative cursor-pointer pl-3 text-left transition-colors duration-150 ${
-                      active
-                        ? "font-medium text-[var(--ink)]"
-                        : "text-[var(--ink-faint)] hover:text-[var(--ink)]"
+                      active ? "font-medium text-(--ink)" : "text-(--ink-faint) hover:text-(--ink)"
                     }`}
                   >
                     {active ? (
@@ -862,7 +860,7 @@ export function ProChoiceGallery({
                         layoutId="sidebar-active-indicator"
                         aria-hidden="true"
                         transition={prefersReducedMotion ? { duration: 0 } : TAB_SPRING}
-                        className="absolute inset-y-0.5 left-0 w-[2px] rounded-full bg-[var(--ink)]"
+                        className="absolute inset-y-0.5 left-0 w-[2px] rounded-full bg-(--ink)"
                       />
                     ) : null}
                     <span>{d.shortLabel}</span>
@@ -878,7 +876,7 @@ export function ProChoiceGallery({
               aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
               title={isDark ? "Light mode" : "Dark mode"}
               onClick={toggleTheme}
-              className="-ml-1 inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-[var(--ink-faint)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--ink)]"
+              className="-ml-1 inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-(--ink-faint) transition-colors hover:bg-(--surface-hover) hover:text-(--ink)"
             >
               {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
@@ -886,7 +884,7 @@ export function ProChoiceGallery({
         </aside>
 
         {/* Central hairline-framed content column */}
-        <main className="flex min-h-screen min-w-0 flex-1 flex-col overflow-x-clip lg:border-x lg:border-[var(--border)]">
+        <main className="flex min-h-screen min-w-0 flex-1 flex-col overflow-x-clip lg:border-x lg:border-(--border)">
           <motion.div
             key={urlState.view}
             initial={
@@ -910,14 +908,14 @@ export function ProChoiceGallery({
                   }`}
                 >
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <h1 className="font-display text-[32px] leading-[1.1] font-normal tracking-[-0.025em] text-[var(--ink)] sm:text-[36px]">
+                    <h1 className="font-display text-[32px] leading-[1.1] font-normal tracking-tight text-(--ink) sm:text-[36px]">
                       {domainMeta.indexTitle}
                     </h1>
                     {!needsActiveDomain ? (
                       <button
                         type="button"
                         onClick={() => setDrawerOpen(true)}
-                        className="cursor-pointer text-[12.5px] text-[var(--ink-faint)] underline-offset-4 transition-colors hover:text-[var(--ink)] hover:underline"
+                        className="cursor-pointer text-[12.5px] text-(--ink-faint) underline-offset-4 transition-colors hover:text-(--ink) hover:underline"
                       >
                         Methodology
                       </button>
@@ -928,7 +926,7 @@ export function ProChoiceGallery({
                     <div
                       role="tablist"
                       aria-label="Harness views"
-                      className="mt-5 inline-flex rounded-md border border-[var(--border)] bg-[var(--subtle)] p-0.5 text-[12.5px]"
+                      className="mt-5 inline-flex rounded-md border border-(--border) bg-(--subtle) p-0.5 text-[12.5px]"
                     >
                       {(
                         [
@@ -946,8 +944,8 @@ export function ProChoiceGallery({
                             onClick={() => handleSelectHarnessTab(tab.id)}
                             className={`relative cursor-pointer rounded-[5px] px-3 py-1 transition-colors duration-150 ${
                               active
-                                ? "font-medium text-[var(--ink)]"
-                                : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                                ? "font-medium text-(--ink)"
+                                : "text-(--ink-muted) hover:text-(--ink)"
                             }`}
                           >
                             {active ? (
@@ -955,7 +953,7 @@ export function ProChoiceGallery({
                                 layoutId="harnesses-tab-pill"
                                 aria-hidden="true"
                                 transition={prefersReducedMotion ? { duration: 0 } : TAB_SPRING}
-                                className="absolute inset-0 rounded-[5px] bg-[var(--surface)] shadow-[var(--shadow-button)]"
+                                className="absolute inset-0 rounded-[5px] bg-(--surface) shadow-(--shadow-button)"
                               />
                             ) : null}
                             <span className="relative z-10">{tab.label}</span>
@@ -1001,7 +999,7 @@ export function ProChoiceGallery({
                     <div className="px-5 pb-6 sm:px-9 lg:px-11 lg:pb-7">
                       {isControlledHarnesses ? (
                         <div className="no-scrollbar flex min-h-[32px] flex-nowrap items-center gap-1 overflow-x-auto text-[12px] sm:flex-wrap">
-                          <span className="mr-1 shrink-0 font-mono text-[11px] text-[var(--ink-faint)]">
+                          <span className="mr-1 shrink-0 font-mono text-[11px] text-(--ink-faint)">
                             Test model
                           </span>
                           {(release.harnessLeaderboard?.slices ?? []).map((s) => {
@@ -1024,8 +1022,8 @@ export function ProChoiceGallery({
                                 onClick={() => handleSelectHarnessModel(s.sliceId)}
                                 className={`relative h-8 shrink-0 cursor-pointer whitespace-nowrap rounded-md px-2 transition-colors duration-150 ${
                                   active
-                                    ? "font-medium text-[var(--ink)]"
-                                    : "text-[var(--ink-faint)] hover:bg-[var(--surface-hover)] hover:text-[var(--ink)]"
+                                    ? "font-medium text-(--ink)"
+                                    : "text-(--ink-faint) hover:bg-(--surface-hover) hover:text-(--ink)"
                                 }`}
                               >
                                 {active ? (
@@ -1033,7 +1031,7 @@ export function ProChoiceGallery({
                                     layoutId="harnesses-model-pill"
                                     aria-hidden="true"
                                     transition={prefersReducedMotion ? { duration: 0 } : TAB_SPRING}
-                                    className="absolute inset-0 rounded-md border border-[var(--border-strong)] bg-[var(--surface)]"
+                                    className="absolute inset-0 rounded-md border border-(--border-strong) bg-(--surface)"
                                   />
                                 ) : null}
                                 <span className="relative z-10">{sliceLabel}</span>
@@ -1067,38 +1065,38 @@ export function ProChoiceGallery({
                     />
                   ) : needsActiveDomain || !domain ? (
                     domainFetchError ? (
-                      <div className="flex items-center justify-between gap-4 border-t border-[var(--border)] px-5 py-12 font-mono text-[12px] text-[var(--ink-muted)] sm:px-9 lg:px-11">
+                      <div className="flex items-center justify-between gap-4 border-t border-(--border) px-5 py-12 font-mono text-[12px] text-(--ink-muted) sm:px-9 lg:px-11">
                         <span>Could not load {domainMeta.indexTitle} snapshot.</span>
                         <button
                           type="button"
                           onClick={() => setDomainFetchError(false)}
-                          className="cursor-pointer rounded border border-[var(--border-strong)] px-2.5 py-1 text-[var(--ink)] hover:bg-[var(--surface-hover)]"
+                          className="cursor-pointer rounded border border-(--border-strong) px-2.5 py-1 text-(--ink) hover:bg-(--surface-hover)"
                         >
                           Retry
                         </button>
                       </div>
                     ) : (
                       <section aria-busy="true" aria-label={`Loading ${domainMeta.indexTitle}`}>
-                        <div className="grid grid-cols-1 divide-y divide-[var(--border)] border-t border-[var(--border)] md:grid-cols-3 md:divide-x md:divide-y-0">
+                        <div className="grid grid-cols-1 divide-y divide-(--border) border-t border-(--border) md:grid-cols-3 md:divide-x md:divide-y-0">
                           {[0, 1, 2].map((slot) => (
                             <div
                               key={slot}
-                              className="bg-[var(--surface)] px-5 py-6 sm:px-7 lg:first:pl-11 lg:last:pr-11"
+                              className="bg-(--surface) px-5 py-6 sm:px-7 lg:first:pl-11 lg:last:pr-11"
                             >
                               <div className="flex items-center justify-between">
-                                <div className="h-3 w-16 animate-pulse rounded bg-[var(--subtle)]" />
-                                <div className="h-3 w-14 animate-pulse rounded bg-[var(--subtle)]" />
+                                <div className="h-3 w-16 animate-pulse rounded bg-(--subtle)" />
+                                <div className="h-3 w-14 animate-pulse rounded bg-(--subtle)" />
                               </div>
-                              <div className="mt-3 h-6 w-36 animate-pulse rounded bg-[var(--subtle)]" />
-                              <div className="mt-2 h-3 w-20 animate-pulse rounded bg-[var(--subtle)]/75" />
-                              <div className="mt-5 flex items-baseline justify-between border-t border-[var(--border)]/60 pt-3">
-                                <div className="h-5 w-16 animate-pulse rounded bg-[var(--subtle)]" />
-                                <div className="h-4 w-20 animate-pulse rounded bg-[var(--subtle)]/80" />
+                              <div className="mt-3 h-6 w-36 animate-pulse rounded bg-(--subtle)" />
+                              <div className="mt-2 h-3 w-20 animate-pulse rounded bg-(--subtle)/75" />
+                              <div className="mt-5 flex items-baseline justify-between border-t border-(--border)/60 pt-3">
+                                <div className="h-5 w-16 animate-pulse rounded bg-(--subtle)" />
+                                <div className="h-4 w-20 animate-pulse rounded bg-(--subtle)/80" />
                               </div>
                             </div>
                           ))}
                         </div>
-                        <div className="flex h-[420px] items-center justify-center border-y border-[var(--border)] bg-[var(--bg)] px-5 sm:px-9 lg:px-11">
+                        <div className="flex h-[420px] items-center justify-center border-y border-(--border) bg-(--bg) px-5 sm:px-9 lg:px-11">
                           <svg
                             width="260"
                             height="92"
@@ -1195,17 +1193,31 @@ export function ProChoiceGallery({
             )}
           </motion.div>
 
-          <footer className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border)] px-5 py-6 text-[12px] leading-[18px] text-[var(--ink-faint)] sm:px-9 lg:h-[67px] lg:py-0 lg:px-11">
-            <span className="font-mono text-[11px] tabular">
-              Updated {formatUtcDate(activeMeta.generatedAt)}
-            </span>
+          <footer className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-(--border) px-5 py-6 text-[12px] leading-[18px] text-(--ink-faint) sm:px-9 lg:h-[67px] lg:py-0 lg:px-11">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <span className="font-mono text-[11px] tabular">
+                Updated {formatUtcDate(activeMeta.generatedAt)}
+              </span>
+              <Link href="/docs" className="transition-colors hover:text-(--ink)">
+                API docs
+              </Link>
+              <Link href="/about" className="transition-colors hover:text-(--ink)">
+                About
+              </Link>
+              <Link href="/contact" className="transition-colors hover:text-(--ink)">
+                Contact
+              </Link>
+              <Link href="/privacy" className="transition-colors hover:text-(--ink)">
+                Privacy
+              </Link>
+            </div>
             <span>
               © {formatUtcDate(activeMeta.generatedAt).slice(0, 4)}{" "}
               <a
                 href="https://inretrograde.io"
                 target="_blank"
                 rel="noreferrer"
-                className="text-[var(--ink-muted)] underline-offset-4 hover:text-[var(--ink)] hover:underline"
+                className="text-(--ink-muted) underline-offset-4 hover:text-(--ink) hover:underline"
               >
                 Retrograde Labs
               </a>
