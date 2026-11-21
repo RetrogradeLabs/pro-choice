@@ -35,9 +35,9 @@ export interface CompiledAlias {
 
 // Model families whose product tier name ends in "Max" (distinct from the reasoning effort tier "max")
 export const MODEL_MAX_PREFIX_RX =
-  /(?:^|[^a-z0-9])(?:qwen[\s_-]*\d+(?:[._-][0-9]+)?(?:[\s_-]+coder)?|kimi[\s_-]*k\d+(?:[._-][0-9]+)?|glm[\s_-]+\d+(?:[._-][0-9]+)?|codex)$/i;
+  /(?:^|[^a-z0-9])(?:qwen[\s_-]*\d+(?:[._-][0-9]+)?(?:[\s_-]+coder)?|codex)$/i;
 const MODEL_MAX_NAME_RX =
-  /(?:^|[^a-z0-9])(?:qwen[\s_-]*\d+(?:[._-][0-9]+)?(?:[\s_-]+coder)?|kimi[\s_-]*k\d+(?:[._-][0-9]+)?|glm[\s_-]+\d+(?:[._-][0-9]+)?|codex)[\s_-]+max(?=$|[^a-z0-9])/g;
+  /(?:^|[^a-z0-9])(?:qwen[\s_-]*\d+(?:[._-][0-9]+)?(?:[\s_-]+coder)?|codex)[\s_-]+max(?=$|[^a-z0-9])/g;
 
 const ALIAS_ENTRIES: readonly AliasEntry[] = rawAliases as AliasEntry[];
 
@@ -362,7 +362,7 @@ function isPostV2FrontierSlug(provider: ProviderId, slug: string): boolean {
     return Boolean(r && Number(r[1]) >= 2);
   }
   if (provider === "moonshot") {
-    const m = slug.match(/^kimi-k(\d+)(?:\.(\d+))?(?:-(?:pro|code|flash|mini|max))?$/);
+    const m = slug.match(/^kimi-k(\d+)(?:\.(\d+))?(?:-(?:pro|code|flash|mini))?$/);
     if (!m) return false;
     const major = Number(m[1]);
     const minor = m[2] !== undefined ? Number(m[2]) : 0;
@@ -376,7 +376,7 @@ function isPostV2FrontierSlug(provider: ProviderId, slug: string): boolean {
     return Number(m[1]) >= 4;
   }
   if (provider === "zhipu") {
-    const m = slug.match(/^glm-(\d+)(?:\.(\d+))?(?:-(?:flash|air|plus|pro|max|turbo|code))?$/);
+    const m = slug.match(/^glm-(\d+)(?:\.(\d+))?(?:-(?:flash|air|plus|pro|turbo|code))?$/);
     if (!m) return false;
     const major = Number(m[1]);
     const minor = m[2] !== undefined ? Number(m[2]) : 0;

@@ -3,8 +3,8 @@
     "sourceId": "tbench",
     "label": "Terminal-Bench 4.1 Live Harness Board",
     "status": "ok",
-    "fetchedAt": "2026-11-21T21:52:40.844Z",
-    "lastHealthyAt": "2026-11-21T21:52:40.844Z",
+    "fetchedAt": "2026-11-21T22:00:15.273Z",
+    "lastHealthyAt": "2026-11-21T22:00:15.273Z",
     "staleDays": 0,
     "rowCount": 54,
     "license": "Apache-2.0",
@@ -18,7 +18,7 @@
         "rejectedCount": 1,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-21T21:52:40.844Z",
+        "lastHealthyAt": "2026-11-21T22:00:15.273Z",
         "message": null
       }
     ],

@@ -1,4 +1,3 @@
-import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import {
@@ -38,6 +37,7 @@ import { computeLifecycleReport } from "./audit-lifecycle.ts";
 import { readSourceCacheStrict } from "./cache.ts";
 import {
   compileDomainsFromSources,
+  computeCanonicalSnapshotHash,
   MANDATORY_ADAPTERS,
   majorEpochFilename,
   parseEpochMajorNumber,
@@ -86,16 +86,7 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
   const failures: string[] = [];
 
   // 1. Canonical snapshotHash verification
-  const expectedHash = crypto
-    .createHash("sha256")
-    .update(
-      JSON.stringify({
-        domains: snapshot.domains,
-        harnessLeaderboard: snapshot.harnessLeaderboard,
-      }),
-    )
-    .digest("hex")
-    .slice(0, 16);
+  const expectedHash = computeCanonicalSnapshotHash(snapshot.domains, snapshot.harnessLeaderboard);
   if (snapshot.snapshotHash !== expectedHash) {
     failures.push(
       `snapshotHash mismatch: declared ${snapshot.snapshotHash}, computed ${expectedHash}`,

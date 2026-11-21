@@ -1698,6 +1698,20 @@ export function buildDomainFrontiers(
   return frontiers;
 }
 
+// Exclude volatile upstream server timestamps so quiet-day runs keep a stable canonical hash
+export function computeCanonicalSnapshotHash(
+  domains: Record<DomainId, DomainSnapshot>,
+  harnessLeaderboard: HarnessLeaderboardSnapshot,
+): string {
+  const { upstreamGeneratedAt: _upstreamGeneratedAt, ...hashableHarnessLeaderboard } =
+    harnessLeaderboard;
+  return crypto
+    .createHash("sha256")
+    .update(JSON.stringify({ domains, harnessLeaderboard: hashableHarnessLeaderboard }))
+    .digest("hex")
+    .slice(0, 16);
+}
+
 export function compileDomainsFromSources(
   results: readonly CachedSourceFile[],
   frozenByDomain: ReadonlyMap<DomainId, DomainSnapshot | null>,
@@ -2104,11 +2118,7 @@ export function compileDomainsFromSources(
     ),
   );
 
-  const canonicalHash = crypto
-    .createHash("sha256")
-    .update(JSON.stringify({ domains: domainsRecord, harnessLeaderboard }))
-    .digest("hex")
-    .slice(0, 16);
+  const canonicalHash = computeCanonicalSnapshotHash(domainsRecord, harnessLeaderboard);
 
   return {
     domainsRecord,
