@@ -1,5 +1,4 @@
 import type { VercelConfig } from "@vercel/config/v1";
-import { routes } from "@vercel/config/v1";
 
 const VARY_PAGE_VALUE =
   "Accept, rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch";
@@ -111,11 +110,15 @@ export const config: VercelConfig = {
         },
       ],
     },
-    routes.cacheControl("/_next/static/(.*)", {
-      public: true,
-      maxAge: "1 year",
-      immutable: true,
-    }),
+    {
+      source: "/_next/static/(.*)",
+      headers: [
+        {
+          key: "Cache-Control",
+          value: "public, max-age=31536000, immutable",
+        },
+      ],
+    },
     {
       source: "/",
       headers: [{ key: "Vary", value: VARY_PAGE_VALUE }],
