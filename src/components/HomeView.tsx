@@ -1,6 +1,15 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BookOpen,
+  Code2,
+  FileText,
+  RefreshCw,
+  ShieldCheck,
+  TrendingUp,
+} from "lucide-react";
 import Link from "next/link";
 import type { MouseEvent } from "react";
 import { BENCHMARKS, DOMAINS } from "@/config/benchmarks";
@@ -71,18 +80,68 @@ export function HomeView({ summaries, onSelectDomain }: HomeViewProps) {
   return (
     <div className="bg-(--bg)">
       {/* Clean Retrograde-style editorial hero */}
-      <section className="px-5 pt-12 pb-8 sm:px-9 sm:pt-16 sm:pb-9 lg:px-11 lg:pt-24 lg:pb-10">
-        <h1 className="font-display text-[28px] leading-[1.12] font-normal tracking-tight text-(--ink) sm:text-[34px] lg:whitespace-nowrap lg:text-[38px]">
-          No Nonsense LLM Leaderboards &amp; Rankings
+      <section className="px-5 pt-12 pb-6 sm:px-9 sm:pt-16 sm:pb-7 lg:px-11 lg:pt-24 lg:pb-8">
+        <h1 className="font-display text-[28px] leading-[1.12] font-normal tracking-tight text-(--ink) sm:text-[34px] xl:text-[38px]">
+          <strong className="font-medium text-(--ink)">No Nonsense</strong> LLM Benchmarks,
+          Leaderboards &amp; Rankings
         </h1>
-
         <p className="mt-4 max-w-240 text-[15px] leading-[1.65] text-pretty text-(--ink-muted)">
-          ProChoice compares AI models by score and real dollar cost across six composite indices.{" "}
-          <strong className="font-medium text-(--ink)">
-            Models that cost more while scoring lower are left off the chart
-          </strong>
-          , so you can always pick the model that performs best for your task and fits your budget.
+          ProChoice helps you choose the model that performs best for your task and fits your
+          budget.
         </p>
+      </section>
+
+      <section
+        aria-label="Core principles"
+        className="grid grid-cols-1 divide-y divide-(--border) border-t border-(--border) md:grid-cols-3 md:divide-x md:divide-y-0"
+      >
+        <div className="px-5 py-5 sm:px-9 md:pr-6 lg:pl-11 lg:pr-7">
+          <div className="flex items-center gap-2 text-(--ink)">
+            <ShieldCheck
+              aria-hidden="true"
+              strokeWidth={1.6}
+              className="h-4 w-4 shrink-0 text-(--ink-secondary)"
+            />
+            <h2 className="text-[13.5px] font-medium tracking-[-0.01em]">
+              Private &amp; live benchmarks only
+            </h2>
+          </div>
+          <p className="mt-1.5 text-[12.5px] leading-[1.55] text-pretty text-(--ink-muted)">
+            {BENCHMARKS.length} private held-out and live tests. Zero static public datasets that
+            leak into training.
+          </p>
+        </div>
+
+        <div className="px-5 py-5 sm:px-9 md:px-6 lg:px-7">
+          <div className="flex items-center gap-2 text-(--ink)">
+            <TrendingUp
+              aria-hidden="true"
+              strokeWidth={1.6}
+              className="h-4 w-4 shrink-0 text-(--ink-secondary)"
+            />
+            <h2 className="text-[13.5px] font-medium tracking-[-0.01em]">
+              Best models for the price
+            </h2>
+          </div>
+          <p className="mt-1.5 text-[12.5px] leading-[1.55] text-pretty text-(--ink-muted)">
+            Models and reasoning effort levels that cost more while scoring lower stay off the
+            chart.
+          </p>
+        </div>
+
+        <div className="px-5 py-5 sm:px-9 md:pl-6 lg:pl-7 lg:pr-11">
+          <div className="flex items-center gap-2 text-(--ink)">
+            <RefreshCw
+              aria-hidden="true"
+              strokeWidth={1.6}
+              className="h-4 w-4 shrink-0 text-(--ink-secondary)"
+            />
+            <h2 className="text-[13.5px] font-medium tracking-[-0.01em]">Updated daily</h2>
+          </div>
+          <p className="mt-1.5 text-[12.5px] leading-[1.55] text-pretty text-(--ink-muted)">
+            Fresh scores and verified first-party API prices refresh automatically every day.
+          </p>
+        </div>
       </section>
 
       {/* Immediate answer ledger aligned to page gutter */}
@@ -96,7 +155,7 @@ export function HomeView({ summaries, onSelectDomain }: HomeViewProps) {
             return (
               <article
                 key={meta.id}
-                className={`group relative flex flex-col justify-between bg-(--surface) px-5 py-6 text-left transition-colors hover:bg-(--subtle)/70 sm:py-5 ${
+                className={`group relative flex flex-col justify-between bg-(--surface) px-5 py-6 text-left transition-colors hover:bg-(--subtle)/70 focus-within:ring-2 focus-within:ring-inset focus-within:ring-(--interactive) sm:py-5 ${
                   isLeftCol
                     ? "sm:border-r sm:border-(--border) sm:pl-9 sm:pr-7 lg:pl-11 lg:pr-9"
                     : "sm:pl-7 sm:pr-9 lg:pl-9 lg:pr-11"
@@ -201,46 +260,42 @@ export function HomeView({ summaries, onSelectDomain }: HomeViewProps) {
         </div>
       </section>
 
-      <section aria-label="How ProChoice works" className="px-5 py-8 sm:px-9 lg:px-11 lg:py-9">
-        <div className="grid grid-cols-1 gap-6 text-[13px] leading-[1.65] text-(--ink-muted) sm:grid-cols-2 lg:gap-10">
-          <p className="text-pretty">
-            Static public test sets leak into training data and wear out fast, so ProChoice builds
-            its six composite indices solely from {BENCHMARKS.length} private held-out and live
-            benchmarks across nine providers, paired with real dollar task cost from verified
-            first-party API pricing. Coding agent harnesses are tested separately across eight fixed
-            open models so harness quality and model quality stay distinct.
-          </p>
-          <p className="text-pretty">
-            Rankings update daily from 13 live benchmark and pricing sources. Read how scores and
-            costs are computed on{" "}
-            <Link href="/about" className="text-(--ink) underline underline-offset-4">
-              About
-            </Link>
-            , query the live JSON or Markdown endpoints via{" "}
-            <Link href="/docs" className="text-(--ink) underline underline-offset-4">
-              API docs
-            </Link>{" "}
-            and{" "}
-            <Link
-              href="/llms.txt"
-              prefetch={false}
-              className="text-(--ink) underline underline-offset-4"
-            >
-              llms.txt
-            </Link>
-            , or inspect the open-source code on{" "}
-            <a
-              href={REPO_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="text-(--ink) underline underline-offset-4"
-            >
-              GitHub
-            </a>
-            .
-          </p>
-        </div>
-      </section>
+      <nav
+        aria-label="Reference links"
+        className="flex flex-wrap items-center gap-x-6 gap-y-2.5 px-5 py-6 text-[13px] text-(--ink-muted) sm:px-9 lg:px-11"
+      >
+        <Link
+          href="/about"
+          className="inline-flex items-center gap-1.5 transition-colors hover:text-(--ink)"
+        >
+          <BookOpen aria-hidden="true" strokeWidth={1.6} className="h-3.5 w-3.5" />
+          <span>About &amp; methodology</span>
+        </Link>
+        <Link
+          href="/docs"
+          className="inline-flex items-center gap-1.5 transition-colors hover:text-(--ink)"
+        >
+          <Code2 aria-hidden="true" strokeWidth={1.6} className="h-3.5 w-3.5" />
+          <span>API docs</span>
+        </Link>
+        <Link
+          href="/llms.txt"
+          prefetch={false}
+          className="inline-flex items-center gap-1.5 transition-colors hover:text-(--ink)"
+        >
+          <FileText aria-hidden="true" strokeWidth={1.6} className="h-3.5 w-3.5" />
+          <span>llms.txt</span>
+        </Link>
+        <a
+          href={REPO_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1 transition-colors hover:text-(--ink)"
+        >
+          <span>GitHub</span>
+          <ArrowUpRight aria-hidden="true" strokeWidth={1.6} className="h-3.5 w-3.5" />
+        </a>
+      </nav>
     </div>
   );
 }

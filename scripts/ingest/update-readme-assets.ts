@@ -38,12 +38,9 @@ const PROVIDER_HEX: Readonly<Record<ProviderId, { light: string; dark: string }>
 
 const CELL_COPY: Readonly<Record<DomainId, readonly [string, string]>> = {
   coding: ["Private repo engineering, systems ops,", "code migration, and live agentic coding."],
-  writing: ["Live blind-arena creative writing rated", "by human pairwise comparisons."],
-  design_code: ["Live web, SVG, 3D, interactive UI,", "and data visualization blind arenas."],
-  research: [
-    "Long-context retrieval, frontier science,",
-    "finance, legal, and biomedical research.",
-  ],
+  writing: ["Live blind-arena creative writing and", "private held-out long-form scripts."],
+  design_code: ["Live web, SVG, 3D, dataviz,", "mobile app, and slide blind arenas."],
+  research: ["FrontierMath, ARC-AGI-3, science,", "finance, legal, and enterprise research."],
   cyber: ["Held-out CVE patching, private detection,", "and live attack-defense CTF matches."],
   harnesses: ["Coding agent harnesses on private stacks", "and fixed open-model control suites."],
 };

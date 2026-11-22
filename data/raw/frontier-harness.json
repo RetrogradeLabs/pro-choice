@@ -3,8 +3,8 @@
     "sourceId": "frontier-harness",
     "label": "FrontierHarness Eval v1.1 (TB 2.1 + TB 4.0)",
     "status": "ok",
-    "fetchedAt": "2026-11-22T01:47:42.583Z",
-    "lastHealthyAt": "2026-11-22T01:47:42.583Z",
+    "fetchedAt": "2026-11-22T08:45:24.988Z",
+    "lastHealthyAt": "2026-11-22T08:45:24.988Z",
     "staleDays": 0,
     "rowCount": 130,
     "license": "Public Research Leaderboard / Attribution Required",
@@ -18,7 +18,7 @@
         "rejectedCount": 53,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T01:47:42.583Z",
+        "lastHealthyAt": "2026-11-22T08:45:24.988Z",
         "message": null
       }
     ],

@@ -31,7 +31,7 @@ export default async function DocsPage() {
         <h2 className="font-display text-[22px] font-normal text-(--ink)">REST API v1 endpoints</h2>
         <p>
           All API routes are public, require no API key or OAuth token, and serve read-only
-          benchmark data compiled daily from 13 live sources under CC BY 4.0.
+          benchmark data compiled daily from 15 live sources under CC BY 4.0.
         </p>
         <div className="overflow-x-auto border border-(--border) bg-(--surface)">
           <table className="w-full border-collapse text-left text-[13px]">

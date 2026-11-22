@@ -61,7 +61,11 @@
     "displayName": "Claude Opus 4.6",
     "releaseDate": "2026-02-05",
     "defaultEffort": "none",
-    "patterns": ["claude[\\s_-]+opus[\\s_-]+4[._-]6", "opus[\\s_-]+4[._-]6"]
+    "patterns": [
+      "claude[\\s_-]+opus[\\s_-]+4[._-]6",
+      "anthropic[\\s_-]+opus[\\s_-]+4[._-]6",
+      "opus[\\s_-]+4[._-]6"
+    ]
   },
   {
     "provider": "anthropic",
@@ -415,7 +419,7 @@
     "displayName": "Gemini 3.1 Pro",
     "releaseDate": "2026-02-19",
     "defaultEffort": "high",
-    "patterns": ["gemini[\\s_-]+3[._-]1[\\s_-]+pro(?:[\\s_-]+preview)?"]
+    "patterns": ["gemini[\\s_-]+3[._-]1[\\s_-]+pro(?:[\\s_-]+preview|\\s+\\(preview\\))?"]
   },
   {
     "provider": "google",

@@ -108,6 +108,7 @@ function splitEpochModelVersion(raw: string): {
 interface EpochFeedSpec {
   csvFile: string;
   benchmarkId: string;
+  version: string;
   domainId: DomainId;
   harnessRegime: HarnessRegime;
   observedHarness: string;
@@ -127,6 +128,7 @@ const EPOCH_FEEDS: readonly EpochFeedSpec[] = [
   {
     csvFile: "cursorbench_external.csv",
     benchmarkId: "epoch_cursorbench",
+    version: "2026.11",
     domainId: "coding",
     harnessRegime: "standardized",
     observedHarness: "Cursor",
@@ -138,6 +140,23 @@ const EPOCH_FEEDS: readonly EpochFeedSpec[] = [
     costCol: "Cost per task",
     dateCol: null,
     sourceUrl: "https://cursor.com/cursorbench",
+  },
+  {
+    csvFile: "frontiermath_tiers_1_3_v2.csv",
+    benchmarkId: "epoch_frontiermath_t13",
+    version: "v2-tiers-1-3",
+    domainId: "research",
+    harnessRegime: "native",
+    observedHarness: "Epoch Inspect",
+    scoreCol: "mean_score",
+    scaleFactor: 100,
+    maxScore: 100,
+    stderrCol: "stderr",
+    stderrScaleFactor: 100,
+    effortCol: null,
+    costCol: null,
+    dateCol: "Started at",
+    sourceUrl: "https://epoch.ai/benchmarks/frontiermath",
   },
 ];
 
@@ -284,13 +303,20 @@ export const epochAdapter: SourceAdapter = {
         let seRaw: number | null = null;
         let ciHalfWidth: number | null = null;
         if (spec.stderrCol) {
-          const parsedSe = parsePositive(row[spec.stderrCol]);
-          if (parsedSe !== null) {
-            const seFactor = spec.stderrScaleFactor ?? spec.scaleFactor;
-            const scaledSe = parsedSe * seFactor;
-            if (Number.isFinite(scaledSe) && scaledSe > 0) {
-              seRaw = Number(scaledSe.toFixed(6));
-              ciHalfWidth = Number((scaledSe * 1.96).toFixed(4));
+          const rawSeText = (row[spec.stderrCol] ?? "").trim();
+          if (rawSeText.length > 0) {
+            const parsedSe = parseNumeric(rawSeText);
+            if (parsedSe === null || parsedSe < 0) {
+              st.rejected++;
+              continue;
+            }
+            if (parsedSe > 0) {
+              const seFactor = spec.stderrScaleFactor ?? spec.scaleFactor;
+              const scaledSe = parsedSe * seFactor;
+              if (Number.isFinite(scaledSe) && scaledSe > 0) {
+                seRaw = Number(scaledSe.toFixed(6));
+                ciHalfWidth = Number((scaledSe * 1.96).toFixed(4));
+              }
             }
           }
         }
@@ -306,7 +332,7 @@ export const epochAdapter: SourceAdapter = {
           sourceId: "epoch",
           sourceRowId,
           benchmarkId: spec.benchmarkId,
-          benchmarkVersion: "2026.11",
+          benchmarkVersion: spec.version,
           domainId: spec.domainId,
           rawModelName: modelName,
           rawProvider: org,

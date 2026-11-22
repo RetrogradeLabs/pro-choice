@@ -24,6 +24,206 @@
     "reason": "unresolved_allowlisted_model:Gemini 3.8 Flash Cyber"
   },
   {
+    "sourceId": "arcprize",
+    "benchmarkId": "arc_agi_3",
+    "rawModelName": "Grok 4.20 (Beta Reasoning)",
+    "rawProvider": "spacexai",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:Grok 4.20 (Beta Reasoning)"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "qwen3.6-plus",
+    "rawProvider": "Alibaba",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:qwen3.6-plus"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "qwen3-max-2025-09-23",
+    "rawProvider": "Alibaba",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:qwen3-max"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "qwen3.7-flash",
+    "rawProvider": "Alibaba",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:qwen3.7-flash"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "qwen3.6-flash",
+    "rawProvider": "Alibaba",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:qwen3.6-flash"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "qwen3.6-27b",
+    "rawProvider": "Alibaba",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:qwen3.6-27b"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "qwen3.5-flash",
+    "rawProvider": "Alibaba",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:qwen3.5-flash"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "o1-2024-12-17",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:o1"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "gpt-4.1-mini-2025-04-14",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-4.1-mini"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "gpt-3.5-turbo-0125",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-3.5-turbo"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "gpt-4o-mini-2024-07-18",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-4o-mini"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "gpt-4.1-2025-04-14",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-4.1"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "gpt-4-turbo-2024-04-09",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-4-turbo"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "gpt-4o-2024-08-06",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-4o"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "o4-mini-2025-04-16",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:o4-mini"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "o3-mini-2025-01-31",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:o3-mini"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "gpt-5-mini-2025-08-07",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-5-mini"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "gpt-5-nano-2025-08-07",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-5-nano"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "gpt-5.4-pro-2026-03-05",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-5.4-pro"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "gpt-5.2-pro-2025-12-11",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-5.2-pro"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "gpt-5-pro-2025-10-06",
+    "rawProvider": "OpenAI",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-5-pro"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "gemini-2.5-pro",
+    "rawProvider": "Google DeepMind",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gemini-2.5-pro"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "claude-opus-4-1-20250805_32K",
+    "rawProvider": "Anthropic",
+    "rawHarness": null,
+    "reason": "manual_token_budget_distinct_from_effort:32K"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "claude-sonnet-4-5-20250929_32K",
+    "rawProvider": "Anthropic",
+    "rawHarness": null,
+    "reason": "manual_token_budget_distinct_from_effort:32K"
+  },
+  {
+    "sourceId": "epoch",
+    "benchmarkId": "epoch_frontiermath_t13",
+    "rawModelName": "claude-opus-4-5-20251101_32K",
+    "rawProvider": "Anthropic",
+    "rawHarness": null,
+    "reason": "manual_token_budget_distinct_from_effort:32K"
+  },
+  {
     "sourceId": "lmarena",
     "benchmarkId": "lmarena_creative_writing",
     "rawModelName": "Claude Opus 4.5 (High, 32K, 20251101)",
@@ -2650,14 +2850,6 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
-    "rawModelName": "glm-4.7-flash",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:glm-4.7-flash"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
     "rawModelName": "claude-sonnet-4",
     "rawProvider": null,
     "rawHarness": null,
@@ -2666,10 +2858,10 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
-    "rawModelName": "deepseek-v3p1-thinking",
+    "rawModelName": "glm-4.7-flash",
     "rawProvider": null,
     "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:deepseek-v3p1"
+    "reason": "unresolved_allowlisted_model:glm-4.7-flash"
   },
   {
     "sourceId": "designarena",
@@ -2678,6 +2870,14 @@
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:deepseek-v3p2"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_gamedev",
+    "rawModelName": "deepseek-v3p1-thinking",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:deepseek-v3p1"
   },
   {
     "sourceId": "designarena",
@@ -2862,6 +3062,62 @@
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:qwen3-235b-a22b"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_mobileapps",
+    "rawModelName": "kimi-k2.5",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:kimi-k2.5"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_mobileapps",
+    "rawModelName": "glm-5v-turbo",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-5v-turbo"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_mobileapps",
+    "rawModelName": "glm-4.7",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-4.7"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_mobileapps",
+    "rawModelName": "glm-4.6",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-4.6"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_mobileapps",
+    "rawModelName": "gpt-5.2-codex",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-5.2-codex"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_mobileapps",
+    "rawModelName": "grok-code-fast-1",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:grok-code-fast-1"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_slides",
+    "rawModelName": "glm-5v-turbo",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-5v-turbo"
   },
   {
     "sourceId": "designarena",
@@ -3234,18 +3490,18 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_website",
-    "rawModelName": "deepseek-v3p2",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:deepseek-v3p2"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_website",
     "rawModelName": "glm-4.6",
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:glm-4.6"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_website",
+    "rawModelName": "deepseek-v3p2",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:deepseek-v3p2"
   },
   {
     "sourceId": "designarena",
@@ -3654,6 +3910,190 @@
     "rawProvider": "Qwen",
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:Qwen 3 Max"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "GPT-5.6 Sol",
+    "rawProvider": "openai",
+    "rawHarness": null,
+    "reason": "unsupported_or_unknown_effort:ultra"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "GPT-5.6 Terra",
+    "rawProvider": "openai",
+    "rawHarness": null,
+    "reason": "unsupported_or_unknown_effort:ultra"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "GPT-5.6 Luna",
+    "rawProvider": "openai",
+    "rawHarness": null,
+    "reason": "unsupported_or_unknown_effort:ultra"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Qwen3.8 Max",
+    "rawProvider": "alibaba",
+    "rawHarness": null,
+    "reason": "unsupported_or_unknown_effort:thinking on"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Muse Wonder",
+    "rawProvider": "meta",
+    "rawHarness": null,
+    "reason": "unsupported_or_unknown_effort:adaptive"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "GLM-5",
+    "rawProvider": "zhipu",
+    "rawHarness": null,
+    "reason": "unsupported_or_unknown_effort:thinking on"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Qwen3.8 Flash",
+    "rawProvider": "alibaba",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:Qwen3.8 Flash"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "GLM-4.7",
+    "rawProvider": "zhipu",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:GLM-4.7"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "GLM-4.6",
+    "rawProvider": "zhipu",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:GLM-4.6"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Gemini 2.5 Pro",
+    "rawProvider": "google",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:Gemini 2.5 Pro"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Grok 4.20",
+    "rawProvider": "spacexai",
+    "rawHarness": null,
+    "reason": "unsupported_or_unknown_effort:thinking always on"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Gemini 2.5 Flash",
+    "rawProvider": "google",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:Gemini 2.5 Flash"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Claude Haiku 4.5",
+    "rawProvider": "anthropic",
+    "rawHarness": null,
+    "reason": "unsupported_or_unknown_effort:extended thinking"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Qwen3 235B Thinking",
+    "rawProvider": "alibaba",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:Qwen3 235B"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Qwen3 235B A22B",
+    "rawProvider": "alibaba",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:Qwen3 235B A22B"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Gemini 2.5 Flash-Lite",
+    "rawProvider": "google",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:Gemini 2.5 Flash-Lite"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "GLM-4.5 Air",
+    "rawProvider": "zhipu",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:GLM-4.5 Air"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Qwen3 Next 80B",
+    "rawProvider": "alibaba",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:Qwen3 Next 80B"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Qwen3.5 9B",
+    "rawProvider": "alibaba",
+    "rawHarness": null,
+    "reason": "unsupported_or_unknown_effort:thinking on"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Qwen3 8B",
+    "rawProvider": "alibaba",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:Qwen3 8B"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "GPT-4o",
+    "rawProvider": "openai",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:GPT-4o"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "GPT-4o mini",
+    "rawProvider": "openai",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:GPT-4o mini"
+  },
+  {
+    "sourceId": "tonebench",
+    "benchmarkId": "tonebench_writing",
+    "rawModelName": "Gemma 3 4B",
+    "rawProvider": "google",
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:Gemma 3 4B"
   },
   {
     "sourceId": "designarena",

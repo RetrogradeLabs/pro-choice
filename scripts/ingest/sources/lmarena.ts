@@ -64,6 +64,15 @@ const ARENA_SPLITS: readonly ArenaSplitSpec[] = [
     harnessRegime: "native",
     format: "elo",
   },
+  {
+    splitDir: "agent_capability",
+    targetCategory: "work",
+    benchmarkId: "lmarena_agent_work",
+    domainId: "research",
+    harnessRegime: "native",
+    format: "agent_capability",
+    sourceUrl: "https://arena.ai/leaderboard/agent/work",
+  },
 ];
 
 const ELO_REQUIRED_COLUMNS = [

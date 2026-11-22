@@ -80,9 +80,10 @@ export function buildHomeSummaries(
 
   const taglines: Record<DomainId, string> = {
     coding: "Private repo engineering, systems ops, code migration, and live agentic coding.",
-    writing: "Live blind-arena creative writing rated by human pairwise comparisons.",
-    design_code: "Live web, SVG, 3D, interactive UI, and data visualization arenas.",
-    research: "Long-context retrieval, frontier science, finance, legal, and biomedical research.",
+    writing: "Live blind-arena creative writing and private held-out long-form script writing.",
+    design_code: "Live web, SVG, 3D, UI, dataviz, mobile app, and slide arenas.",
+    research:
+      "FrontierMath, ARC-AGI-3, long-context, science, finance, legal, and enterprise research.",
     cyber: "Held-out CVE patching, private detection, and live attack-defense CTF.",
     harnesses: "Coding agents compared on fixed test models and private stacks.",
   };

@@ -71,6 +71,38 @@ const SURGE_FEEDS: readonly SurgeFeedSpec[] = [
     harnessRegime: "native",
     isElo: false,
   },
+  {
+    slug: "dayjob-tax",
+    benchmarkId: "surge_dayjob_tax",
+    version: "1.0",
+    domainId: "research",
+    harnessRegime: "native",
+    isElo: false,
+  },
+  {
+    slug: "handbook",
+    benchmarkId: "surge_handbook",
+    version: "1.1",
+    domainId: "research",
+    harnessRegime: "native",
+    isElo: false,
+  },
+  {
+    slug: "chartography",
+    benchmarkId: "surge_chartography",
+    version: "1.0",
+    domainId: "research",
+    harnessRegime: "native",
+    isElo: false,
+  },
+  {
+    slug: "complex-constraints",
+    benchmarkId: "surge_complex_constraints",
+    version: "1.1",
+    domainId: "research",
+    harnessRegime: "native",
+    isElo: false,
+  },
 ];
 
 function decodeHtmlEntities(text: string): string {

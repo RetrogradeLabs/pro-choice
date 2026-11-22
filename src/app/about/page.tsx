@@ -15,7 +15,7 @@ import {
 
 export const metadata: Metadata = {
   title: "About ProChoice",
-  description: `How Retrograde Labs compiles daily LLM and coding agent harness Pareto frontiers across ${BENCHMARKS.length} private and live benchmarks from 13 live sources.`,
+  description: `How Retrograde Labs compiles daily LLM and coding agent harness Pareto frontiers across ${BENCHMARKS.length} private and live benchmarks from 15 live sources.`,
   alternates: {
     canonical: `${SITE_URL}/about`,
   },
@@ -53,7 +53,7 @@ export default async function AboutPage() {
       <section className="space-y-3">
         <h2 className="font-display text-[22px] font-normal text-(--ink)">Methodology in brief</h2>
         <p>
-          Each day, ProChoice ingests 13 mandatory benchmark and first-party pricing feeds covering
+          Each day, ProChoice ingests 15 mandatory benchmark and first-party pricing feeds covering
           9 model providers: Anthropic, OpenAI, Google, SpaceXAI, Meta, DeepSeek, Moonshot, Alibaba,
           and Zhipu. All {BENCHMARKS.length} active benchmarks across the six composite indices are
           strictly private held-out or live benchmarks, disjoint within each domain, and contribute

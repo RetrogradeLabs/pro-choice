@@ -91,6 +91,15 @@ const VALS_FEEDS: readonly ValsFeedSpec[] = [
     harnessRegime: "native",
     defaultObservedHarness: "Direct API",
   },
+  {
+    slug: "a2j",
+    benchmarkId: "vals_a2j",
+    refusalFallbackKey: "a2j",
+    version: "1",
+    domainId: "research",
+    harnessRegime: "native",
+    defaultObservedHarness: "Direct API",
+  },
 ];
 
 interface ValsRowMetrics {

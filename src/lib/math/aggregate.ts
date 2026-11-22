@@ -801,7 +801,11 @@ function computeRedundancyFactors(
   anchorStats: Readonly<Record<string, AnchorStats>>,
 ): Map<string, number> {
   const zMaps = new Map<string, Map<string, { provider: ProviderId; z: number }>>();
+  const modelCountByBm = new Map<string, number>();
+  const labCountByBm = new Map<string, number>();
   let maxAnchorCount = 0;
+  let maxModelCount = 0;
+  let maxLabCount = 0;
   for (const bmId of calibratedIds) {
     const st = anchorStats[bmId];
     if (!st) continue;
@@ -809,12 +813,20 @@ function computeRedundancyFactors(
       maxAnchorCount = st.anchorCount;
     }
     const m = new Map<string, { provider: ProviderId; z: number }>();
+    const distinctModels = new Set<string>();
+    const distinctLabs = new Set<ProviderId>();
     for (const c of obsByBm.get(bmId) ?? []) {
       m.set(c.configId, {
         provider: c.provider,
         z: clampZScore((orientScore(bmId, c.rawScore) - st.mean) / st.sd),
       });
+      distinctModels.add(`${c.provider}:${c.modelSlug}`);
+      distinctLabs.add(c.provider);
     }
+    modelCountByBm.set(bmId, distinctModels.size);
+    labCountByBm.set(bmId, distinctLabs.size);
+    if (distinctModels.size > maxModelCount) maxModelCount = distinctModels.size;
+    if (distinctLabs.size > maxLabCount) maxLabCount = distinctLabs.size;
     zMaps.set(bmId, m);
   }
 
@@ -857,11 +869,14 @@ function computeRedundancyFactors(
     }
 
     const kishRed = 1 / (1 + famSumSq + 0.25 * srcOnlySumSq);
-    // Scale every benchmark uniformly by sqrt(anchorCount / maxAnchorCount) in [0.50, 1.00] so tiny panels cannot overpower broad benchmarks
-    const breadthScale =
-      stB && maxAnchorCount > 0
-        ? Math.min(1, Math.max(0.5, Math.sqrt(stB.anchorCount / maxAnchorCount)))
-        : 1;
+    // Dampen narrow-panel benchmarks by min(config, distinct-model, lab) breadth in [0.50, 1.00] so repeated effort tiers cannot mask narrow model/lab coverage
+    const cfgFrac = stB && maxAnchorCount > 0 ? stB.anchorCount / maxAnchorCount : 1;
+    const modelFrac = maxModelCount > 0 ? (modelCountByBm.get(bId) ?? 0) / maxModelCount : 1;
+    const labFrac = maxLabCount > 0 ? (labCountByBm.get(bId) ?? 0) / maxLabCount : 1;
+    const breadthScale = Math.min(
+      1,
+      Math.max(0.5, Math.sqrt(Math.min(cfgFrac, modelFrac, labFrac))),
+    );
     out.set(bId, Number(Math.min(1, Math.max(0.1, kishRed * breadthScale)).toFixed(4)));
   }
   return out;

@@ -89,6 +89,7 @@ import {
 } from "./generation.ts";
 import { withPublishLock } from "./lock.ts";
 import { aikidoAdapter } from "./sources/aikido.ts";
+import { arcprizeAdapter } from "./sources/arcprize.ts";
 import { artificialAnalysisAdapter } from "./sources/artificial-analysis.ts";
 import { cweBenchAdapter } from "./sources/cwe-bench.ts";
 import { cyberArenaAdapter } from "./sources/cyber-arena.ts";
@@ -100,6 +101,7 @@ import { livebenchAdapter } from "./sources/livebench.ts";
 import { lmarenaAdapter } from "./sources/lmarena.ts";
 import { pricingAdapter } from "./sources/pricing.ts";
 import { surgeAdapter } from "./sources/surge.ts";
+import { tonebenchAdapter } from "./sources/tonebench.ts";
 import { valsAdapter } from "./sources/vals.ts";
 import type { CachedSourceFile, SourceAdapter } from "./types.ts";
 
@@ -307,6 +309,7 @@ export async function recoverPendingEpochManifest(
 export const MANDATORY_ADAPTERS: readonly SourceAdapter[] = [
   artificialAnalysisAdapter,
   aikidoAdapter,
+  arcprizeAdapter,
   cweBenchAdapter,
   cyberArenaAdapter,
   epochAdapter,
@@ -317,6 +320,7 @@ export const MANDATORY_ADAPTERS: readonly SourceAdapter[] = [
   valsAdapter,
   designarenaAdapter,
   surgeAdapter,
+  tonebenchAdapter,
   pricingAdapter,
 ];
 
@@ -598,7 +602,7 @@ export function extractAcceptedCellsFromSources(results: readonly CachedSourceFi
             ? obs.seRaw * 1.96
             : obs.ciHalfWidth;
 
-      if (bmMeta.id === "lmarena_agent") {
+      if (bmMeta.id === "lmarena_agent" || bmMeta.id === "lmarena_agent_work") {
         if (
           obs.battleCount === null ||
           !Number.isInteger(obs.battleCount) ||
