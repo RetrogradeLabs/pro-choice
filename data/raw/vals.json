@@ -3,8 +3,8 @@
     "sourceId": "vals",
     "label": "Vals AI Frontier Suite (8 Benchmarks)",
     "status": "ok",
-    "fetchedAt": "2026-11-22T08:45:24.988Z",
-    "lastHealthyAt": "2026-11-22T08:45:24.988Z",
+    "fetchedAt": "2026-11-22T14:18:22.348Z",
+    "lastHealthyAt": "2026-11-22T14:18:22.348Z",
     "staleDays": 0,
     "rowCount": 447,
     "license": "Public Benchmarks / Attribution Required",
@@ -18,7 +18,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T08:45:24.988Z",
+        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
         "message": null
       },
       {
@@ -28,7 +28,7 @@
         "rejectedCount": 1,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T08:45:24.988Z",
+        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
         "message": null
       },
       {
@@ -38,7 +38,7 @@
         "rejectedCount": 2,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T08:45:24.988Z",
+        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
         "message": null
       },
       {
@@ -48,7 +48,7 @@
         "rejectedCount": 2,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T08:45:24.988Z",
+        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
         "message": null
       },
       {
@@ -58,7 +58,7 @@
         "rejectedCount": 6,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T08:45:24.988Z",
+        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
         "message": null
       },
       {
@@ -68,7 +68,7 @@
         "rejectedCount": 6,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T08:45:24.988Z",
+        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
         "message": null
       },
       {
@@ -78,7 +78,7 @@
         "rejectedCount": 2,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T08:45:24.988Z",
+        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
         "message": null
       },
       {
@@ -88,7 +88,7 @@
         "rejectedCount": 4,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T08:45:24.988Z",
+        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
         "message": null
       }
     ],

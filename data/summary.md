@@ -1,8 +1,8 @@
 # ProChoice Daily Ingestion Summary
 
-- Generated at: 2026-11-22T08:45:24.988Z
-- Snapshot hash: `f6096c239e1d3911`
-- Unmapped allowlisted records: 522
+- Generated at: 2026-11-22T14:18:22.348Z
+- Snapshot hash: `313a974fbd864b61`
+- Unmapped allowlisted records: 497
 
 ## Mandatory Source Health
 | Source | Status | Rows | Stale Days | Note |
@@ -18,7 +18,7 @@
 | Harness Leaderboard (TB 2.1 + DeepSWE) | OK | 65 | 0 | OK |
 | LiveBench 2.0 Contamination-Free Suite | OK | 38 | 0 | OK |
 | Vals AI Frontier Suite (8 Benchmarks) | OK | 447 | 0 | OK |
-| DesignArena Visual & Agentic Arenas (7 Modalities) | OK | 890 | 0 | designarena_3d: Upstream btStdErr null on 168 rows; conservatively down-weighted by reliability model; designarena_dataviz: Upstream btStdErr null on 108 rows; conservatively down-weighted by reliability model; designarena_gamedev: Upstream btStdErr null on 173 rows; conservatively down-weighted by reliability model; designarena_mobileapps: Upstream btStdErr null on 56 rows; conservatively down-weighted by reliability model; designarena_slides: Upstream btStdErr null on 38 rows; conservatively down-weighted by reliability model; designarena_svg: Upstream btStdErr null on 143 rows; conservatively down-weighted by reliability model; designarena_website: Upstream btStdErr null on 204 rows; conservatively down-weighted by reliability model |
+| DesignArena Visual & Agentic Arenas (7 Modalities) | OK | 776 | 0 | designarena_slides: Upstream btStdErr null on 38 rows; conservatively down-weighted by reliability model; designarena_svg: Upstream btStdErr null on 143 rows; conservatively down-weighted by reliability model |
 | Surge AI Frontier Benchmarks (11 Benchmarks) | OK | 398 | 0 | OK |
 | ToneBench Script Writing | OK | 150 | 0 | OK |
 | First-Party API Pricing (LiteLLM Verified SKUs) | OK | 71 | 0 | OK |
@@ -28,7 +28,7 @@
 | :--- | :--- | ---: | ---: | ---: |
 | Coding | coding-v3.0.0 | 59 | 69 | 9 |
 | Writing | writing-v4.0.0 | 37 | 124 | 8 |
-| Design | design-code-v4.0.0 | 67 | 64 | 9 |
+| Design | design-code-v4.0.0 | 64 | 64 | 9 |
 | Research | research-v4.0.0 | 47 | 195 | 9 |
 | Cyber | cyber-v3.0.0 | 28 | 5 | 9 |
 | Harnesses | harnesses-v3.0.0 | 28 | 1 | 10 |
@@ -36,14 +36,14 @@
 ## Longitudinal Epoch Linking
 - coding-v3.0.0/standardized vs coding-v2.0.0.json: Verified Mean-Sigma link (n=64, labs=9, r=0.971)
 - writing-v4.0.0/native vs writing-v3.0.0.json: Verified Mean-Sigma link (n=43, labs=8, r=0.969)
-- design-code-v4.0.0/native vs design-code-v3.0.0.json: Verified Mean-Sigma link (n=70, labs=9, r=0.998)
+- design-code-v4.0.0/native vs design-code-v3.0.0.json: Verified Mean-Sigma link (n=66, labs=9, r=0.997)
 - research-v4.0.0/native vs research-v3.0.0.json: Verified Mean-Sigma link (n=53, labs=9, r=0.968)
 - cyber-v3.0.0/native vs cyber-v2.0.0.json: Verified Mean-Sigma link (n=33, labs=9, r=0.996)
 - harnesses-v3.0.0/native vs harnesses-v2.0.0.json: Verified Mean-Sigma link (n=29, labs=6, r=0.910)
 
 ## Daily Saturation & Lifecycle Audit
 - Active benchmarks at sustained retirement trigger: 0
-- Active benchmarks in warning state: 30
+- Active benchmarks in warning state: 25
 - Candidate benchmarks ready for next MAJOR cutover: 0
 
 | Benchmark | Domain | State | Top Labs | S_index | Sep | LOO Tau | Status |
@@ -57,13 +57,13 @@
 | aa_agent_frontiercode | harnesses | ACTIVE | 6 | 0.21 | 60% | N/A | HEALTHY |
 | lmarena_creative_writing | writing | ACTIVE | 9 | 0.00 | 75% | N/A | HEALTHY |
 | tonebench_writing | writing | ACTIVE | 9 | 0.06 | 31% | N/A | WARNING |
-| lmarena_webdev | design_code | ACTIVE | 9 | 0.00 | 92% | 0.98 | HEALTHY |
-| designarena_website | design_code | ACTIVE | 9 | N/A | N/A | 0.98 | WARNING |
-| designarena_svg | design_code | ACTIVE | 9 | N/A | N/A | 0.96 | WARNING |
-| designarena_3d | design_code | ACTIVE | 9 | N/A | N/A | 0.97 | WARNING |
-| designarena_gamedev | design_code | ACTIVE | 9 | N/A | N/A | 0.97 | WARNING |
-| designarena_dataviz | design_code | ACTIVE | 9 | N/A | N/A | 0.98 | WARNING |
-| designarena_mobileapps | design_code | ACTIVE | 8 | N/A | N/A | 0.97 | WARNING |
+| lmarena_webdev | design_code | ACTIVE | 9 | 0.00 | 92% | 0.97 | HEALTHY |
+| designarena_website | design_code | ACTIVE | 9 | 0.00 | 83% | 0.98 | HEALTHY |
+| designarena_svg | design_code | ACTIVE | 9 | N/A | N/A | 0.95 | WARNING |
+| designarena_3d | design_code | ACTIVE | 9 | 0.00 | 94% | 0.97 | HEALTHY |
+| designarena_gamedev | design_code | ACTIVE | 9 | 0.00 | 89% | 0.98 | HEALTHY |
+| designarena_dataviz | design_code | ACTIVE | 9 | 0.00 | 75% | 0.99 | HEALTHY |
+| designarena_mobileapps | design_code | ACTIVE | 8 | 0.00 | 79% | 0.98 | HEALTHY |
 | designarena_slides | design_code | ACTIVE | 8 | N/A | N/A | 0.98 | WARNING |
 | mlcr_aa | research | ACTIVE | 9 | 0.74 | 25% | 0.99 | WARNING |
 | critpt_v2_hard | research | ACTIVE | 9 | 0.34 | 47% | 0.98 | WARNING |
