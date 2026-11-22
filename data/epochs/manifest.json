@@ -1,14 +1,20 @@
 {
   "coding-v1.0.0.json": "65aa560631874ae504a897fde1e2ca42a6e3fb205f6972c5444654ad8cb2ab7a",
   "coding-v2.0.0.json": "0344cccb5a35a124cd2443d9483545d1d91853f2cc2ca6963d302f63a4cc2e92",
+  "coding-v3.0.0.json": "750f2a035e581d4b87832919f89b6b318faa1370f7189f630111b68f03e72ccb",
   "cyber-v1.0.0.json": "0e0d7a2dc684604117c3d72de835cf5d9a14dcd409291880c9e2b97406d831bb",
   "cyber-v2.0.0.json": "b96cdc985a9229870abba91123124c1c2ac8a181d7a2ffa6694c73e1818f580f",
+  "cyber-v3.0.0.json": "d496b75b8ba9641503582d19d57f8aa4bcb4b550d0b4bce88b054d876cdf6c53",
   "design-code-v1.0.0.json": "f2022b0fc5facc356082126309a0524bd58c3baad8de9c4f7264dd8508be6817",
   "design-code-v2.0.0.json": "b1176847b2dd4348d5a5f0d8dec68cadf436ebb234e950a858dee197c3a6c577",
+  "design-code-v3.0.0.json": "3848cd87ba45c6832ec88b98d4eb0491a9f129f11566f5c14d882f7e75262583",
   "harnesses-v1.0.0.json": "3472b6f3b987459c17bd9dbdef786d87fc713aed952c51d236f1175bbc0ff3f9",
   "harnesses-v2.0.0.json": "880adeaaa4e38b2cf6aec45e24f2e3e64a68da2c2badcaa282a1f7994468ad03",
+  "harnesses-v3.0.0.json": "1fb251bdf9ed9893960d40aae4847bcd8ff3d1fda9c9fface9b337ed4e9f941d",
   "research-v1.0.0.json": "e80653905f3fc9f4ea03acba0edb87431d633571782081c15dba23580f98916c",
   "research-v2.0.0.json": "0a2a99225ebc7f1fdfc8b875c8fd33477ba5943d6162c64bcf40cf18f6a26f55",
+  "research-v3.0.0.json": "fe7984bd4fa8a2aceb65d75ee0919baf79f6ce07e09f7b76a3c2c2078a3a7987",
   "writing-v1.0.0.json": "5e23551791d8513715a9309b0608590bf713b19100edab57048fb44e751c57aa",
-  "writing-v2.0.0.json": "949ed46199c16ae22ced009f8d5b4acbc5448f062fbfd42b3f34f484ebbfad31"
+  "writing-v2.0.0.json": "949ed46199c16ae22ced009f8d5b4acbc5448f062fbfd42b3f34f484ebbfad31",
+  "writing-v3.0.0.json": "80d97ba2cac64f2691a972e27d802f14db5401e2db6a1defa020224b9beb2b40"
 }

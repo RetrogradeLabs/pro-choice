@@ -38,33 +38,6 @@ const VALS_FEEDS: readonly ValsFeedSpec[] = [
     defaultObservedHarness: "Pi",
   },
   {
-    slug: "sre_bench",
-    benchmarkId: "vals_sre_bench",
-    refusalFallbackKey: "sre_bench",
-    version: "1",
-    domainId: "coding",
-    harnessRegime: "standardized",
-    defaultObservedHarness: "Vals SRE Runner",
-  },
-  {
-    slug: "vibe-code",
-    benchmarkId: "vals_vibe_code",
-    refusalFallbackKey: "vibe_code_bench",
-    version: "1.1",
-    domainId: "design_code",
-    harnessRegime: "native",
-    defaultObservedHarness: "OpenHands",
-  },
-  {
-    slug: "swebench-multimodal",
-    benchmarkId: "vals_swebench_multimodal",
-    refusalFallbackKey: "swebench_multimodal",
-    version: "1",
-    domainId: "design_code",
-    harnessRegime: "native",
-    defaultObservedHarness: "mini-SWE-agent",
-  },
-  {
     slug: "legal_research",
     benchmarkId: "vals_legal_research",
     refusalFallbackKey: "legal_research",
@@ -142,6 +115,23 @@ interface ValsRefusalFallbackRecord {
   fallbacks?: number | null;
   scoreDeltaPctPoints?: number | null;
   respondingModels?: unknown;
+  refusals?: number | null;
+  totalTasks?: number | null;
+  refusalRatePct?: number | null;
+}
+
+function extractValsRefusalRate(fbRecord: ValsRefusalFallbackRecord | undefined): number | null {
+  if (!fbRecord) return null;
+  const refusals = parseNumeric(fbRecord.refusals);
+  const totalTasks = parsePositive(fbRecord.totalTasks);
+  if (refusals !== null && refusals >= 0 && totalTasks !== null && refusals <= totalTasks) {
+    return refusals > 0 ? Number((refusals / totalTasks).toFixed(6)) : null;
+  }
+  const pct = parseNumeric(fbRecord.refusalRatePct);
+  if (pct !== null && pct >= 0 && pct <= 100) {
+    return pct > 0 ? Number((pct / 100).toFixed(6)) : null;
+  }
+  return null;
 }
 
 type ValsRefusalFallbackModelsMap = Record<
@@ -902,14 +892,13 @@ export const valsAdapter: SourceAdapter = {
 
           const upstreamHarness = htmlMeta?.harness ?? metricsHarness;
           const canonicalUpstreamHarness = canonicalValsHarness(upstreamHarness);
-          const isOpenHandsDesign = spec.benchmarkId === "vals_vibe_code";
           // Fold documented per-benchmark default harnesses while preserving observedHarness provenance
           const isDocumentedDefaultHarness =
-            canonicalUpstreamHarness === null ||
-            canonicalUpstreamHarness === "direct" ||
-            (isOpenHandsDesign && canonicalUpstreamHarness === "openhands");
+            canonicalUpstreamHarness === null || canonicalUpstreamHarness === "direct";
           const observedHarness = upstreamHarness ?? spec.defaultObservedHarness;
           const emittedRawHarness = isDocumentedDefaultHarness ? null : canonicalUpstreamHarness;
+
+          const refusalRate = extractValsRefusalRate(fbRecord);
 
           observations.push({
             sourceId: "vals",
@@ -930,6 +919,7 @@ export const valsAdapter: SourceAdapter = {
             ciUpper: null,
             battleCount: tasksMeasured,
             measuredCostUsd: costPerTest !== null ? Number(costPerTest.toFixed(6)) : null,
+            ...(refusalRate !== null ? { refusalRate } : {}),
             suiteCostUsd: null,
             measuredInputTokens: null,
             measuredOutputTokens: null,

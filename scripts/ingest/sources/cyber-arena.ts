@@ -106,7 +106,7 @@ export const cyberArenaAdapter: SourceAdapter = {
         rawModelName: model,
         rawProvider: null,
         rawEffort: null,
-        // Fold vendor-native CTF harness so model-level Cyber scores link across CWE-bench, SRE Bench, and CyberBench
+        // Fold vendor-native CTF harness so model-level Cyber scores link across CWE-bench and Aikido Arena
         rawHarness: null,
         observedHarness: formatArenaHarness(harness),
         harnessRegime: "native",
@@ -120,7 +120,7 @@ export const cyberArenaAdapter: SourceAdapter = {
         suiteCostUsd: null,
         measuredInputTokens: null,
         measuredOutputTokens: null,
-        evalDate: publishedDate,
+        evalDate: null,
         publishedDate,
         sourceUrl: CYBER_ARENA_PUBLIC_URL,
       });

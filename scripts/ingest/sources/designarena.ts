@@ -20,7 +20,7 @@ interface DesignArenaFeedSpec {
   observedHarness: string;
 }
 
-// Four completely disjoint visual generation arenas (distinct prompts and battle pools per modality)
+// Five completely disjoint live blind visual arenas (distinct prompts and battle pools per modality)
 const DESIGNARENA_FEEDS: readonly DesignArenaFeedSpec[] = [
   {
     benchmarkId: "designarena_website",
@@ -44,6 +44,12 @@ const DESIGNARENA_FEEDS: readonly DesignArenaFeedSpec[] = [
     benchmarkId: "designarena_gamedev",
     arenaType: "models",
     category: "gamedev",
+    observedHarness: "Direct API",
+  },
+  {
+    benchmarkId: "designarena_dataviz",
+    arenaType: "models",
+    category: "dataviz",
     observedHarness: "Direct API",
   },
 ];
@@ -74,7 +80,7 @@ function parseStrictPositiveSe(val: unknown): number | null {
 
 export const designarenaAdapter: SourceAdapter = {
   id: "designarena",
-  label: "DesignArena Visual Arenas (Website, SVG, 3D, GameDev)",
+  label: "DesignArena Visual Arenas (Website, SVG, 3D, GameDev, DataViz)",
   license: "Public Leaderboard / Attribution Required",
   sourceUrl: DESIGNARENA_URL,
   expectedBenchmarks: DESIGNARENA_FEEDS.map((f) => f.benchmarkId),

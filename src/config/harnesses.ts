@@ -118,7 +118,7 @@ export const HARNESSES: readonly HarnessMeta[] = [
     name: "Mirror CLI",
     regime: "native",
     userSelectable: true,
-    aliases: ["mirror cli", "mirror-cli", "mirror_cli"],
+    aliases: ["mirror", "mirror cli", "mirror-cli", "mirror_cli"],
   },
   {
     id: "factory",

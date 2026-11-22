@@ -41,7 +41,7 @@ function resolveHarnessLabel(cfg: EvaluatedConfig): string | null {
   }
   if (cfg.harness === "multi-harness") {
     return (
-      cfg.benchmarks.find((b) => b.benchmarkId === "tbench_4_1")?.observedHarness ??
+      cfg.benchmarks.find((b) => b.benchmarkId === "aa_agent_frontiercode")?.observedHarness ??
       cfg.benchmarks.find((b) => b.observedHarness && b.observedHarness !== "Direct API")
         ?.observedHarness ??
       "Multi-harness"
@@ -361,7 +361,9 @@ export function PrunedCatalogue({
                                                       bm.refusalRate !== undefined &&
                                                       bm.refusalRate !== null &&
                                                       bm.refusalRate > 0
-                                                        ? `${Math.round(bm.refusalRate * 100)}% refused`
+                                                        ? bm.refusalRate * 100 < 0.5
+                                                          ? "<1% refused"
+                                                          : `${Math.round(bm.refusalRate * 100)}% refused`
                                                         : null,
                                                     ]
                                                       .filter(Boolean)

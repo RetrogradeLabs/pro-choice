@@ -3,8 +3,8 @@
     "sourceId": "cyber-arena",
     "label": "CyberArena Attack-Defense CTF (mc-v1)",
     "status": "ok",
-    "fetchedAt": "2026-11-21T22:00:15.273Z",
-    "lastHealthyAt": "2026-11-21T22:00:15.273Z",
+    "fetchedAt": "2026-11-22T01:47:42.583Z",
+    "lastHealthyAt": "2026-11-22T01:47:42.583Z",
     "staleDays": 0,
     "rowCount": 14,
     "license": "Public Research Leaderboard / Attribution Required",
@@ -18,7 +18,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-21T22:00:15.273Z",
+        "lastHealthyAt": "2026-11-22T01:47:42.583Z",
         "message": null
       }
     ],
@@ -48,8 +48,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       },
       {
@@ -74,8 +74,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       },
       {
@@ -100,8 +100,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       },
       {
@@ -126,8 +126,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       },
       {
@@ -152,8 +152,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       },
       {
@@ -178,8 +178,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       },
       {
@@ -204,8 +204,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       },
       {
@@ -230,8 +230,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       },
       {
@@ -256,8 +256,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       },
       {
@@ -282,8 +282,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       },
       {
@@ -308,8 +308,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       },
       {
@@ -334,8 +334,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       },
       {
@@ -360,8 +360,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       },
       {
@@ -386,8 +386,8 @@
         "suiteCostUsd": null,
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
-        "evalDate": "2026-11-21",
-        "publishedDate": "2026-11-21",
+        "evalDate": null,
+        "publishedDate": "2026-11-22",
         "sourceUrl": "https://cyber-arena.ai/"
       }
     ],

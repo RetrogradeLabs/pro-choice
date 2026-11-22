@@ -18,9 +18,7 @@ const ROLLOUTS_PER_TASK = 4;
 
 interface CweBenchCostPoint {
   model?: unknown;
-  cost?: unknown;
   pass1?: unknown;
-  ci95?: unknown;
   tasks?: unknown;
 }
 
@@ -48,30 +46,50 @@ function stripTags(html: string): string {
     .trim();
 }
 
-interface CweHtmlMeta {
+interface CweHtmlRow {
+  modelKey: string;
   fullName: string;
   harness: string;
+  publicPass1: number | null;
+  allPass1: number | null;
+  heldoutPass1: number | null;
+  heldoutCostUsd: number | null;
   conflicted: boolean;
   candidateFullNames: string[];
 }
 
-function parseCweBenchHtmlMetadata(html: string): Map<string, CweHtmlMeta> {
-  const rowsByModel = new Map<string, { fullName: string; harness: string }[]>();
-  const trMatches = html.matchAll(/<tr[^>]*data-model="([^"]+)"[^>]*>([\s\S]*?)<\/tr>/g);
+function parseCweBenchHtmlHeldoutRows(html: string): Map<string, CweHtmlRow> {
+  const rowsByModel = new Map<
+    string,
+    {
+      fullName: string;
+      harness: string;
+      publicPass1: number | null;
+      allPass1: number | null;
+      heldoutPass1: number | null;
+      heldoutCostUsd: number | null;
+    }[]
+  >();
+  const trMatches = html.matchAll(/<tr([^>]*data-model="([^"]+)"[^>]*)>([\s\S]*?)<\/tr>/g);
   for (const m of trMatches) {
-    const model = m[1]?.trim();
-    const inner = m[2] ?? "";
+    const attrs = m[1] ?? "";
+    const model = m[2]?.trim();
+    const inner = m[3] ?? "";
     if (!model) continue;
     const tds = [...inner.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((td) =>
       stripTags(td[1] ?? ""),
     );
     const fullName = tds[1]?.trim() ?? "";
     const harness = tds[2]?.trim() ?? "";
+    const publicPass1 = parseNumeric(attrs.match(/data-p1-public="([^"]+)"/i)?.[1] ?? null);
+    const allPass1 = parseNumeric(attrs.match(/data-p1-all="([^"]+)"/i)?.[1] ?? null);
+    const heldoutPass1 = parseNumeric(attrs.match(/data-p1-heldout="([^"]+)"/i)?.[1] ?? null);
+    const heldoutCostUsd = parsePositive(attrs.match(/data-cost-heldout="([^"]+)"/i)?.[1] ?? null);
     const list = rowsByModel.get(model) ?? [];
-    list.push({ fullName, harness });
+    list.push({ fullName, harness, publicPass1, allPass1, heldoutPass1, heldoutCostUsd });
     rowsByModel.set(model, list);
   }
-  const out = new Map<string, CweHtmlMeta>();
+  const out = new Map<string, CweHtmlRow>();
   for (const [model, list] of rowsByModel.entries()) {
     const first = list[0]!;
     const conflicted =
@@ -79,11 +97,23 @@ function parseCweBenchHtmlMetadata(html: string): Map<string, CweHtmlMeta> {
       !first.harness ||
       list.some(
         (r) =>
-          !r.fullName || !r.harness || r.fullName !== first.fullName || r.harness !== first.harness,
+          !r.fullName ||
+          !r.harness ||
+          r.fullName !== first.fullName ||
+          r.harness !== first.harness ||
+          r.publicPass1 !== first.publicPass1 ||
+          r.allPass1 !== first.allPass1 ||
+          r.heldoutPass1 !== first.heldoutPass1 ||
+          r.heldoutCostUsd !== first.heldoutCostUsd,
       );
     out.set(model, {
+      modelKey: model,
       fullName: first.fullName,
       harness: first.harness || "Native Agent",
+      publicPass1: first.publicPass1,
+      allPass1: first.allPass1,
+      heldoutPass1: first.heldoutPass1,
+      heldoutCostUsd: first.heldoutCostUsd,
       conflicted,
       candidateFullNames: [...new Set([model, ...list.map((r) => r.fullName).filter(Boolean)])],
     });
@@ -171,7 +201,7 @@ function parseCweBenchPublishedDate(htmlText: string, nowIso: string): string | 
 
 export const cweBenchAdapter: SourceAdapter = {
   id: "cwe-bench",
-  label: "Collinear CWE-bench v2 (250 Public + Held-Out)",
+  label: "Collinear CWE-bench v2 (150 Held-Out Private Tasks)",
   license: "Apache-2.0",
   sourceUrl: CWE_BENCH_PUBLIC_URL,
   expectedBenchmarks: ["cwe_bench_v2"],
@@ -202,7 +232,7 @@ export const cweBenchAdapter: SourceAdapter = {
       points.length === 0
     ) {
       throw new Error(
-        `CWE-bench v2 payload cohort mismatch (expected ${EXPECTED_CWE_PUBLIC_TASKS} public + ${EXPECTED_CWE_PRIVATE_TASKS} held-out = ${EXPECTED_CWE_TOTAL_TASKS}, got ${publicTasks} + ${privateTasks})`,
+        `CWE-bench v2 cohort mismatch (expected ${EXPECTED_CWE_PUBLIC_TASKS} public + ${EXPECTED_CWE_PRIVATE_TASKS} held-out = ${EXPECTED_CWE_TOTAL_TASKS}, got ${publicTasks} + ${privateTasks})`,
       );
     }
 
@@ -222,7 +252,7 @@ export const cweBenchAdapter: SourceAdapter = {
         },
       };
     }
-    const metaByModel = parseCweBenchHtmlMetadata(htmlText);
+    const htmlRowsByModel = parseCweBenchHtmlHeldoutRows(htmlText);
     const st: PartitionStats = { attempted: 0, rejected: 0, excluded: 0 };
     const candidatesByRowId = new Map<string, RawObservation[]>();
     const disqualifiedIds = new Set<string>();
@@ -234,61 +264,69 @@ export const cweBenchAdapter: SourceAdapter = {
         continue;
       }
       const model = typeof pt.model === "string" ? pt.model.trim() : "";
-      const pass1 = parseNumeric(pt.pass1);
-      const ci95 = parsePositive(pt.ci95);
-      const cost = parsePositive(pt.cost);
+      const jsAllPass1 = parseNumeric(pt.pass1);
       const rowTasks = parseStrictPositiveInt(pt.tasks);
-      const tableMeta = metaByModel.get(model);
+      const tableMeta = htmlRowsByModel.get(model);
 
-      // Require a unique, non-conflicted HTML table row for revision-qualified model identity and harness
+      // Require full 250-task completion and a unique, non-conflicted HTML row with verified split parity
       if (!model || !tableMeta || tableMeta.conflicted) {
         st.rejected++;
-        if (model) disqualifiedIds.add(`cwe-bench:v2:${slugToken(model)}`);
+        if (model) disqualifiedIds.add(`cwe-bench:v2-heldout:${slugToken(model)}`);
         for (const cand of tableMeta?.candidateFullNames ?? []) {
-          disqualifiedIds.add(`cwe-bench:v2:${slugToken(cand)}`);
+          disqualifiedIds.add(`cwe-bench:v2-heldout:${slugToken(cand)}`);
         }
         continue;
       }
       const resolvedModelName = tableMeta.fullName;
       const harness = tableMeta.harness;
+      const publicPass1 = tableMeta.publicPass1;
+      const allPass1 = tableMeta.allPass1;
+      const pass1 = tableMeta.heldoutPass1;
+      const cost = tableMeta.heldoutCostUsd;
+      const splitConsistent =
+        publicPass1 !== null &&
+        allPass1 !== null &&
+        pass1 !== null &&
+        jsAllPass1 !== null &&
+        Math.abs((publicTasks * publicPass1 + privateTasks * pass1) / totalTasks - allPass1) <=
+          0.15 &&
+        Math.abs(allPass1 - jsAllPass1) <= 0.15;
 
       if (
         pass1 === null ||
         pass1 < 0 ||
         pass1 > 100 ||
-        ci95 === null ||
         cost === null ||
-        rowTasks === null ||
-        rowTasks !== totalTasks
+        rowTasks !== totalTasks ||
+        !splitConsistent
       ) {
         st.rejected++;
-        disqualifiedIds.add(`cwe-bench:v2:${slugToken(model)}`);
-        disqualifiedIds.add(`cwe-bench:v2:${slugToken(resolvedModelName)}`);
+        disqualifiedIds.add(`cwe-bench:v2-heldout:${slugToken(model)}`);
+        disqualifiedIds.add(`cwe-bench:v2-heldout:${slugToken(resolvedModelName)}`);
         continue;
       }
 
-      const seRaw = ci95 / 1.96;
-      // Key cache & disqualification rows stably on chart point identity so missing HTML metadata cannot evade eviction
-      const sourceRowId = `cwe-bench:v2:${slugToken(model)}`;
+      // Held-out 150 split omits separate CI95 in upstream data-v2.js; defer honestly to 150-task Bhatia-Davis SE
+      const sourceRowId = `cwe-bench:v2-heldout:${slugToken(model)}`;
       const obs: RawObservation = {
         sourceId: "cwe-bench",
         sourceRowId,
         benchmarkId: "cwe_bench_v2",
-        benchmarkVersion: "2.0",
+        benchmarkVersion: "2.0-heldout",
         domainId: "cyber",
         rawModelName: resolvedModelName,
         rawProvider: null,
         rawEffort: protocolEffort,
-        // Fold documented native harness so CWE-bench v2 connects with Aikido Arena and CyberArena
+        // Fold documented native harness so CWE-bench v2 Held-Out connects with Aikido Arena and CyberArena
         rawHarness: null,
         observedHarness: harness,
         harnessRegime: "native",
         rawScore: Number(pass1.toFixed(2)),
-        seRaw: Number(seRaw.toFixed(6)),
-        ciHalfWidth: Number(ci95.toFixed(4)),
+        seRaw: null,
+        ciHalfWidth: null,
         ciLower: null,
         ciUpper: null,
-        battleCount: rowTasks * ROLLOUTS_PER_TASK,
+        battleCount: privateTasks * ROLLOUTS_PER_TASK,
         measuredCostUsd: Number(cost.toFixed(6)),
         suiteCostUsd: null,
         measuredInputTokens: null,

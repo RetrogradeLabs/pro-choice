@@ -194,7 +194,11 @@ export function EpochMonographDrawer({
                     and Terminal-Bench 2.1 is never counted twice. Benchmarks with smaller error
                     bars get higher weight, Pass all 3 reports how often a harness solves a task
                     three times in a row on that same shared scale, and harnesses tested on
-                    different versions across the two leaderboards list both versions.
+                    different versions across the two leaderboards list both versions. Because no
+                    private controlled-harness benchmark currently publishes per-run trajectories,
+                    this fixed-model tab uses public Terminal-Bench and DeepSWE suites with
+                    automated answer-key lookup filtering while every model composite index uses
+                    strictly private or live benchmarks.
                   </p>
                 </div>
               ) : (
@@ -308,13 +312,14 @@ export function EpochMonographDrawer({
                     Benchmarks ({activeBenchmarks.length})
                   </h3>
                   <p className="text-[12.5px] leading-relaxed text-(--ink-secondary)">
-                    Every benchmark below counts directly toward this domain&apos;s score. Weight
-                    ranges from 0.10 to 1.00 based on measurement precision, separation among top
-                    providers, and task-family and source independence estimated from
-                    provider-balanced overlap correlations, falling back to conservative priors when
-                    fewer than six configurations overlap. Precision displays a bound suffix when
-                    upstream error bars are absent and Bhatia-Davis bounded task error estimates
-                    stand in.
+                    Every benchmark below is either a private held-out evaluation or a live arena
+                    that post-dates training, so leaked public datasets never inflate the index.
+                    Each counts directly toward this domain&apos;s score, with weight from 0.10 to
+                    1.00 based on measurement precision, separation among top providers, and
+                    task-family and source independence estimated from provider-balanced overlap
+                    correlations, falling back to conservative priors when fewer than six
+                    configurations overlap. Precision displays a bound suffix when upstream error
+                    bars are absent and Bhatia-Davis bounded task error estimates stand in.
                   </p>
 
                   <div className="space-y-2.5">
@@ -425,8 +430,8 @@ export function EpochMonographDrawer({
                   </h3>
                   <p className="text-[12.5px] leading-relaxed text-(--ink-secondary)">
                     {domain.domainId === "harnesses"
-                      ? "A model stays off the chart if it is no longer available to buy, has no public API price, ran in a harness with no measured run costs, or has too little benchmark precision for a reliable score."
-                      : "A model stays off the chart if it is no longer available to buy, has no public API price, or has too little benchmark precision for a reliable score."}
+                      ? "A model stays off the chart if it is no longer available to buy, has no public API price, ran in a harness with no measured run costs, or has too few benchmarks or too little precision for a reliable score."
+                      : "A model stays off the chart if it is no longer available to buy, has no public API price, or has too few benchmarks or too little precision for a reliable score."}
                   </p>
                   {provisionalConfigs.length === 0 ? (
                     <p className="font-mono text-[11px] text-(--ink-faint)">
@@ -461,9 +466,11 @@ export function EpochMonographDrawer({
                                   : domain.domainId === "harnesses"
                                     ? "No measured harness cost"
                                     : "No task cost"
-                              : !cfg.eligibleForFrontier
-                                ? "High uncertainty"
-                                : "Excluded";
+                              : cfg.coverageCount < (regimeInfo?.coverageFloor ?? 1)
+                                ? `Under ${regimeInfo?.coverageFloor ?? 2} benchmarks`
+                                : !cfg.eligibleForFrontier
+                                  ? "High uncertainty"
+                                  : "Excluded";
                         return (
                           <div
                             key={cfg.id}

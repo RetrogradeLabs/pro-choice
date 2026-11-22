@@ -8,9 +8,9 @@ authors:
 repository-code: "https://github.com/RetrogradeLabs/pro-choice"
 url: "https://prochoice.industries"
 license: MIT
-version: "2.0.0"
-date-released: "2026-11-21"
-abstract: "ProChoice aggregates 59 active public LLM and coding agent benchmarks across 17 daily sources into six cost-quality composite indices covering Coding, Writing, Design, Research, Cyber, and Harnesses using provider-balanced anchor standardization, empirical reliability, discrimination, anchor-breadth, and additive Kish redundancy weights, measurement-only heteroscedastic REML Empirical Bayes denoising, active-set monotone effort cost regression, and bootstrap Pareto frontier analysis."
+version: "3.0.0"
+date-released: "2026-11-22"
+abstract: "ProChoice aggregates 36 strictly private held-out and live blind-arena LLM and coding agent benchmarks across 13 daily sources into six cost-quality composite indices covering Coding, Writing, Design, Research, Cyber, and Harnesses using provider-balanced anchor standardization, empirical reliability, discrimination, anchor-breadth, and additive Kish redundancy weights, measurement-only heteroscedastic REML Empirical Bayes denoising, active-set monotone effort cost regression, and bootstrap Pareto frontier analysis."
 keywords:
   - llm-leaderboard
   - llm-benchmarks

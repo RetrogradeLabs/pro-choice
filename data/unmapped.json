@@ -1,14 +1,6 @@
 [
   {
     "sourceId": "artificial-analysis",
-    "benchmarkId": "aa_omniscience",
-    "rawModelName": "Gemma 4 E4B (Reasoning)",
-    "rawProvider": "Google",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Gemma 4 E4B"
-  },
-  {
-    "sourceId": "artificial-analysis",
     "benchmarkId": "critpt_v2_hard",
     "rawModelName": "Gemma 4 E4B (Reasoning)",
     "rawProvider": "Google",
@@ -24,780 +16,12 @@
     "reason": "unresolved_allowlisted_model:Gemma 4 E4B"
   },
   {
-    "sourceId": "artificial-analysis",
-    "benchmarkId": "gdp_pdf",
-    "rawModelName": "Gemma 4 E4B (Reasoning)",
-    "rawProvider": "Google",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Gemma 4 E4B"
-  },
-  {
-    "sourceId": "artificial-analysis",
-    "benchmarkId": "hle_diamond",
-    "rawModelName": "Gemma 4 E4B (Reasoning)",
-    "rawProvider": "Google",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Gemma 4 E4B"
-  },
-  {
-    "sourceId": "artificial-analysis",
-    "benchmarkId": "scicode_aa",
-    "rawModelName": "Gemma 4 E4B (Reasoning)",
-    "rawProvider": "Google",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Gemma 4 E4B"
-  },
-  {
-    "sourceId": "artificial-analysis",
-    "benchmarkId": "terminalbench_4_0",
-    "rawModelName": "Gemma 4 E4B (Reasoning)",
-    "rawProvider": "Google",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Gemma 4 E4B"
-  },
-  {
-    "sourceId": "artificial-analysis",
-    "benchmarkId": "terminalbench_science_aa",
-    "rawModelName": "Gemma 4 E4B (Reasoning)",
-    "rawProvider": "Google",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Gemma 4 E4B"
-  },
-  {
     "sourceId": "aikido",
     "benchmarkId": "aikido_arena",
     "rawModelName": "Gemini 3.8 Flash Cyber",
     "rawProvider": "Google",
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:Gemini 3.8 Flash Cyber"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "gpt-5.2-codex",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5.2-codex"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "gpt-5.1-codex",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5.1-codex"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "gpt-5.1-codex-max",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5.1-codex-max"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "claude-opus-4-5-20251101_16K",
-    "rawProvider": "Anthropic",
-    "rawHarness": null,
-    "reason": "manual_token_budget_distinct_from_effort:16K"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "grok-4.3",
-    "rawProvider": "xAI",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "gemma-4-31b-it",
-    "rawProvider": "Google DeepMind",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-4-31b-it"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "o4-mini-2025-04-16",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:o4-mini"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "kimi-k2.5",
-    "rawProvider": "Moonshot",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:kimi-k2.5"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "DeepSeek-R1-0528",
-    "rawProvider": "DeepSeek",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek-R1"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "gpt-5-mini-2025-08-07",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5-mini"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "claude-sonnet-4-5-20250929_32K",
-    "rawProvider": "Anthropic",
-    "rawHarness": null,
-    "reason": "manual_token_budget_distinct_from_effort:32K"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "gemini-2.5-pro_32K",
-    "rawProvider": "Google DeepMind",
-    "rawHarness": null,
-    "reason": "manual_token_budget_distinct_from_effort:32K"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "DeepSeek-V3.1-Terminus",
-    "rawProvider": "DeepSeek",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek-V3.1-Terminus"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "gpt-5-nano-2025-08-07",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5-nano"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "claude-opus-4-1-20250805_16K",
-    "rawProvider": "Anthropic",
-    "rawHarness": null,
-    "reason": "manual_token_budget_distinct_from_effort:16K"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "qwen3.6-plus",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.6-plus"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "gemini-2.5-flash",
-    "rawProvider": "Google DeepMind",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-flash"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "claude-sonnet-4-20250514_32K",
-    "rawProvider": "Anthropic",
-    "rawHarness": null,
-    "reason": "manual_token_budget_distinct_from_effort:32K"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "claude-haiku-4-5-20251001_32K",
-    "rawProvider": "Anthropic",
-    "rawHarness": null,
-    "reason": "manual_token_budget_distinct_from_effort:32K"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "qwen3.5-plus",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.5-plus"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "kimi-k2",
-    "rawProvider": "Moonshot",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:kimi-k2"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "grok-code-fast-1",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:grok-code-fast-1"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "gpt-4.1-2025-04-14",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-4.1"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "Qwen3-Coder-480B-A35B-Instruct",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen3-Coder-480B-A35B-Instruct"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "qwen3-coder-plus",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-coder-plus"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "glm-4.7",
-    "rawProvider": "Z.ai (Zhipu AI)",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:glm-4.7"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "grok-4-1-fast-reasoning",
-    "rawProvider": "xAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:grok-4-1-fast"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "qwen3-max-2025-09-23",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-max"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "qwen3.5-27B",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.5-27B"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "glm-4.5",
-    "rawProvider": "Z.ai (Zhipu AI),Tsinghua University",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:glm-4.5"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "glm-4.6",
-    "rawProvider": "Z.ai (Zhipu AI),Tsinghua University",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:glm-4.6"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "qwen3.6-flash",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.6-flash"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "gemini-2.5-flash-lite-preview-06-17",
-    "rawProvider": "Google DeepMind",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-flash-lite-preview-06-17"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "moonshotai/kimi-k2-0905",
-    "rawProvider": "Moonshot",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:kimi-k2"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "qwen3.5-flash",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.5-flash"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "qwen3.5-35b-a3b",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.5-35b-a3b"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_ale_bench",
-    "rawModelName": "Llama-4-Maverick-17B-128E-Instruct-FP8",
-    "rawProvider": "Meta AI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Llama-4-Maverick-17B-128E-Instruct-FP8"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "gemini-4-carbon",
-    "rawProvider": "Google DeepMind",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "gemini-4-argon",
-    "rawProvider": "Google DeepMind",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "claude-fable-5-2",
-    "rawProvider": "Anthropic",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "gemini-4-hydrogen",
-    "rawProvider": "Google DeepMind",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "grok-4.7",
-    "rawProvider": "xAI",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "claude-fable-5-1",
-    "rawProvider": "Anthropic",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "gemini-3.7-flash",
-    "rawProvider": "Google DeepMind",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "kimi-k3.1-pro",
-    "rawProvider": "Moonshot",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "grok-4.6",
-    "rawProvider": "xAI",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "gpt-6-astra",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "gemini-3.8-flash",
-    "rawProvider": "Google DeepMind",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "muse-ember-1.0",
-    "rawProvider": "Meta AI",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "qwen3.8-max",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "muse-spark-1.3",
-    "rawProvider": "Meta AI",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "glm-5.3",
-    "rawProvider": "Z.ai (Zhipu AI)",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "grok-4.5",
-    "rawProvider": "xAI",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "gpt-5.5",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "claude-sonnet-5",
-    "rawProvider": "Anthropic",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "glm-5.3-flash",
-    "rawProvider": "Z.ai (Zhipu AI)",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "gpt-5.4-2026-03-05",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "gpt-5.6-sol_promax",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5.6-sol_promax"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "kimi-k3",
-    "rawProvider": "Moonshot",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "deepseek-v4-pro-0813",
-    "rawProvider": "DeepSeek",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "gemini-3.6-flash",
-    "rawProvider": "Google DeepMind",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "glm-5.2",
-    "rawProvider": "Z.ai (Zhipu AI)",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "gpt-5.6-luna",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "deepseek-v4.1-flash",
-    "rawProvider": "DeepSeek",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "Muse-Spark-Open-816B-A42B",
-    "rawProvider": "Meta AI",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_apex_agents",
-    "rawModelName": "gemini-3.5-flash",
-    "rawProvider": "Google DeepMind",
-    "rawHarness": null,
-    "reason": "unsupported_or_unknown_effort:unknown"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "gpt-4o-mini-2024-07-18",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-4o-mini"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "gpt-4o-2024-08-06",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-4o"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "gpt-4.1-nano-2025-04-14",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-4.1-nano"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "gpt-4.1-mini-2025-04-14",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-4.1-mini"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "gpt-4.1-2025-04-14",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-4.1"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "o3-mini-2025-01-31",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:o3-mini"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "o1-2024-12-17",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:o1"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "claude-3-opus-20240229",
-    "rawProvider": "Anthropic",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-3-opus"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "qwen3.5-plus",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.5-plus"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "Qwen3-235B-A22B-Thinking-2507",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen3-235B-A22B-Thinking-2507"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "glm-4.7",
-    "rawProvider": "Z.ai (Zhipu AI)",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:glm-4.7"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "kimi-k2.5",
-    "rawProvider": "Moonshot",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:kimi-k2.5"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "qwen3.6-plus",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.6-plus"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "qwen3.6-max-preview",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.6-max-preview"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "qwen3.6-flash",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.6-flash"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "qwen3.5-flash",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.5-flash"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "qwen3-max-2025-09-23",
-    "rawProvider": "Alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-max"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "gemma-4-31b-it",
-    "rawProvider": "Google DeepMind",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-4-31b-it"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "o4-mini-2025-04-16",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:o4-mini"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "gpt-5.4-pro-2026-03-05",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5.4-pro"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "claude-sonnet-4-5-20250929_59K",
-    "rawProvider": "Anthropic",
-    "rawHarness": null,
-    "reason": "manual_token_budget_distinct_from_effort:59K"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "claude-opus-4-5-20251101_32K",
-    "rawProvider": "Anthropic",
-    "rawHarness": null,
-    "reason": "manual_token_budget_distinct_from_effort:32K"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "claude-haiku-4-5-20251001_32K",
-    "rawProvider": "Anthropic",
-    "rawHarness": null,
-    "reason": "manual_token_budget_distinct_from_effort:32K"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "gpt-5-mini-2025-08-07",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5-mini"
-  },
-  {
-    "sourceId": "epoch",
-    "benchmarkId": "epoch_simpleqa_verified",
-    "rawModelName": "gpt-5-nano-2025-08-07",
-    "rawProvider": "OpenAI",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5-nano"
   },
   {
     "sourceId": "lmarena",
@@ -2800,126 +2024,6 @@
     "reason": "unresolved_allowlisted_model:qwen3.6-plus"
   },
   {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "DeepSeek V4",
-    "rawProvider": "deepseek",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek V4"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "openai/gpt-5.2-codex",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5.2-codex"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "alibaba/qwen3.6-plus",
-    "rawProvider": "alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.6-plus"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "openai/gpt-5.1-codex-max",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5.1-codex-max"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "kimi/kimi-k2.5-thinking",
-    "rawProvider": "kimi",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:kimi-k2.5"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "alibaba/qwen3.5-plus-thinking",
-    "rawProvider": "alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.5-plus"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "openai/gpt-5-mini-2025-08-07",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5-mini"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "grok/grok-build-0.1",
-    "rawProvider": "grok",
-    "rawHarness": "grok-build",
-    "reason": "unresolved_allowlisted_model:grok-build-0.1"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "openai/gpt-5.1-codex",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5.1-codex"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "alibaba/qwen3.6-27b",
-    "rawProvider": "alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3.6-27b"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "alibaba/qwen3-max",
-    "rawProvider": "alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-max"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "zai/glm-4.6",
-    "rawProvider": "zai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:glm-4.6"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "grok/grok-4-1-fast-reasoning",
-    "rawProvider": "grok",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:grok-4-1-fast"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "google/gemini-2.5-pro",
-    "rawProvider": "google",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-pro"
-  },
-  {
-    "sourceId": "vals",
-    "benchmarkId": "vals_vibe_code",
-    "rawModelName": "grok/grok-4-fast-reasoning",
-    "rawProvider": "grok",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:grok-4-fast"
-  },
-  {
     "sourceId": "designarena",
     "benchmarkId": "designarena_3d",
     "rawModelName": "qwen3.8-max-preview",
@@ -3257,6 +2361,174 @@
   },
   {
     "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "qwen3.8-max-preview",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:qwen3.8-max-preview"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "glm-5-turbo",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-5-turbo"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "qwen3.6-plus",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:qwen3.6-plus"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "kimi-k2.5",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:kimi-k2.5"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "deepseek-v4-pro",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "ambiguous_mode_requires_explicit_effort:deepseek-v4-pro"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "glm-5v-turbo",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-5v-turbo"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "glm-4.7",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-4.7"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "claude-opus-4-1-20250805",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:claude-opus-4-1"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "glm-4.6",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-4.6"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "deepseek-v3p2",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:deepseek-v3p2"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "deepseek-v3p2-exp",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:deepseek-v3p2-exp"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "qwen3.5-plus-02-15",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:qwen3.5-plus-02-15"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "gpt-5-mini",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-5-mini"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "qwen3-max",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:qwen3-max"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "grok-4-fast-non-reasoning",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:grok-4-fast"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "gpt-5.1-codex-mini",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:gpt-5.1-codex-mini"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "grok-4-1-fast-reasoning",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:grok-4-1-fast"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "grok-4-1-fast-non-reasoning",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:grok-4-1-fast"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "grok-4-fast-reasoning",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:grok-4-fast"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "grok-4",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:grok-4"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "grok-3",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:grok-3"
+  },
+  {
+    "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
     "rawModelName": "qwen3.8-max-preview",
     "rawProvider": null,
@@ -3378,14 +2650,6 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
-    "rawModelName": "claude-sonnet-4",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-sonnet-4"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
     "rawModelName": "glm-4.7-flash",
     "rawProvider": null,
     "rawHarness": null,
@@ -3394,10 +2658,10 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
-    "rawModelName": "deepseek-v3p2",
+    "rawModelName": "claude-sonnet-4",
     "rawProvider": null,
     "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:deepseek-v3p2"
+    "reason": "unresolved_allowlisted_model:claude-sonnet-4"
   },
   {
     "sourceId": "designarena",
@@ -3406,6 +2670,14 @@
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:deepseek-v3p1"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_gamedev",
+    "rawModelName": "deepseek-v3p2",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:deepseek-v3p2"
   },
   {
     "sourceId": "designarena",
@@ -3618,18 +2890,18 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_svg",
-    "rawModelName": "kimi-k2.5",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:kimi-k2.5"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_svg",
     "rawModelName": "glm-5v-turbo",
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:glm-5v-turbo"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_svg",
+    "rawModelName": "kimi-k2.5",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:kimi-k2.5"
   },
   {
     "sourceId": "designarena",
@@ -4320,1060 +3592,68 @@
     "reason": "unresolved_allowlisted_model:gpt-4o"
   },
   {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "gpt-5.3-chat",
-    "rawProvider": null,
+    "sourceId": "surge",
+    "benchmarkId": "surge_corecraft",
+    "rawModelName": "Qwen 3.8 Flash",
+    "rawProvider": "Qwen",
     "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5.3-chat"
+    "reason": "unresolved_allowlisted_model:Qwen 3.8 Flash"
   },
   {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "moonshotai/Kimi-K2-Instruct",
-    "rawProvider": null,
+    "sourceId": "surge",
+    "benchmarkId": "surge_corecraft",
+    "rawModelName": "DeepSeek V4 Flash Vision (experimental)",
+    "rawProvider": "DeepSeek",
     "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Kimi-K2-Instruct"
+    "reason": "unresolved_allowlisted_model:DeepSeek V4 Flash Vision (experimental)"
   },
   {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "moonshotai/Kimi-K2-Thinking",
-    "rawProvider": null,
+    "sourceId": "surge",
+    "benchmarkId": "surge_corecraft",
+    "rawModelName": "Grok 4.1 (Fast)",
+    "rawProvider": "Grok",
     "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Kimi-K2"
+    "reason": "unresolved_allowlisted_model:Grok 4.1 (Fast)"
   },
   {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "moonshotai/Kimi-K2.5",
-    "rawProvider": null,
+    "sourceId": "surge",
+    "benchmarkId": "surge_corecraft",
+    "rawModelName": "GPT 5.2 Codex",
+    "rawProvider": "OpenAI",
     "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Kimi-K2.5"
+    "reason": "unresolved_allowlisted_model:GPT 5.2 Codex"
   },
   {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "claude-opus-4",
-    "rawProvider": null,
+    "sourceId": "surge",
+    "benchmarkId": "surge_corecraft",
+    "rawModelName": "GLM 5",
+    "rawProvider": "Z.ai",
     "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-opus-4"
+    "reason": "unsupported_or_unknown_effort:auto-reasoning"
   },
   {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-V4-Pro",
-    "rawProvider": null,
+    "sourceId": "surge",
+    "benchmarkId": "surge_corecraft",
+    "rawModelName": "Qwen 3.5 Plus",
+    "rawProvider": "Qwen",
     "rawHarness": null,
-    "reason": "ambiguous_mode_requires_explicit_effort:deepseek-v4-pro"
+    "reason": "unresolved_allowlisted_model:Qwen 3.5 Plus"
   },
   {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-R1",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek-R1"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "claude-sonnet-4",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-sonnet-4"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-V3-0324",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek-V3"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "claude-3-5-sonnet-20241022",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-3-5-sonnet"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-V3.1",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek-V3.1"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "gemini-2.5-pro-preview-06-05",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-pro-preview-06-05"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-R1-0528",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek-R1"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "gpt-4.1",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-4.1"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "zai-org/GLM-4.7",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GLM-4.7"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "claude-3-7-sonnet-20250219",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-3-7-sonnet"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "zai-org/GLM-4.6",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GLM-4.6"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "gemini-2.5-pro-exp-03-25",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-pro-exp-03-25"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "google/gemma-4-31B-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-4-31B-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "qwen/qwen3-235b-a22b:thinking",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-235b-a22b:thinking"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "zai-org/GLM-4.5",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GLM-4.5"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "grok-4.1-fast",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:grok-4.1-fast"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "gpt-5-mini-2025-08-07",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5-mini"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "google/gemma-4-26B-A4B-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-4-26B-A4B-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "google/gemma-4-12B-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-4-12B-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-V3.2-Speciale",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek-V3.2-Speciale"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "google/gemma-3-27b-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-3-27b-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "gpt-4.5-preview",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-4.5-preview"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "qwen/qwq-32b",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwq-32b"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "grok-3-beta",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:grok-3-beta"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "gpt-4.1-mini",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-4.1-mini"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "anthropic/claude-3.5-haiku-20241022",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-3.5-haiku"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "zai-org/GLM-4.7-Flash",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GLM-4.7-Flash"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "gemini-2.5-flash-preview",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-flash-preview"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "google/gemma-3-12b-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-3-12b-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "gemini-2.0-flash-001",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.0-flash-001"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "google/gemma-4-E4B-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-4-E4B-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "google/gemma-3-4b-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-3-4b-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "gpt-4.1-nano",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-4.1-nano"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "gpt-4o-mini",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-4o-mini"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "meta-llama/llama-3.1-405b-instruct",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:llama-3.1-405b-instruct"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "google/gemma-2-9b-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-2-9b-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "meta-llama/llama-3.1-70b-instruct",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:llama-3.1-70b-instruct"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "openai/gpt-4-0314",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-4"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "anthropic/claude-3-haiku",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-3-haiku"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "meta-llama/llama-3.1-8b-instruct",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:llama-3.1-8b-instruct"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "gpt-5-nano-2025-08-07",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5-nano"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "meta-llama/llama-3.2-3b-instruct",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:llama-3.2-3b-instruct"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "openai/gpt-3.5-turbo-0613",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-3.5-turbo"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "meta-llama/llama-3.2-1b-instruct",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:llama-3.2-1b-instruct"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "moonshotai/Kimi-K2.5",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Kimi-K2.5"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "claude-opus-4.1",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-opus-4.1"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "moonshotai/Kimi-K2-Thinking",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Kimi-K2"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "moonshotai/Kimi-K2-Instruct",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Kimi-K2-Instruct"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "gpt-5-chat-latest-2025-08-07",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5-chat-latest"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "Qwen3-Max-2025-09-24",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen3-Max"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "zai-org/GLM-4.7",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GLM-4.7"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "moonshotai/Kimi-K2-Instruct-0905",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Kimi-K2-Instruct"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-V3.1",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek-V3.1"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-V3-0324",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek-V3"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-R1",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek-R1"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-R1-0528",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek-R1"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "gemini-2.5-pro-preview-03-25",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-pro-preview-03-25"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "claude-sonnet-4",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-sonnet-4"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "claude-3.5-sonnet",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-3.5-sonnet"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "claude-3-7-sonnet-20250219",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-3-7-sonnet"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "Qwen/Qwen3-235B-A22B-Instruct-2507",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen3-235B-A22B-Instruct-2507"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "zai-org/GLM-4.6",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GLM-4.6"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "gpt-5-mini-2025-08-07",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5-mini"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "zai-org/GLM-4.5",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GLM-4.5"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "gemini-2.5-pro-preview-06-05",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-pro-preview-06-05"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "Qwen3-Max-2025-09-05",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen3-Max"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-V3.2-Speciale",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek-V3.2-Speciale"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "google/gemini-2.5-flash-preview-05-20",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-flash-preview-05-20"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "zai-org/GLM-4.7-Flash",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GLM-4.7-Flash"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "grok-4",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:grok-4"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "google/gemma-3-27b-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-3-27b-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "google/gemma-3-12b-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-3-12b-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "qwen/qwen3-32b",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-32b"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "grok-4.1-fast",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:grok-4.1-fast"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "qwen/qwq-32b",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwq-32b"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "qwen/qwen3-14b",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-14b"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "qwen/qwen3-30b-a3b",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-30b-a3b"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "google/gemma-3-4b-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-3-4b-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "gpt-4.1-nano",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-4.1-nano"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "Qwen/Qwen3-Next-80B-A3B-Instruct",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen3-Next-80B-A3B-Instruct"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "gpt-5-nano-2025-08-07",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5-nano"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "qwen/qwen3-4b",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-4b"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "Qwen/Qwen3.5-27B",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen3.5-27B"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "Qwen/Qwen3.5-35B-A3B",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen3.5-35B-A3B"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "gpt-5.3-chat",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5.3-chat"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "google/gemma-4-31B-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-4-31B-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "google/gemma-4-26B-A4B-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-4-26B-A4B-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-V4-Pro",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "ambiguous_mode_requires_explicit_effort:deepseek-v4-pro"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "google/gemma-4-12B-it",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemma-4-12B-it"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "lechmazur_writing",
-    "rawModelName": "Claude Sonnet 4.6 Thinking 16K",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "manual_token_budget_distinct_from_effort:16K"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "lechmazur_writing",
-    "rawModelName": "Claude Opus 4.6 Thinking 16K",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "manual_token_budget_distinct_from_effort:16K"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "lechmazur_writing",
-    "rawModelName": "DeepSeek V4 Pro Preview",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "ambiguous_mode_requires_explicit_effort:deepseek-v4-pro"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "lechmazur_writing",
-    "rawModelName": "Qwen 3 Max Preview",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen 3 Max Preview"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "lechmazur_writing",
-    "rawModelName": "Qwen 3.6 Max Preview",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen 3.6 Max Preview"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "lechmazur_writing",
-    "rawModelName": "Kimi K2.5 Thinking",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Kimi K2.5"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "lechmazur_writing",
-    "rawModelName": "Qwen 3.6 Plus",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen 3.6 Plus"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "GPT 5 Pro high",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GPT 5 Pro"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "o3-pro",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:o3-pro"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
+    "sourceId": "surge",
+    "benchmarkId": "surge_corecraft",
     "rawModelName": "Kimi K2.5",
-    "rawProvider": "moonshot",
+    "rawProvider": "Kimi",
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:Kimi K2.5"
   },
   {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "GPT 5.2 Pro",
-    "rawProvider": "openai",
+    "sourceId": "surge",
+    "benchmarkId": "surge_corecraft",
+    "rawModelName": "Qwen 3 Max",
+    "rawProvider": "Qwen",
     "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GPT 5.2 Pro"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "Kimi K2 Thinking",
-    "rawProvider": "moonshot",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Kimi K2"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "o4-mini high",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:o4-mini"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "Qwen3-235B-A22B-Instruct-2507",
-    "rawProvider": "alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen3-235B-A22B-Instruct-2507"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "Gemini 2.5 Pro",
-    "rawProvider": "google",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Gemini 2.5 Pro"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "Gemini 2.5 Flash",
-    "rawProvider": "google",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Gemini 2.5 Flash"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "Kimi K2",
-    "rawProvider": "moonshot",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Kimi K2"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "Claude Opus 4.1 high",
-    "rawProvider": "anthropic",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Claude Opus 4.1"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "DeepSeek V3.1",
-    "rawProvider": "deepseek",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek V3.1"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "GPT-4.1",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GPT-4.1"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "DeepSeek R1 0528",
-    "rawProvider": "deepseek",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek R1"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_finance",
-    "rawModelName": "GPT-4.1 mini",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GPT-4.1 mini"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "GPT 5 Pro high",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GPT 5 Pro"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "o3-pro",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:o3-pro"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "GPT 5.2 Pro",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GPT 5.2 Pro"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "Kimi K2.5",
-    "rawProvider": "moonshot",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Kimi K2.5"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "Gemini 2.5 Pro",
-    "rawProvider": "google",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Gemini 2.5 Pro"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "Gemini 2.5 Flash",
-    "rawProvider": "google",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Gemini 2.5 Flash"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "Kimi K2 Thinking",
-    "rawProvider": "moonshot",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Kimi K2"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "Qwen3-235B-A22B-Instruct-2507",
-    "rawProvider": "alibaba",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Qwen3-235B-A22B-Instruct-2507"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "o4-mini high",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:o4-mini"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "DeepSeek V3.1",
-    "rawProvider": "deepseek",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek V3.1"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "DeepSeek R1 0528",
-    "rawProvider": "deepseek",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:DeepSeek R1"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "GPT-4.1",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GPT-4.1"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "Kimi K2",
-    "rawProvider": "moonshot",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Kimi K2"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "Claude Opus 4.1 high",
-    "rawProvider": "anthropic",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:Claude Opus 4.1"
-  },
-  {
-    "sourceId": "scale-seal",
-    "benchmarkId": "scale_prbench_legal",
-    "rawModelName": "GPT-4.1 mini",
-    "rawProvider": "openai",
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:GPT-4.1 mini"
+    "reason": "unresolved_allowlisted_model:Qwen 3 Max"
   },
   {
     "sourceId": "designarena",
@@ -5386,6 +3666,22 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_3d",
+    "rawModelName": "deepseek-v4-flash",
+    "rawProvider": "deepseek",
+    "rawHarness": "Direct API",
+    "reason": "ambiguous_alias_collision:deepseek:deepseek-v4-flash:high:direct:native"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "deepseek-v4-flash-0731",
+    "rawProvider": "deepseek",
+    "rawHarness": "Direct API",
+    "reason": "ambiguous_alias_collision:deepseek:deepseek-v4-flash:high:direct:native"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
     "rawModelName": "deepseek-v4-flash",
     "rawProvider": "deepseek",
     "rawHarness": "Direct API",
@@ -5435,38 +3731,6 @@
     "sourceId": "designarena",
     "benchmarkId": "designarena_website",
     "rawModelName": "deepseek-v4-flash",
-    "rawProvider": "deepseek",
-    "rawHarness": "Direct API",
-    "reason": "ambiguous_alias_collision:deepseek:deepseek-v4-flash:high:direct:native"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-V4-Flash",
-    "rawProvider": "deepseek",
-    "rawHarness": "Direct API",
-    "reason": "ambiguous_alias_collision:deepseek:deepseek-v4-flash:high:direct:native"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_creative_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-V4-Flash-0731",
-    "rawProvider": "deepseek",
-    "rawHarness": "Direct API",
-    "reason": "ambiguous_alias_collision:deepseek:deepseek-v4-flash:high:direct:native"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-V4-Flash",
-    "rawProvider": "deepseek",
-    "rawHarness": "Direct API",
-    "reason": "ambiguous_alias_collision:deepseek:deepseek-v4-flash:high:direct:native"
-  },
-  {
-    "sourceId": "writing-feeds",
-    "benchmarkId": "eqbench_longform_writing",
-    "rawModelName": "deepseek-ai/DeepSeek-V4-Flash-0731",
     "rawProvider": "deepseek",
     "rawHarness": "Direct API",
     "reason": "ambiguous_alias_collision:deepseek:deepseek-v4-flash:high:direct:native"

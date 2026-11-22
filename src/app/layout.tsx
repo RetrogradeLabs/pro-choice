@@ -38,6 +38,8 @@ export const metadata: Metadata = {
   keywords: [
     "LLM leaderboard",
     "AI model rankings",
+    "private LLM benchmarks",
+    "contamination-free AI benchmarks",
     "frontier LLM benchmarks",
     "coding agent harness benchmark",
     "LLM cost comparison",

@@ -79,12 +79,12 @@ export function buildHomeSummaries(
   const harnessCount = pooledSlice?.entries.length ?? 0;
 
   const taglines: Record<DomainId, string> = {
-    coding: "Multi-file engineering, SRE operations, code migration, and scientific coding.",
-    writing: "Creative fiction, longform narrative, and constrained professional writing.",
-    design_code: "Web apps, visual UI debugging, vector SVG, 3D, and motion graphics.",
+    coding: "Private repo engineering, systems ops, code migration, and live agentic coding.",
+    writing: "Live blind-arena creative writing rated by human pairwise comparisons.",
+    design_code: "Live web, SVG, 3D, interactive UI, and data visualization arenas.",
     research: "Long-context retrieval, frontier science, finance, legal, and biomedical research.",
-    cyber: "Vulnerability detection, CVE patching, and attack-defense CTF.",
-    harnesses: "Coding agents compared on fixed test models and full stacks.",
+    cyber: "Held-out CVE patching, private detection, and live attack-defense CTF.",
+    harnesses: "Coding agents compared on fixed test models and private stacks.",
   };
 
   return DOMAINS.map((meta) => {

@@ -95,7 +95,7 @@ function livebenchCostRowsEqual(a: Record<string, string>, b: Record<string, str
 
 export const livebenchAdapter: SourceAdapter = {
   id: "livebench",
-  label: "LiveBench 2.0 Long-Agentic",
+  label: "LiveBench 2.0 Contamination-Free Suite",
   license: "Apache-2.0",
   sourceUrl: LIVEBENCH_URL,
   expectedBenchmarks: LIVEBENCH_SPECS.map((s) => s.benchmarkId),

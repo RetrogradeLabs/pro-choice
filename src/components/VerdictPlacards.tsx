@@ -45,7 +45,7 @@ function resolveDisplayHarnessName(cfg: EvaluatedConfig): string | null {
   }
   if (cfg.harness === "multi-harness") {
     const primary =
-      cfg.benchmarks.find((b) => b.benchmarkId === "tbench_4_1")?.observedHarness ??
+      cfg.benchmarks.find((b) => b.benchmarkId === "aa_agent_frontiercode")?.observedHarness ??
       cfg.benchmarks.find((b) => b.observedHarness && b.observedHarness !== "Direct API")
         ?.observedHarness;
     return primary ?? "Multi-harness";

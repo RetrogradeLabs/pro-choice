@@ -24,14 +24,6 @@ const SURGE_FEEDS: readonly SurgeFeedSpec[] = [
     isElo: false,
   },
   {
-    slug: "complex-constraints",
-    benchmarkId: "surge_complex_constraints",
-    version: "1.1",
-    domainId: "writing",
-    harnessRegime: "native",
-    isElo: false,
-  },
-  {
     slug: "gdp-xlsx",
     benchmarkId: "surge_gdp_xlsx",
     version: "1.0",
@@ -58,6 +50,14 @@ const SURGE_FEEDS: readonly SurgeFeedSpec[] = [
   {
     slug: "dayjob-healthcare",
     benchmarkId: "surge_dayjob_healthcare",
+    version: "1.0",
+    domainId: "research",
+    harnessRegime: "native",
+    isElo: false,
+  },
+  {
+    slug: "enterprisebench-corecraft",
+    benchmarkId: "surge_corecraft",
     version: "1.0",
     domainId: "research",
     harnessRegime: "native",

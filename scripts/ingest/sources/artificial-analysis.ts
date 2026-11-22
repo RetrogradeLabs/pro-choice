@@ -23,12 +23,10 @@ import type { PartitionStats, SourceAdapter } from "../types.ts";
 
 const AA_MODELS_URL = "https://artificialanalysis.ai/leaderboards/models";
 const AA_BRIEFCASE_URL = "https://artificialanalysis.ai/evaluations/aa-briefcase";
-const AA_GDPVAL_URL = "https://artificialanalysis.ai/evaluations/gdpval-aa";
-const AA_CODE2VIDEO_URL = "https://artificialanalysis.ai/evaluations/code2video-aa";
 const AA_CODING_AGENTS_URL = "https://artificialanalysis.ai/agents/coding-agents";
 
 const MAX_ARENA_CI = 25;
-const MAX_RUBRIC_ELO_CI = 30;
+const EXPECTED_AA_AGENT_SUITE_COMPONENTS = 3;
 
 interface AaCodingAgentEval {
   datasetIndexName?: unknown;
@@ -50,10 +48,12 @@ interface AaCodingAgentRow {
   provider?: unknown;
   isRouter?: unknown;
   isUnavailable?: unknown;
+  evalCount?: unknown;
+  indexComponentCount?: unknown;
   model?: {
     name?: unknown;
     suffix?: unknown;
-    effort?: { slug?: unknown; label?: unknown } | null;
+    effort?: unknown;
   } | null;
   mean?: {
     costUsd?: unknown;
@@ -93,17 +93,6 @@ interface AaEvalModel {
     lower95ci?: number | null;
     upper95ci?: number | null;
   } | null;
-  gdpval?: number | null;
-  gdpvalBreakdown?: {
-    lower95ci?: number | null;
-    upper95ci?: number | null;
-  } | null;
-  code2videoElo?: number | null;
-  code2videoBreakdown?: {
-    elo?: number | null;
-    lower95ci?: number | null;
-    upper95ci?: number | null;
-  } | null;
 }
 
 interface BoundedScoreSpec {
@@ -116,7 +105,7 @@ interface BoundedScoreSpec {
   sourceUrl: string;
 }
 
-// Every entry below is a verified 0..1 accuracy fraction on Artificial Analysis
+// Every entry below is a verified strictly private 0..1 accuracy fraction on Artificial Analysis
 const AA_BOUNDED_SPECS: readonly BoundedScoreSpec[] = [
   {
     aaKey: "frontiercode-2-0",
@@ -128,58 +117,13 @@ const AA_BOUNDED_SPECS: readonly BoundedScoreSpec[] = [
     sourceUrl: "https://artificialanalysis.ai/evaluations/frontiercode-2-0",
   },
   {
-    aaKey: "terminalbench-4-0",
-    benchmarkId: "terminalbench_4_0",
-    version: "4.0",
-    domainId: "coding",
-    harnessRegime: "standardized",
-    observedHarness: "mini-SWE-agent",
-    sourceUrl: AA_MODELS_URL,
-  },
-  {
-    aaKey: "scicode",
-    benchmarkId: "scicode_aa",
-    version: "1.0",
-    domainId: "coding",
-    harnessRegime: "standardized",
-    observedHarness: "Direct API",
-    sourceUrl: AA_MODELS_URL,
-  },
-  {
     aaKey: "mlcr-aa",
     benchmarkId: "mlcr_aa",
     version: "1.0",
     domainId: "research",
     harnessRegime: "native",
     observedHarness: "Direct API",
-    sourceUrl: AA_MODELS_URL,
-  },
-  {
-    aaKey: "omniscience-accuracy",
-    benchmarkId: "aa_omniscience",
-    version: "1.1",
-    domainId: "research",
-    harnessRegime: "native",
-    observedHarness: "Direct API",
-    sourceUrl: AA_MODELS_URL,
-  },
-  {
-    aaKey: "gdp-pdf",
-    benchmarkId: "gdp_pdf",
-    version: "1.0",
-    domainId: "research",
-    harnessRegime: "native",
-    observedHarness: "Direct API",
-    sourceUrl: AA_MODELS_URL,
-  },
-  {
-    aaKey: "hle-diamond",
-    benchmarkId: "hle_diamond",
-    version: "1.0",
-    domainId: "research",
-    harnessRegime: "native",
-    observedHarness: "Direct API",
-    sourceUrl: AA_MODELS_URL,
+    sourceUrl: "https://artificialanalysis.ai/evaluations/mlcr-aa",
   },
   {
     aaKey: "critpt-v2-hard",
@@ -188,16 +132,7 @@ const AA_BOUNDED_SPECS: readonly BoundedScoreSpec[] = [
     domainId: "research",
     harnessRegime: "native",
     observedHarness: "Stirrup",
-    sourceUrl: AA_MODELS_URL,
-  },
-  {
-    aaKey: "terminal-bench-science",
-    benchmarkId: "terminalbench_science_aa",
-    version: "0.1",
-    domainId: "research",
-    harnessRegime: "native",
-    observedHarness: "mini-SWE-agent",
-    sourceUrl: "https://artificialanalysis.ai/evaluations/terminal-bench-science",
+    sourceUrl: "https://artificialanalysis.ai/evaluations/critpt-v2",
   },
   {
     aaKey: "aa-analyst-agent",
@@ -218,13 +153,13 @@ const AA_BOUNDED_SPECS: readonly BoundedScoreSpec[] = [
     sourceUrl: "https://artificialanalysis.ai/evaluations/mka",
   },
   {
-    aaKey: "vials-aa",
-    benchmarkId: "aa_vials",
-    version: "1.0",
+    aaKey: "harvey-lab-aa",
+    benchmarkId: "aa_harvey_lab",
+    version: "1.1",
     domainId: "research",
     harnessRegime: "native",
     observedHarness: "Stirrup",
-    sourceUrl: "https://artificialanalysis.ai/evaluations/vials-aa",
+    sourceUrl: "https://artificialanalysis.ai/evaluations/harvey-lab-aa",
   },
 ];
 
@@ -496,33 +431,21 @@ export const artificialAnalysisAdapter: SourceAdapter = {
   sourceUrl: AA_MODELS_URL,
   expectedBenchmarks: [
     "frontiercode_2_0",
-    "terminalbench_4_0",
-    "scicode_aa",
-    "aa_code2video",
     "aa_briefcase",
-    "gdpval_aa",
     "mlcr_aa",
-    "aa_omniscience",
-    "gdp_pdf",
-    "hle_diamond",
     "critpt_v2_hard",
-    "terminalbench_science_aa",
     "aa_analyst_agent",
     "aa_mka",
-    "aa_vials",
+    "aa_harvey_lab",
     "aa_agent_frontiercode",
-    "aa_agent_swe_atlas",
   ],
   expectsPricing: false,
   async fetchLive(nowIso) {
-    const [modelsRes, briefcaseRes, gdpvalRes, code2videoRes, codingAgentsRes] =
-      await Promise.allSettled([
-        fetchText(AA_MODELS_URL, { rejectRedirects: false }),
-        fetchText(AA_BRIEFCASE_URL, { rejectRedirects: false }),
-        fetchText(AA_GDPVAL_URL, { rejectRedirects: false }),
-        fetchText(AA_CODE2VIDEO_URL, { rejectRedirects: false }),
-        fetchText(AA_CODING_AGENTS_URL, { rejectRedirects: false }),
-      ]);
+    const [modelsRes, briefcaseRes, codingAgentsRes] = await Promise.allSettled([
+      fetchText(AA_MODELS_URL, { rejectRedirects: false }),
+      fetchText(AA_BRIEFCASE_URL, { rejectRedirects: false }),
+      fetchText(AA_CODING_AGENTS_URL, { rejectRedirects: false }),
+    ]);
 
     const partitionStats: Record<string, PartitionStats> = {};
     const ensureStat = (bmId: string): PartitionStats => {
@@ -532,13 +455,8 @@ export const artificialAnalysisAdapter: SourceAdapter = {
       return partitionStats[bmId]!;
     };
 
-    type MergedEvalRow = Omit<
-      AaEvalModel,
-      "briefcaseBreakdown" | "gdpvalBreakdown" | "code2videoBreakdown"
-    > & {
+    type MergedEvalRow = Omit<AaEvalModel, "briefcaseBreakdown"> & {
       briefcaseBreakdown?: AccumulatedInterval | null;
-      gdpvalBreakdown?: AccumulatedInterval | null;
-      code2videoBreakdown?: AccumulatedInterval | null;
       rowConflict?: boolean;
     };
 
@@ -546,13 +464,11 @@ export const artificialAnalysisAdapter: SourceAdapter = {
     const evalIdentityById = new Map<string, VerifiedEvalIdentity>();
     const evalIdsByPage = new Map<string, Set<string>>();
     const briefcaseRows: MergedEvalRow[] = [];
-    const gdpvalRows: MergedEvalRow[] = [];
-    const code2videoRows: MergedEvalRow[] = [];
 
     // Keep Elo eval rows isolated per page while detecting same-page and cross-page conflicts order-independently
     const ingestEvalPage = (
       res: PromiseSettledResult<string>,
-      bmId: "aa_briefcase" | "gdpval_aa" | "aa_code2video",
+      bmId: "aa_briefcase",
       targetRows: MergedEvalRow[],
     ): number => {
       const st = ensureStat(bmId);
@@ -605,30 +521,12 @@ export const artificialAnalysisAdapter: SourceAdapter = {
         const breakdownBcElo = parseNumeric(ev.briefcaseBreakdown?.elo);
         const prevBcElo = parseNumeric(prevRow?.briefcaseElo ?? prevRow?.briefcaseBreakdown?.elo);
         const nextBcElo = topBcElo ?? breakdownBcElo;
-        const prevGvElo = parseNumeric(prevRow?.gdpval);
-        const nextGvElo = parseNumeric(ev.gdpval);
-        const topC2vElo = parseNumeric(ev.code2videoElo);
-        const breakdownC2vElo = parseNumeric(ev.code2videoBreakdown?.elo);
-        const prevC2vElo = parseNumeric(
-          prevRow?.code2videoElo ?? prevRow?.code2videoBreakdown?.elo,
-        );
-        const nextC2vElo = topC2vElo ?? breakdownC2vElo;
         const bcInterval = mergeIntervalBounds(prevRow?.briefcaseBreakdown, ev.briefcaseBreakdown);
-        const gvInterval = mergeIntervalBounds(prevRow?.gdpvalBreakdown, ev.gdpvalBreakdown);
-        const c2vInterval = mergeIntervalBounds(
-          prevRow?.code2videoBreakdown,
-          ev.code2videoBreakdown,
-        );
         const metricConflict =
           Boolean(prevRow?.rowConflict) ||
           numericDisagrees(topBcElo, breakdownBcElo) ||
           numericDisagrees(prevBcElo, nextBcElo) ||
-          numericDisagrees(prevGvElo, nextGvElo) ||
-          numericDisagrees(topC2vElo, breakdownC2vElo) ||
-          numericDisagrees(prevC2vElo, nextC2vElo) ||
-          bcInterval.conflict ||
-          gvInterval.conflict ||
-          c2vInterval.conflict;
+          bcInterval.conflict;
 
         const resolvedCreator = ev.creator?.name ? ev.creator : prevRow?.creator;
         pageRowById.set(evId, {
@@ -640,10 +538,6 @@ export const artificialAnalysisAdapter: SourceAdapter = {
           effort: ev.effort?.slug ? ev.effort : (prevRow?.effort ?? null),
           briefcaseElo: nextBcElo ?? prevBcElo ?? null,
           briefcaseBreakdown: bcInterval.chosen,
-          gdpval: nextGvElo ?? prevGvElo ?? null,
-          gdpvalBreakdown: gvInterval.chosen,
-          code2videoElo: nextC2vElo ?? prevC2vElo ?? null,
-          code2videoBreakdown: c2vInterval.chosen,
           rowConflict: metricConflict,
         });
 
@@ -670,14 +564,8 @@ export const artificialAnalysisAdapter: SourceAdapter = {
     };
 
     const briefcaseCount = ingestEvalPage(briefcaseRes, "aa_briefcase", briefcaseRows);
-    const gdpvalCount = ingestEvalPage(gdpvalRes, "gdpval_aa", gdpvalRows);
-    const code2videoCount = ingestEvalPage(code2videoRes, "aa_code2video", code2videoRows);
 
-    const evalOrCyberJoinedIds = new Set<string>([
-      ...(evalIdsByPage.get("aa_briefcase") ?? []),
-      ...(evalIdsByPage.get("gdpval_aa") ?? []),
-      ...(evalIdsByPage.get("aa_code2video") ?? []),
-    ]);
+    const evalOrCyberJoinedIds = new Set<string>(evalIdsByPage.get("aa_briefcase") ?? []);
 
     let leaderboardModels: AaLeaderboardModel[] = [];
     let modelsParseError: string | null = null;
@@ -721,11 +609,11 @@ export const artificialAnalysisAdapter: SourceAdapter = {
       return ident?.canonicalTier ?? normalizeAaEffort(suffix, effortSlug);
     };
 
-    // Allow bounded AA scores to proceed per row using surviving eval metadata and explicit suffixes if at least one eval page succeeded
+    // Allow bounded AA scores to proceed per row using surviving eval metadata and explicit suffixes
     let evalMetadataError =
       modelsParseError ??
-      (briefcaseCount === 0 && gdpvalCount === 0 && code2videoCount === 0
-        ? `effort metadata unavailable (briefcase: ${partitionStats.aa_briefcase?.error ?? "empty"}; gdpval: ${partitionStats.gdpval_aa?.error ?? "empty"}; code2video: ${partitionStats.aa_code2video?.error ?? "empty"})`
+      (briefcaseCount === 0
+        ? `effort metadata unavailable (briefcase: ${partitionStats.aa_briefcase?.error ?? "empty"})`
         : null);
 
     if (modelsRes.status === "fulfilled" && !evalMetadataError) {
@@ -737,32 +625,20 @@ export const artificialAnalysisAdapter: SourceAdapter = {
       const briefcaseJoinCount = [...(evalIdsByPage.get("aa_briefcase") ?? [])].filter((id) =>
         lbIds.has(id),
       ).length;
-      const gdpvalJoinCount = [...(evalIdsByPage.get("gdpval_aa") ?? [])].filter((id) =>
-        lbIds.has(id),
-      ).length;
-      const code2videoJoinCount = [...(evalIdsByPage.get("aa_code2video") ?? [])].filter((id) =>
-        lbIds.has(id),
-      ).length;
       const parsedLbEffortCount = leaderboardModels.filter((m) => {
         if (!m || typeof m !== "object") return false;
         const slug = m.effort && typeof m.effort === "object" ? cleanString(m.effort.slug) : null;
         return normalizeAaEffort(m.suffix, slug) !== null;
       }).length;
-      if (
-        lbIds.size > 0 &&
-        ((briefcaseCount > 0 && briefcaseJoinCount === 0) ||
-          (gdpvalCount > 0 && gdpvalJoinCount === 0) ||
-          (code2videoCount > 0 && code2videoJoinCount === 0))
-      ) {
-        evalMetadataError = `AA eval metadata IDs failed leaderboard join (briefcase=${briefcaseJoinCount}, gdpval=${gdpvalJoinCount}, code2video=${code2videoJoinCount})`;
+      if (lbIds.size > 0 && briefcaseCount > 0 && briefcaseJoinCount === 0) {
+        evalMetadataError = `AA eval metadata IDs failed leaderboard join (briefcase=${briefcaseJoinCount})`;
       } else if (leaderboardModels.length > 0 && parsedLbEffortCount === 0) {
         evalMetadataError =
           "AA /leaderboards/models parsed 0 rows with suffix or effort.slug metadata (possible upstream schema rename)";
       }
 
       if (!evalMetadataError) {
-        const evalPartialOutage =
-          briefcaseCount === 0 || gdpvalCount === 0 || code2videoCount === 0;
+        const evalPartialOutage = briefcaseCount === 0;
         for (const m of leaderboardModels) {
           if (!m || typeof m !== "object") continue;
           const rowId = cleanString(m.id);
@@ -864,7 +740,7 @@ export const artificialAnalysisAdapter: SourceAdapter = {
       }
     }
 
-    // Emit Briefcase and GDPVal Elo scores strictly from each page's own interval and unified conflict-checked identity
+    // Emit Briefcase Elo scores strictly from its own interval and unified conflict-checked identity
     for (const ev of briefcaseRows) {
       const evId = cleanString(ev.id);
       const evName = cleanString(ev.name);
@@ -938,163 +814,12 @@ export const artificialAnalysisAdapter: SourceAdapter = {
       });
     }
 
-    for (const ev of gdpvalRows) {
-      const evId = cleanString(ev.id);
-      const evName = cleanString(ev.name);
-      if (!evId || !evName) continue;
-      const gv = ev.gdpvalBreakdown;
-      const gvElo = parseNumeric(ev.gdpval);
-      if (gvElo === null) continue;
-
-      const st = ensureStat("gdpval_aa");
-      st.attempted++;
-      const ident = evalIdentityById.get(evId);
-      if (ident?.gatedDaybreak) {
-        st.excluded++;
-        continue;
-      }
-      if (ev.rowConflict || ident?.conflict) {
-        st.rejected++;
-        continue;
-      }
-      const gvLow = parseNumeric(gv?.lower95ci);
-      const gvHigh = parseNumeric(gv?.upper95ci);
-      if (
-        !gv?.hasComplete ||
-        gvLow === null ||
-        gvHigh === null ||
-        gvHigh <= gvLow ||
-        gvElo < gvLow - 0.01 ||
-        gvElo > gvHigh + 0.01
-      ) {
-        st.rejected++;
-        continue;
-      }
-      const rawCiHalf = (gvHigh - gvLow) / 2;
-      if (rawCiHalf > MAX_ARENA_CI) {
-        st.excluded++;
-        continue;
-      }
-      const roundedCiHalf = Number(rawCiHalf.toFixed(4));
-      if (!(roundedCiHalf > 0)) {
-        st.rejected++;
-        continue;
-      }
-      const fallbackRouting =
-        (ident?.fallbackRouting ?? false) ||
-        isAaFallbackRoutingLabel(evName, ev.suffix, ev.effort?.slug);
-      observations.push({
-        sourceId: "artificial-analysis",
-        sourceRowId: `aa:gdpval_aa:${evId}`,
-        benchmarkId: "gdpval_aa",
-        benchmarkVersion: "2.1",
-        domainId: "research",
-        rawModelName: evName,
-        rawProvider: cleanString(ev.creator?.name),
-        rawEffort: emitEffortForId(evId, ev.suffix, ev.effort?.slug),
-        rawHarness: null,
-        observedHarness: "Stirrup",
-        harnessRegime: "native",
-        rawScore: Number(gvElo.toFixed(2)),
-        ciHalfWidth: Number(rawCiHalf.toFixed(4)),
-        ciLower: Number(gvLow.toFixed(4)),
-        ciUpper: Number(gvHigh.toFixed(4)),
-        battleCount: null,
-        measuredCostUsd: null,
-        ...(fallbackRouting ? { fallbackRouting: true } : {}),
-        suiteCostUsd: null,
-        measuredInputTokens: null,
-        measuredOutputTokens: null,
-        evalDate: null,
-        publishedDate: null,
-        sourceUrl: AA_GDPVAL_URL,
-      });
-    }
-
-    for (const ev of code2videoRows) {
-      const evId = cleanString(ev.id);
-      const evName = cleanString(ev.name);
-      if (!evId || !evName) continue;
-      const c2v = ev.code2videoBreakdown;
-      const c2vElo = parseNumeric(ev.code2videoElo ?? c2v?.elo);
-      if (c2vElo === null) continue;
-
-      const st = ensureStat("aa_code2video");
-      st.attempted++;
-      const ident = evalIdentityById.get(evId);
-      if (ident?.gatedDaybreak) {
-        st.excluded++;
-        continue;
-      }
-      if (ev.rowConflict || ident?.conflict) {
-        st.rejected++;
-        continue;
-      }
-      const c2vLow = parseNumeric(c2v?.lower95ci);
-      const c2vHigh = parseNumeric(c2v?.upper95ci);
-      if (
-        !c2v?.hasComplete ||
-        c2vLow === null ||
-        c2vHigh === null ||
-        c2vHigh <= c2vLow ||
-        c2vElo < c2vLow - 0.01 ||
-        c2vElo > c2vHigh + 0.01
-      ) {
-        st.rejected++;
-        continue;
-      }
-      const rawCiHalf = (c2vHigh - c2vLow) / 2;
-      if (rawCiHalf > MAX_RUBRIC_ELO_CI) {
-        st.excluded++;
-        continue;
-      }
-      const roundedCiHalf = Number(rawCiHalf.toFixed(4));
-      if (!(roundedCiHalf > 0)) {
-        st.rejected++;
-        continue;
-      }
-      const fallbackRouting =
-        (ident?.fallbackRouting ?? false) ||
-        isAaFallbackRoutingLabel(evName, ev.suffix, ev.effort?.slug);
-      observations.push({
-        sourceId: "artificial-analysis",
-        sourceRowId: `aa:aa_code2video:${evId}`,
-        benchmarkId: "aa_code2video",
-        benchmarkVersion: "1.0",
-        domainId: "design_code",
-        rawModelName: evName,
-        rawProvider: cleanString(ev.creator?.name),
-        rawEffort: emitEffortForId(evId, ev.suffix, ev.effort?.slug),
-        rawHarness: null,
-        observedHarness: "Stirrup",
-        harnessRegime: "native",
-        rawScore: Number(c2vElo.toFixed(2)),
-        ciHalfWidth: Number(rawCiHalf.toFixed(4)),
-        ciLower: Number(c2vLow.toFixed(4)),
-        ciUpper: Number(c2vHigh.toFixed(4)),
-        battleCount: null,
-        measuredCostUsd: null,
-        ...(fallbackRouting ? { fallbackRouting: true } : {}),
-        suiteCostUsd: null,
-        measuredInputTokens: null,
-        measuredOutputTokens: null,
-        evalDate: null,
-        publishedDate: null,
-        sourceUrl: AA_CODE2VIDEO_URL,
-      });
-    }
-
-    // Emit independent AA Coding Agent sub-evals (FrontierCode 2.0 & SWE-Atlas-QnA, excluding TB 4.1 to avoid double-counting)
+    // Emit strictly private AA Coding Agent sub-eval (FrontierCode 2.0, excluding public TB 4.1 and SWE-Atlas)
     const AA_AGENT_SUB_SPECS = [
       {
         datasetIndexName: "frontiercode-v2.0",
         benchmarkId: "aa_agent_frontiercode",
         version: "2.0",
-      },
-      {
-        datasetIndexName: "swe-atlas-qna",
-        benchmarkId: "aa_agent_swe_atlas",
-        version: "1.0",
       },
     ] as const;
     const disqualifiedByBenchmark: Record<string, string[]> = {};
@@ -1125,15 +850,27 @@ export const artificialAnalysisAdapter: SourceAdapter = {
             const agentName = cleanString(row.agentName);
             const modelName = cleanString(row.model?.name);
             const provider = cleanString(row.provider);
-            const effortSlug = cleanString(row.model?.effort?.slug);
-            const effortSuffix = cleanString(row.model?.suffix);
+            const rawEffortObj = row.model?.effort;
+            const malformedEffortObj =
+              rawEffortObj !== undefined &&
+              rawEffortObj !== null &&
+              (typeof rawEffortObj !== "object" ||
+                hasMalformedOptionalString((rawEffortObj as { slug?: unknown }).slug));
+            const malformedAgentMeta =
+              hasMalformedOptionalString(row.model?.suffix) || malformedEffortObj;
+            const effortSlug =
+              !malformedEffortObj && rawEffortObj && typeof rawEffortObj === "object"
+                ? cleanString((rawEffortObj as { slug?: unknown }).slug)
+                : null;
+            const effortSuffix = malformedAgentMeta ? null : cleanString(row.model?.suffix);
             if (!rowId || !agentName || !modelName || !Array.isArray(row.evals)) continue;
             const resolvedEff = resolveRowCanonicalEffort(modelName, effortSuffix, effortSlug);
-            const effortStr = resolvedEff.conflict
-              ? null
-              : (resolvedEff.manualBudget ??
-                resolvedEff.tier ??
-                normalizeAaEffort(effortSuffix, effortSlug));
+            const effortStr =
+              malformedAgentMeta || resolvedEff.conflict
+                ? null
+                : (resolvedEff.manualBudget ??
+                  resolvedEff.tier ??
+                  normalizeAaEffort(effortSuffix, effortSlug));
             const isGated = isAaDaybreakLabel(modelName, effortSuffix, effortSlug);
             const hasFallbackLabel = isAaFallbackRoutingLabel(modelName, effortSuffix, effortSlug);
 
@@ -1150,11 +887,16 @@ export const artificialAnalysisAdapter: SourceAdapter = {
                 st.excluded++;
                 continue;
               }
-              if (resolvedEff.conflict || reward < 0 || reward > 1) {
+              if (malformedAgentMeta || resolvedEff.conflict || reward < 0 || reward > 1) {
                 st.rejected++;
                 continue;
               }
               const fallbackCount = parseNumeric(ev?.safety?.fallbackAttemptCount) ?? 0;
+              // Emit suite cost only when all 3 AA coding-agent suite components ran so task-mix stays homogeneous
+              const fullSuiteParity =
+                row.evalCount === EXPECTED_AA_AGENT_SUITE_COMPONENTS &&
+                row.indexComponentCount === EXPECTED_AA_AGENT_SUITE_COMPONENTS;
+              const agentSuiteCost = fullSuiteParity ? parsePositive(row.mean?.costUsd) : null;
               const sourceRowId = `aa:${spec.benchmarkId}:${rowId}`;
               const obs: RawObservation = {
                 sourceId: "artificial-analysis",
@@ -1175,7 +917,7 @@ export const artificialAnalysisAdapter: SourceAdapter = {
                 battleCount: null,
                 measuredCostUsd: null,
                 ...(fallbackCount > 0 || hasFallbackLabel ? { fallbackRouting: true } : {}),
-                suiteCostUsd: null,
+                suiteCostUsd: agentSuiteCost !== null ? Number(agentSuiteCost.toFixed(6)) : null,
                 measuredInputTokens: null,
                 measuredOutputTokens: null,
                 evalDate: null,

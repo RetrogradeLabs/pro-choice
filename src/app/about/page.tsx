@@ -15,7 +15,7 @@ import {
 
 export const metadata: Metadata = {
   title: "About ProChoice",
-  description: `How Retrograde Labs compiles daily LLM and coding agent harness Pareto frontiers across ${BENCHMARKS.length} active benchmarks and 17 live public sources.`,
+  description: `How Retrograde Labs compiles daily LLM and coding agent harness Pareto frontiers across ${BENCHMARKS.length} private and live benchmarks from 13 live sources.`,
   alternates: {
     canonical: `${SITE_URL}/about`,
   },
@@ -41,22 +41,29 @@ export default async function AboutPage() {
           that cost more while scoring lower are removed from the default frontier so teams can pick
           the strongest option for a real budget in seconds.
         </p>
+        <p>
+          Benchmark contamination is the quieter failure underneath. Once a static public test set
+          leaks into training data, its score stops measuring real capability, and n-gram
+          deduplication or mirror removal only catches part of the leak. ProChoice excludes static
+          public datasets from every model composite index and relies on private held-out
+          evaluations and live arenas whose tasks post-date training.
+        </p>
       </section>
 
       <section className="space-y-3">
         <h2 className="font-display text-[22px] font-normal text-(--ink)">Methodology in brief</h2>
         <p>
-          Each day, ProChoice ingests 17 mandatory public benchmark and first-party pricing feeds
-          covering 9 model providers: Anthropic, OpenAI, Google, SpaceXAI, Meta, DeepSeek, Moonshot,
-          Alibaba, and Zhipu. All {BENCHMARKS.length} active benchmarks are strictly disjoint within
-          each domain and contribute directly to their domain composite with zero shadow candidates.
-          Scores align via provider-balanced anchor standardization, empirical reliability, frontier
-          discrimination, anchor breadth, and construct-family redundancy weights, and
-          measurement-only heteroscedastic REML Empirical Bayes denoising with cross-benchmark
-          joint-jackknife linking uncertainty. Missing task costs for non-retired models with
-          verified first-party API pricing are estimated on each domain&apos;s homogeneous cost axis
-          with active-set monotone effort regression and propagated through bootstrap Pareto
-          probabilities.
+          Each day, ProChoice ingests 13 mandatory benchmark and first-party pricing feeds covering
+          9 model providers: Anthropic, OpenAI, Google, SpaceXAI, Meta, DeepSeek, Moonshot, Alibaba,
+          and Zhipu. All {BENCHMARKS.length} active benchmarks across the six composite indices are
+          strictly private held-out or live benchmarks, disjoint within each domain, and contribute
+          directly with zero shadow candidates and zero static public test sets. Scores align via
+          provider-balanced anchor standardization, empirical reliability, frontier discrimination,
+          anchor breadth, and construct-family redundancy weights, and measurement-only
+          heteroscedastic REML Empirical Bayes denoising with cross-benchmark joint-jackknife
+          linking uncertainty. Missing task costs for non-retired models with verified first-party
+          API pricing are estimated on each domain&apos;s homogeneous cost axis with active-set
+          monotone effort regression and propagated through bootstrap Pareto probabilities.
         </p>
         <p>
           Controlled coding-agent harness evaluations live in their own{" "}

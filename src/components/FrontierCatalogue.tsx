@@ -117,7 +117,7 @@ export function FrontierCatalogue({
                     config.harness !== "multi-harness"
                     ? HARNESS_BY_ID[config.harness].name
                     : config.harness === "multi-harness"
-                      ? (config.benchmarks.find((b) => b.benchmarkId === "tbench_4_1")
+                      ? (config.benchmarks.find((b) => b.benchmarkId === "aa_agent_frontiercode")
                           ?.observedHarness ??
                         config.benchmarks.find(
                           (b) => b.observedHarness && b.observedHarness !== "Direct API",
@@ -335,7 +335,9 @@ export function FrontierCatalogue({
                                                     bm.refusalRate !== undefined &&
                                                     bm.refusalRate !== null &&
                                                     bm.refusalRate > 0
-                                                      ? `${Math.round(bm.refusalRate * 100)}% refused`
+                                                      ? bm.refusalRate * 100 < 0.5
+                                                        ? "<1% refused"
+                                                        : `${Math.round(bm.refusalRate * 100)}% refused`
                                                       : null,
                                                   ]
                                                     .filter(Boolean)

@@ -37,18 +37,15 @@ const PROVIDER_HEX: Readonly<Record<ProviderId, { light: string; dark: string }>
 };
 
 const CELL_COPY: Readonly<Record<DomainId, readonly [string, string]>> = {
-  coding: ["Multi-file engineering, SRE operations,", "code migration, and scientific coding."],
-  writing: ["Creative fiction, longform narrative,", "and constrained professional writing."],
-  design_code: ["Web apps, visual UI debugging, vector SVG,", "3D scenes, and motion graphics."],
+  coding: ["Private repo engineering, systems ops,", "code migration, and live agentic coding."],
+  writing: ["Live blind-arena creative writing rated", "by human pairwise comparisons."],
+  design_code: ["Live web, SVG, 3D, interactive UI,", "and data visualization blind arenas."],
   research: [
     "Long-context retrieval, frontier science,",
     "finance, legal, and biomedical research.",
   ],
-  cyber: ["Vulnerability detection, CVE patching,", "and attack-defense CTF benchmarks."],
-  harnesses: [
-    "Coding agent harnesses compared on fixed test",
-    "models and full model-plus-harness stacks.",
-  ],
+  cyber: ["Held-out CVE patching, private detection,", "and live attack-defense CTF matches."],
+  harnesses: ["Coding agent harnesses on private stacks", "and fixed open-model control suites."],
 };
 
 const CELL_GEOMETRY: Readonly<
@@ -400,7 +397,7 @@ function buildReadmeLiveSection(
           ? `${escapeMdCell(e.name)} at ${e.passRate.toFixed(1)}%, ${escapeMdCell(formatCost(e.costPerTrialUsd, "usd_per_task"))}`
           : "N/A";
       rows.push(
-        `| ${link} | ${bmCount} | ${fmtH(findPick(["Budget"]))} | ${fmtH(findPick(["Best value"]))} | ${fmtH(findPick(["Top score", "Top pick"]))} |`,
+        `| ${link} | ${bmCount} (+3 controlled) | ${fmtH(findPick(["Budget"]))} | ${fmtH(findPick(["Best value"]))} | ${fmtH(findPick(["Top score", "Top pick"]))} |`,
       );
       continue;
     }
@@ -439,7 +436,7 @@ function buildReadmeLiveSection(
   return [
     `## Live composite indices`,
     ``,
-    `Snapshot \`${snap.snapshotHash}\`, updated \`${dateStr}\` from ${snap.sources.length} live public benchmark and first-party pricing feeds across ${activeBenchmarkCount} active benchmarks with unique dataset lineages within each domain. Default model picks cover the five Western providers shown on initial load; toggle DeepSeek, Moonshot, Alibaba, and Zhipu on [prochoice.industries](https://prochoice.industries) to compare all nine.`,
+    `Snapshot \`${snap.snapshotHash}\`, updated \`${dateStr}\` from ${snap.sources.length} live benchmark and first-party pricing feeds across ${activeBenchmarkCount} active private and live benchmarks with unique dataset lineages within each domain. Default model picks cover the five Western providers shown on initial load; toggle DeepSeek, Moonshot, Alibaba, and Zhipu on [prochoice.industries](https://prochoice.industries) to compare all nine.`,
     ``,
     `| Composite index | Active benchmarks | Budget | Best value | Top score |`,
     `| :--- | :---: | :--- | :--- | :--- |`,

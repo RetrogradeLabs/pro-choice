@@ -46,7 +46,6 @@ import {
   sha256Hex,
   validateFrozenMajorEpochSnapshot,
 } from "./run.ts";
-import { MIN_TBENCH_4_1_TRIALS } from "./sources/tbench.ts";
 import type { CachedSourceFile } from "./types.ts";
 
 const DEFAULT_DATA_DIR = path.join(process.cwd(), "data");
@@ -215,18 +214,6 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
         );
       }
       obsCountByBm.set(obs.benchmarkId, (obsCountByBm.get(obs.benchmarkId) ?? 0) + 1);
-      if (
-        obs.benchmarkId === "tbench_4_1" &&
-        (obs.battleCount === null ||
-          !Number.isInteger(obs.battleCount) ||
-          obs.battleCount < MIN_TBENCH_4_1_TRIALS ||
-          obs.measuredCostUsd === null ||
-          obs.measuredCostUsd <= 0)
-      ) {
-        failures.push(
-          `Cache ${adapter.id}: persisted tbench_4_1 row '${obs.sourceRowId}' failed minimum ${MIN_TBENCH_4_1_TRIALS}-trial or positive-cost gate`,
-        );
-      }
     }
     for (const sf of cache.health.subFeeds) {
       const actualCount =
@@ -607,9 +594,9 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
             bmObs.every((o) => o.battleCount !== null && o.battleCount > 0)
           ) {
             const upstreamN = [...counts][0]!;
-            // Multi-repeat harnesses report total trials (e.g. TB 4.1 66x5=330); single-trial feeds must match exact task count
+            // Multi-repeat feeds report total rollouts (e.g. CWE-bench v2 Held-Out 150x4=600); single-trial feeds must match exact task count
             const validMultiRepeat =
-              bmId === "tbench_4_1" &&
+              bmId === "cwe_bench_v2" &&
               bMeta.sampleSize <= upstreamN &&
               upstreamN % bMeta.sampleSize === 0;
             if (!validMultiRepeat && bMeta.sampleSize !== upstreamN) {
@@ -686,10 +673,7 @@ export async function validateSnapshot(options: ValidateSnapshotOptions = {}): P
             liveMeta.sampleSize > 0 &&
             frozenStat.popoviciuSe !== undefined
           ) {
-            const expectedPopoviciu =
-              liveMeta.id === "scicode_aa"
-                ? 100 / (2 * Math.sqrt((288 * 288) / 1826))
-                : liveMeta.boundedMax / (2 * Math.sqrt(liveMeta.sampleSize));
+            const expectedPopoviciu = liveMeta.boundedMax / (2 * Math.sqrt(liveMeta.sampleSize));
             if (Math.abs(frozenStat.popoviciuSe - expectedPopoviciu) > 1e-3) {
               failures.push(
                 `${meta.id}: live registry sampleSize ${liveMeta.sampleSize} for '${expectedBmId}' implies Popoviciu SE ${expectedPopoviciu.toFixed(4)} !== frozen ${frozenStat.popoviciuSe.toFixed(4)}`,

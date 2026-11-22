@@ -124,7 +124,7 @@ function resolveHarnessName(cfg: EvaluatedConfig): string | null {
   }
   if (cfg.harness === "multi-harness") {
     return (
-      cfg.benchmarks.find((b) => b.benchmarkId === "tbench_4_1")?.observedHarness ??
+      cfg.benchmarks.find((b) => b.benchmarkId === "aa_agent_frontiercode")?.observedHarness ??
       cfg.benchmarks.find((b) => b.observedHarness && b.observedHarness !== "Direct API")
         ?.observedHarness ??
       "Multi-harness"

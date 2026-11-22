@@ -99,12 +99,8 @@ import { harnessLeaderboardAdapter } from "./sources/harness-leaderboard.ts";
 import { livebenchAdapter } from "./sources/livebench.ts";
 import { lmarenaAdapter } from "./sources/lmarena.ts";
 import { pricingAdapter } from "./sources/pricing.ts";
-import { scaleSealAdapter } from "./sources/scale-seal.ts";
 import { surgeAdapter } from "./sources/surge.ts";
-import { MIN_TBENCH_4_1_TRIALS, tbenchAdapter } from "./sources/tbench.ts";
 import { valsAdapter } from "./sources/vals.ts";
-import { vulcanbenchAdapter } from "./sources/vulcanbench.ts";
-import { writingFeedsAdapter } from "./sources/writing-feeds.ts";
 import type { CachedSourceFile, SourceAdapter } from "./types.ts";
 
 const DEFAULT_DATA_DIR = path.join(process.cwd(), "data");
@@ -316,14 +312,10 @@ export const MANDATORY_ADAPTERS: readonly SourceAdapter[] = [
   epochAdapter,
   frontierHarnessAdapter,
   lmarenaAdapter,
-  tbenchAdapter,
   harnessLeaderboardAdapter,
   livebenchAdapter,
   valsAdapter,
-  vulcanbenchAdapter,
   designarenaAdapter,
-  writingFeedsAdapter,
-  scaleSealAdapter,
   surgeAdapter,
   pricingAdapter,
 ];
@@ -648,22 +640,8 @@ export function extractAcceptedCellsFromSources(results: readonly CachedSourceFi
         if (obs.ciLower === null || obs.ciUpper === null || obs.ciUpper <= obs.ciLower) continue;
         const exactCiHalf = (obs.ciUpper - obs.ciLower) / 2;
         const maxEloCi =
-          bmMeta.id === "aa_briefcase" || bmMeta.id === "gdpval_aa"
-            ? MAX_ARENA_ELO_CI_HALF
-            : MAX_RUBRIC_ELO_CI_HALF;
+          bmMeta.id === "aa_briefcase" ? MAX_ARENA_ELO_CI_HALF : MAX_RUBRIC_ELO_CI_HALF;
         if (exactCiHalf <= 0 || exactCiHalf > maxEloCi) continue;
-      } else if (bmMeta.id === "lechmazur_writing") {
-        if (obs.ciLower === null || obs.ciUpper === null || obs.ciUpper <= obs.ciLower) continue;
-      } else if (bmMeta.id === "tbench_4_1") {
-        if (
-          obs.battleCount === null ||
-          !Number.isInteger(obs.battleCount) ||
-          obs.battleCount < MIN_TBENCH_4_1_TRIALS ||
-          obs.measuredCostUsd === null ||
-          obs.measuredCostUsd <= 0
-        ) {
-          continue;
-        }
       }
 
       const outcome = canonicalizeObservation(obs, dynamicAliases);

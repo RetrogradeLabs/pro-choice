@@ -1,6 +1,6 @@
 {
   "name": "pro-choice",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Open-source LLM leaderboard and coding agent harness benchmark comparing frontier AI models by composite score and real dollar cost across six domains.",
   "private": true,
   "license": "MIT",
