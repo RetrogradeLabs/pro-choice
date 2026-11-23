@@ -153,6 +153,8 @@ export function serializeJsonLd(payload: unknown): string {
     .replace(/\u2029/g, "\\u2029");
 }
 
+const CATALOG_NAME = "ProChoice Composite LLM and Harness Indices";
+
 function buildOrganizationEntity(): Record<string, unknown> {
   return {
     "@type": "Organization",
@@ -184,6 +186,37 @@ function buildOrganizationEntity(): Record<string, unknown> {
       },
     ],
   };
+}
+
+// Inline type/name/url alongside @id so both full JSON-LD graph resolvers and shallow validators read creator/publisher cleanly
+function buildOrganizationRef(): Record<string, unknown> {
+  return {
+    "@type": "Organization",
+    "@id": `${ORG_URL}/#org`,
+    name: ORG_NAME,
+    url: ORG_URL,
+  };
+}
+
+function buildDomainDatasetDescription(domainId: DomainId, evaluatedCount: number): string {
+  const meta = DOMAIN_BY_ID[domainId];
+  const unitLabel = domainId === "harnesses" ? "coding harnesses" : "model configurations";
+  return `${meta.description} Evaluates ${evaluatedCount} ${unitLabel} on a shared score and dollar cost Pareto frontier.`;
+}
+
+function buildDomainDistribution(slug: DomainSlug): Record<string, unknown>[] {
+  return [
+    {
+      "@type": "DataDownload",
+      encodingFormat: "application/json",
+      contentUrl: `${SITE_URL}/api/v1/domains/${slug}`,
+    },
+    {
+      "@type": "DataDownload",
+      encodingFormat: "text/markdown",
+      contentUrl: `${SITE_URL}/${slug}.md`,
+    },
+  ];
 }
 
 function getActiveBenchmarkNames(domainId: DomainId): string[] {
@@ -425,6 +458,7 @@ export function buildHomeJsonLd(
 ): Record<string, unknown> {
   const summaryById = new Map(homeSummaries.map((s) => [s.domainId, s]));
   const orgId = `${ORG_URL}/#org`;
+  const orgRef = buildOrganizationRef();
   const siteId = `${SITE_URL}/#website`;
 
   return {
@@ -457,26 +491,37 @@ export function buildHomeJsonLd(
       {
         "@type": "DataCatalog",
         "@id": `${SITE_URL}/#catalog`,
-        name: "ProChoice Composite LLM and Harness Indices",
+        name: CATALOG_NAME,
         description:
           "Daily composite indices built from private held-out and live benchmarks, comparing frontier language models and coding agent harnesses by score and real dollar cost.",
         url: SITE_URL,
         sameAs: [REPO_URL],
         dateModified: snapshot.generatedAt,
         license: LICENSE_URL,
-        creator: { "@id": orgId },
-        publisher: { "@id": orgId },
+        creator: orgRef,
+        publisher: orgRef,
         dataset: DOMAINS.map((meta) => {
           const sum = summaryById.get(meta.id);
+          const slug = domainToSlug(meta.id);
+          const canonicalUrl = domainToCanonicalUrl(meta.id);
           return {
             "@type": "Dataset",
-            name: meta.indexTitle,
-            description: sum?.tagline ?? meta.description,
-            url: domainToCanonicalUrl(meta.id),
+            "@id": `${canonicalUrl}#dataset`,
+            name: `ProChoice ${meta.indexTitle}`,
+            alternateName: meta.indexTitle,
+            description: buildDomainDatasetDescription(meta.id, sum?.evaluatedCount ?? 0),
+            url: canonicalUrl,
+            sameAs: canonicalUrl,
+            identifier: `${meta.epochVersion}:${snapshot.snapshotHash}`,
             version: meta.epochVersion,
             dateModified: snapshot.generatedAt,
-            license: LICENSE_URL,
+            inLanguage: "en-US",
             isAccessibleForFree: true,
+            license: LICENSE_URL,
+            creator: orgRef,
+            publisher: orgRef,
+            keywords: DOMAIN_KEYWORDS[meta.id],
+            distribution: buildDomainDistribution(slug),
           };
         }),
       },
@@ -504,7 +549,7 @@ export function buildDomainJsonLd(
   const canonicalUrl = domainToCanonicalUrl(domainId);
   const stats = computeDomainHeadlineStats(domainId, snapshot);
   const benchmarkNames = getActiveBenchmarkNames(domainId);
-  const orgId = `${ORG_URL}/#org`;
+  const orgRef = buildOrganizationRef();
 
   return {
     "@context": "https://schema.org",
@@ -531,7 +576,8 @@ export function buildDomainJsonLd(
         "@type": "Dataset",
         "@id": `${canonicalUrl}#dataset`,
         name: `ProChoice ${meta.indexTitle}`,
-        description: `${meta.description} Evaluates ${stats.evaluatedCount} ${domainId === "harnesses" ? "coding harnesses" : "model configurations"} on a shared score and dollar cost Pareto frontier.`,
+        alternateName: meta.indexTitle,
+        description: buildDomainDatasetDescription(domainId, stats.evaluatedCount),
         url: canonicalUrl,
         identifier: `${meta.epochVersion}:${snapshot.snapshotHash}`,
         version: meta.epochVersion,
@@ -539,8 +585,15 @@ export function buildDomainJsonLd(
         inLanguage: "en-US",
         isAccessibleForFree: true,
         license: LICENSE_URL,
-        creator: { "@id": orgId },
-        publisher: { "@id": orgId },
+        creator: orgRef,
+        publisher: orgRef,
+        keywords: DOMAIN_KEYWORDS[domainId],
+        includedInDataCatalog: {
+          "@type": "DataCatalog",
+          "@id": `${SITE_URL}/#catalog`,
+          name: CATALOG_NAME,
+          url: SITE_URL,
+        },
         measurementTechnique:
           domainId === "harnesses"
             ? "Controlled multi-benchmark pass rate and dollar cost per run merged across FrontierHarness v1.1 and Harness Leaderboard."
@@ -554,18 +607,7 @@ export function buildDomainJsonLd(
             ? ["FrontierHarness v1.1", "Harness Leaderboard"]
             : benchmarkNames),
         ],
-        distribution: [
-          {
-            "@type": "DataDownload",
-            encodingFormat: "application/json",
-            contentUrl: `${SITE_URL}/api/v1/domains/${slug}`,
-          },
-          {
-            "@type": "DataDownload",
-            encodingFormat: "text/markdown",
-            contentUrl: `${SITE_URL}/${slug}.md`,
-          },
-        ],
+        distribution: buildDomainDistribution(slug),
       },
       {
         "@type": "ItemList",
