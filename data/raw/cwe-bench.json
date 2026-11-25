@@ -3,10 +3,10 @@
     "sourceId": "cwe-bench",
     "label": "Collinear CWE-bench v2 (150 Held-Out Private Tasks)",
     "status": "ok",
-    "fetchedAt": "2026-11-22T14:18:22.348Z",
-    "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+    "fetchedAt": "2026-11-25T06:46:29.875Z",
+    "lastHealthyAt": "2026-11-25T06:46:29.875Z",
     "staleDays": 0,
-    "rowCount": 20,
+    "rowCount": 21,
     "license": "Apache-2.0",
     "sourceUrl": "https://cwe-bench.com/",
     "message": null,
@@ -14,11 +14,11 @@
       {
         "benchmarkId": "cwe_bench_v2",
         "status": "ok",
-        "rowCount": 20,
+        "rowCount": 21,
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
         "message": null
       }
     ],
@@ -49,7 +49,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -75,7 +75,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -101,7 +101,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -127,7 +127,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -153,7 +153,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -179,7 +179,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -205,7 +205,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -231,7 +231,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -257,7 +257,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -283,7 +283,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -309,7 +309,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -335,7 +335,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -361,7 +361,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -387,7 +387,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -413,7 +413,33 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
+        "sourceUrl": "https://cwe-bench.com/"
+      },
+      {
+        "sourceId": "cwe-bench",
+        "sourceRowId": "cwe-bench:v2-heldout:minimax-m3-1-flash-max",
+        "benchmarkId": "cwe_bench_v2",
+        "benchmarkVersion": "2.0-heldout",
+        "domainId": "cyber",
+        "rawModelName": "MiniMax-M3.1-Flash (max)",
+        "rawProvider": null,
+        "rawEffort": "high",
+        "rawHarness": null,
+        "observedHarness": "Claude Code",
+        "harnessRegime": "native",
+        "rawScore": 50.5,
+        "seRaw": null,
+        "ciHalfWidth": null,
+        "ciLower": null,
+        "ciUpper": null,
+        "battleCount": 600,
+        "measuredCostUsd": 0.41,
+        "suiteCostUsd": null,
+        "measuredInputTokens": null,
+        "measuredOutputTokens": null,
+        "evalDate": null,
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -439,7 +465,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -465,7 +491,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -491,7 +517,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -517,7 +543,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       },
       {
@@ -543,7 +569,7 @@
         "measuredInputTokens": null,
         "measuredOutputTokens": null,
         "evalDate": null,
-        "publishedDate": "2026-11-18",
+        "publishedDate": "2026-11-24",
         "sourceUrl": "https://cwe-bench.com/"
       }
     ],

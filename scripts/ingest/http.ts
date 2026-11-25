@@ -253,6 +253,131 @@ export function parseBalancedJson(str: string, startIdx: number): unknown {
   return null;
 }
 
+// Parse React Flight stream rows (<hexId>:<json> and UTF-8 byte-framed <hexId>:T<hexLen>,<text>)
+export function parseRscFlightChunks(rsc: string): Map<string, unknown> {
+  const bytes = Buffer.from(rsc, "utf8");
+  const chunks = new Map<string, unknown>();
+  let pos = 0;
+
+  while (pos < bytes.length) {
+    while (pos < bytes.length && (bytes[pos] === 0x0a || bytes[pos] === 0x0d)) pos++;
+    if (pos >= bytes.length) break;
+    const colon = bytes.indexOf(0x3a, pos);
+    if (colon === -1) break;
+    const id = bytes.subarray(pos, colon).toString("utf8").trim();
+    const nl = bytes.indexOf(0x0a, colon + 1);
+    if (!/^[0-9a-f]+$/.test(id)) {
+      pos = nl === -1 ? bytes.length : nl + 1;
+      continue;
+    }
+    if (bytes[colon + 1] === 0x54) {
+      const comma = bytes.indexOf(0x2c, colon + 2);
+      if (comma !== -1 && (nl === -1 || comma < nl)) {
+        const lenHex = bytes.subarray(colon + 2, comma).toString("utf8");
+        if (/^[0-9a-f]+$/i.test(lenHex)) {
+          const byteLen = Number.parseInt(lenHex, 16);
+          const start = comma + 1;
+          const end = Math.min(bytes.length, start + byteLen);
+          chunks.set(id, bytes.subarray(start, end).toString("utf8"));
+          pos = end;
+          continue;
+        }
+      }
+    }
+    const end = nl === -1 ? bytes.length : nl;
+    const payload = bytes.subarray(colon + 1, end).toString("utf8");
+    const first = payload[0];
+    if (
+      first &&
+      (first === "[" ||
+        first === "{" ||
+        first === '"' ||
+        first === "-" ||
+        first === "t" ||
+        first === "f" ||
+        first === "n" ||
+        (first >= "0" && first <= "9"))
+    ) {
+      try {
+        chunks.set(id, JSON.parse(payload));
+      } catch {
+        // Skip non-JSON Flight frames
+      }
+    }
+    pos = nl === -1 ? bytes.length : nl + 1;
+  }
+  return chunks;
+}
+
+// Resolve React Flight $undefined, $$ escapes, and lowercase-hex $<chunkId>:<path> outline references
+export function resolveRscFlightTree(root: unknown, chunks: ReadonlyMap<string, unknown>): unknown {
+  const refMemo = new Map<string, unknown>();
+  const activeRefs = new Set<string>();
+  const objMemo = new WeakMap<object, unknown>();
+
+  const resolveRefString = (ref: string): unknown => {
+    if (ref === "$undefined") return undefined;
+    if (ref.startsWith("$$")) return ref.slice(1);
+    const match = ref.match(/^\$([0-9a-f]+)(?::(.*))?$/);
+    if (!match?.[1]) return ref;
+    if (refMemo.has(ref)) return refMemo.get(ref);
+    if (activeRefs.has(ref)) return ref;
+    const chunkId = match[1];
+    if (!chunks.has(chunkId)) return ref;
+
+    activeRefs.add(ref);
+    try {
+      let cur: unknown = chunks.get(chunkId);
+      const segs = match[2] !== undefined && match[2].length > 0 ? match[2].split(":") : [];
+      for (const seg of segs) {
+        if (typeof cur === "string" && cur.startsWith("$")) {
+          cur = resolveRefString(cur);
+        }
+        if (Array.isArray(cur)) {
+          if (seg === "props" && cur.length >= 4 && cur[0] === "$") {
+            cur = cur[3];
+          } else if (/^\d+$/.test(seg)) {
+            cur = cur[Number(seg)];
+          } else {
+            return ref;
+          }
+        } else if (cur !== null && typeof cur === "object" && Object.hasOwn(cur, seg)) {
+          cur = (cur as Record<string, unknown>)[seg];
+        } else {
+          return ref;
+        }
+      }
+      const resolved = walk(cur);
+      refMemo.set(ref, resolved);
+      return resolved;
+    } finally {
+      activeRefs.delete(ref);
+    }
+  };
+
+  const walk = (val: unknown): unknown => {
+    if (typeof val === "string") {
+      return val.startsWith("$") ? resolveRefString(val) : val;
+    }
+    if (val === null || typeof val !== "object") return val;
+    if (objMemo.has(val)) return objMemo.get(val);
+    if (Array.isArray(val)) {
+      const out: unknown[] = [];
+      objMemo.set(val, out);
+      for (const item of val) out.push(walk(item));
+      return out;
+    }
+    const out: Record<string, unknown> = {};
+    objMemo.set(val, out);
+    for (const [k, v] of Object.entries(val)) {
+      out[k] = walk(v);
+    }
+    return out;
+  };
+
+  return walk(root);
+}
+
 export function unwrapAstroProps(v: unknown): unknown {
   if (Array.isArray(v) && v.length === 2 && (v[0] === 0 || v[0] === 1)) {
     if (v[0] === 0) {

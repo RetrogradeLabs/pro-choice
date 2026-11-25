@@ -24,6 +24,13 @@ export const metadata: Metadata = {
 export default async function AboutPage() {
   const { snapshot } = await loadCachedRelease();
   const updated = formatUtcDate(snapshot.generatedAt);
+  const pooledHarnesses =
+    snapshot.harnessLeaderboard.slices.find((s) => s.sliceId === "_all") ??
+    snapshot.harnessLeaderboard.slices[0];
+  const harnessCount = pooledHarnesses?.entries.length ?? 0;
+  const controlModelCount = snapshot.harnessLeaderboard.slices.filter(
+    (s) => s.sliceId !== "_all",
+  ).length;
 
   return (
     <InfoPageShell
@@ -70,8 +77,9 @@ export default async function AboutPage() {
           <Link href="/harnesses" className="underline underline-offset-4 hover:text-(--ink)">
             Harnesses Composite Index
           </Link>
-          , combining FrontierHarness v1.1 and Harness Leaderboard into one 25-harness board across
-          8 open control models so harness design and model choice are never conflated.
+          , combining FrontierHarness v1.1 and Harness Leaderboard into one {harnessCount}-harness
+          board across {controlModelCount} open control models so harness design and model choice
+          are never conflated.
         </p>
       </section>
 

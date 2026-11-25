@@ -3,8 +3,8 @@
     "sourceId": "surge",
     "label": "Surge AI Frontier Benchmarks (11 Benchmarks)",
     "status": "ok",
-    "fetchedAt": "2026-11-22T14:18:22.348Z",
-    "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+    "fetchedAt": "2026-11-25T06:46:29.875Z",
+    "lastHealthyAt": "2026-11-25T06:46:29.875Z",
     "staleDays": 0,
     "rowCount": 398,
     "license": "Public Research Leaderboards / Attribution Required",
@@ -18,7 +18,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
         "message": null
       },
       {
@@ -28,7 +28,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
         "message": null
       },
       {
@@ -38,7 +38,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
         "message": null
       },
       {
@@ -48,7 +48,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
         "message": null
       },
       {
@@ -58,7 +58,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
         "message": null
       },
       {
@@ -68,7 +68,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
         "message": null
       },
       {
@@ -78,7 +78,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
         "message": null
       },
       {
@@ -88,7 +88,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
         "message": null
       },
       {
@@ -98,7 +98,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
         "message": null
       },
       {
@@ -108,7 +108,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
         "message": null
       },
       {
@@ -118,7 +118,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-22T14:18:22.348Z",
+        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
         "message": null
       }
     ],
@@ -9728,6 +9728,31 @@
       },
       {
         "sourceId": "surge",
+        "sourceRowId": "surge:sudo-l7:Qwen 4 Max (xHigh reasoning)",
+        "benchmarkId": "surge_sudo_l7",
+        "benchmarkVersion": "1.0",
+        "domainId": "coding",
+        "rawModelName": "Qwen 4 Max",
+        "rawProvider": "Qwen",
+        "rawEffort": "xhigh",
+        "rawHarness": null,
+        "observedHarness": "Direct API",
+        "harnessRegime": "standardized",
+        "rawScore": 22.8,
+        "ciHalfWidth": null,
+        "ciLower": null,
+        "ciUpper": null,
+        "battleCount": null,
+        "measuredCostUsd": null,
+        "suiteCostUsd": null,
+        "measuredInputTokens": null,
+        "measuredOutputTokens": null,
+        "evalDate": null,
+        "publishedDate": null,
+        "sourceUrl": "https://www.surgehq.ai/benchmarks/sudo-l7"
+      },
+      {
+        "sourceId": "surge",
         "sourceRowId": "surge:sudo-l7:MiniMax M3.1 Flash (Max reasoning)",
         "benchmarkId": "surge_sudo_l7",
         "benchmarkVersion": "1.0",
@@ -9860,31 +9885,6 @@
         "rawModelName": "Hy Hy4 Preview",
         "rawProvider": "Hunyuan",
         "rawEffort": "high",
-        "rawHarness": null,
-        "observedHarness": "Direct API",
-        "harnessRegime": "standardized",
-        "rawScore": 15.6,
-        "ciHalfWidth": null,
-        "ciLower": null,
-        "ciUpper": null,
-        "battleCount": null,
-        "measuredCostUsd": null,
-        "suiteCostUsd": null,
-        "measuredInputTokens": null,
-        "measuredOutputTokens": null,
-        "evalDate": null,
-        "publishedDate": null,
-        "sourceUrl": "https://www.surgehq.ai/benchmarks/sudo-l7"
-      },
-      {
-        "sourceId": "surge",
-        "sourceRowId": "surge:sudo-l7:Qwen 4 Max (xHigh reasoning)",
-        "benchmarkId": "surge_sudo_l7",
-        "benchmarkVersion": "1.0",
-        "domainId": "coding",
-        "rawModelName": "Qwen 4 Max",
-        "rawProvider": "Qwen",
-        "rawEffort": "xhigh",
         "rawHarness": null,
         "observedHarness": "Direct API",
         "harnessRegime": "standardized",

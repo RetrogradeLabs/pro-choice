@@ -362,9 +362,12 @@ export function buildDomainMetadata(domainId: DomainId, snapshot: ProChoiceSnaps
   if (stats.valueLabel && stats.valueLabel !== stats.topLabel) {
     summaryBits.push(`Best value: ${stats.valueLabel}.`);
   }
+  const controlModelCount = snapshot.harnessLeaderboard.slices.filter(
+    (s) => s.sliceId !== "_all",
+  ).length;
   const leadSentence =
     domainId === "harnesses"
-      ? `Compare ${stats.evaluatedCount} coding agent harnesses across 8 open control models by pass rate and dollar cost.`
+      ? `Compare ${stats.evaluatedCount} coding agent harnesses across ${controlModelCount} open control models by pass rate and dollar cost.`
       : `Compare ${stats.evaluatedCount} LLM configurations across ${stats.benchmarkCount} private and live benchmarks by score and real dollar cost.`;
   const description = [leadSentence, ...summaryBits, `Updated ${updated}.`].join(" ").slice(0, 160);
 
@@ -414,7 +417,12 @@ export function buildDomainMetadata(domainId: DomainId, snapshot: ProChoiceSnaps
 
 export function buildHomeMetadata(snapshot: ProChoiceSnapshot): Metadata {
   const updated = formatUtcDate(snapshot.generatedAt);
-  const description = `Compare frontier LLMs and 25 coding harnesses across 6 indices and ${BENCHMARKS.length} private and live benchmarks by score and dollar cost. Updated ${updated}.`;
+  const harnessCount =
+    (
+      snapshot.harnessLeaderboard.slices.find((s) => s.sliceId === "_all") ??
+      snapshot.harnessLeaderboard.slices[0]
+    )?.entries.length ?? 0;
+  const description = `Compare frontier LLMs and ${harnessCount} coding harnesses across 6 indices and ${BENCHMARKS.length} private and live benchmarks by score and dollar cost. Updated ${updated}.`;
   const ogImageUrl = `${SITE_URL}/opengraph-image`;
 
   return {
@@ -739,8 +747,8 @@ export function renderDomainMarkdown(
       "",
       "## Controlled benchmark sources",
       "",
-      "- FrontierHarness Eval v1.1 (22 harnesses across 5 open control models): https://frontierharness.org/",
-      "- Harness Leaderboard (12 harnesses across 4 open control models): https://joelniklaus-harness-leaderboard.hf.space/",
+      "- FrontierHarness Eval v1.1 (Terminal-Bench 2.1 + Terminal-Bench 4.0): https://frontierharness.org/",
+      "- Harness Leaderboard (Terminal-Bench 2.1 + DeepSWE v1.1): https://joelniklaus-harness-leaderboard.hf.space/",
     );
   }
 

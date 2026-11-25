@@ -18,6 +18,8 @@ import {
   parseIsoDate,
   parseNumeric,
   parsePositive,
+  parseRscFlightChunks,
+  resolveRscFlightTree,
 } from "../http.ts";
 import type { PartitionStats, SourceAdapter } from "../types.ts";
 
@@ -163,7 +165,11 @@ const AA_BOUNDED_SPECS: readonly BoundedScoreSpec[] = [
   },
 ];
 
-function extractModelArrayByKey(rsc: string, key: string): unknown[] {
+function extractModelArrayByKey(
+  rsc: string,
+  key: string,
+  chunks: ReadonlyMap<string, unknown>,
+): unknown[] {
   const needle = `"${key}":[`;
   let searchFrom = 0;
   let best: unknown[] = [];
@@ -177,7 +183,9 @@ function extractModelArrayByKey(rsc: string, key: string): unknown[] {
     }
     searchFrom = idx + needle.length;
   }
-  return best;
+  if (best.length === 0) return best;
+  const resolved = resolveRscFlightTree(best, chunks);
+  return Array.isArray(resolved) ? resolved : best;
 }
 
 function cleanString(value: unknown): string | null {
@@ -485,9 +493,10 @@ export const artificialAnalysisAdapter: SourceAdapter = {
         st.error = err instanceof Error ? err.message : String(err);
         return 0;
       }
+      const evalChunks = parseRscFlightChunks(rsc);
       const arr = [
-        ...extractModelArrayByKey(rsc, "models"),
-        ...extractModelArrayByKey(rsc, "initialModels"),
+        ...extractModelArrayByKey(rsc, "models", evalChunks),
+        ...extractModelArrayByKey(rsc, "initialModels", evalChunks),
       ] as AaEvalModel[];
       const pageRowById = new Map<string, MergedEvalRow>();
 
@@ -572,9 +581,11 @@ export const artificialAnalysisAdapter: SourceAdapter = {
     if (modelsRes.status === "fulfilled") {
       try {
         const modelsRsc = extractRscText(modelsRes.value);
+        const modelsChunks = parseRscFlightChunks(modelsRsc);
         leaderboardModels = extractModelArrayByKey(
           modelsRsc,
           "initialModels",
+          modelsChunks,
         ) as AaLeaderboardModel[];
       } catch (err) {
         modelsParseError = err instanceof Error ? err.message : String(err);
@@ -833,7 +844,12 @@ export const artificialAnalysisAdapter: SourceAdapter = {
     } else {
       try {
         const agRsc = extractRscText(codingAgentsRes.value);
-        const agRows = extractModelArrayByKey(agRsc, "benchmarkRows") as AaCodingAgentRow[];
+        const agChunks = parseRscFlightChunks(agRsc);
+        const agRows = extractModelArrayByKey(
+          agRsc,
+          "benchmarkRows",
+          agChunks,
+        ) as AaCodingAgentRow[];
         if (agRows.length === 0) {
           for (const spec of AA_AGENT_SUB_SPECS) {
             ensureStat(spec.benchmarkId).error = "AA Coding Agents returned 0 benchmarkRows";

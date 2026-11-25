@@ -19,16 +19,16 @@ Open-source LLM leaderboard and coding agent harness benchmark by [Retrograde La
 
 ## Live composite indices
 
-Snapshot `313a974fbd864b61`, updated `2026-11-22` from 15 live benchmark and first-party pricing feeds across 47 active private and live benchmarks with unique dataset lineages within each domain. Default model picks cover the five Western providers shown on initial load; toggle DeepSeek, Moonshot, Alibaba, and Zhipu on [prochoice.industries](https://prochoice.industries) to compare all nine.
+Snapshot `9b4e4e949553b8f1`, updated `2026-11-25` from 15 live benchmark and first-party pricing feeds across 47 active private and live benchmarks with unique dataset lineages within each domain. Default model picks cover the five Western providers shown on initial load; toggle DeepSeek, Moonshot, Alibaba, and Zhipu on [prochoice.industries](https://prochoice.industries) to compare all nine.
 
 | Composite index | Active benchmarks | Budget | Best value | Top score |
 | :--- | :---: | :--- | :--- | :--- |
-| [Coding](https://prochoice.industries/coding) | 6 | GPT-6 Luna at 21.8, \$0.0051 | GPT-6.1 Terra at 57.5, \$0.17 | Claude Fable 5.2 at 90.0, \$26.5 |
-| [Writing](https://prochoice.industries/writing) | 2 | GPT-6 Luna at 46.1, \$0.0030 | Gemini 4 Carbon at 69.9, \$0.060 | Claude Fable 5.2 at 76.0, \$0.24 |
-| [Design](https://prochoice.industries/design) | 8 | GPT-6 Luna at 49.6, \$0.0050 | GPT-6.1 Sol at 70.4, \$0.11 | GPT-6 Astra at 78.6, \$2.40 |
-| [Research](https://prochoice.industries/research) | 27 | Muse Ember at 54.1, \$0.14 | N/A | Gemini 4 Neon at 77.4, \$3.74 |
+| [Coding](https://prochoice.industries/coding) | 6 | GPT-6 Luna at 21.5, \$0.0051 | GPT-6.1 Terra at 57.4, \$0.17 | Claude Fable 5.2 at 90.0, \$26.5 |
+| [Writing](https://prochoice.industries/writing) | 2 | GPT-6 Luna at 46.2, \$0.0030 | Gemini 4 Carbon at 70.3, \$0.060 | Claude Fable 5.2 at 75.2, \$0.24 |
+| [Design](https://prochoice.industries/design) | 8 | GPT-6 Luna at 49.8, \$0.0051 | Gemini 4 Carbon at 80.2, \$0.21 | Claude Fable 5.2 at 86.8, \$3.24 |
+| [Research](https://prochoice.industries/research) | 27 | Muse Ember at 53.8, \$0.14 | N/A | Gemini 4 Neon at 77.5, \$3.74 |
 | [Cyber](https://prochoice.industries/cyber) | 3 | GPT-6.1 Terra at 56.4, \$0.44 | GPT-6.2 Sol at 68.6, \$0.80 | Claude Fable 5.2 at 78.4, \$7.93 |
-| [Harnesses](https://prochoice.industries/harnesses) | 1 (+3 controlled) | OpenClaw at 38.8%, \$0.38 | Pi at 44.8%, \$0.52 | OpenCode at 48.0%, \$0.55 |
+| [Harnesses](https://prochoice.industries/harnesses) | 1 (+3 controlled) | OpenClaw at 39.4%, \$0.36 | Pi at 44.0%, \$0.48 | OpenCode at 47.5%, \$0.52 |
 
 ## Why ProChoice
 
@@ -39,7 +39,7 @@ ProChoice fixes those four gaps directly:
 - **One monotonic frontier per provider.** Models and reasoning efforts that cost more while scoring lower drop off the default chart and move into the Pruned table with exact wasted cost multiples.
 - **Six separated tracks.** Coding, Writing, Design, Research, Cyber, and Harnesses never collapse into one arbitrary overall average. Cross-domain Kendall tau correlations appear in every daily lifecycle audit.
 - **Explicit reasoning effort tiers.** Every configuration resolves to a verified first-party API reasoning effort tier. Scores never copy across effort tiers, and costs never copy across distinct harnesses.
-- **Controlled coding agent harness rankings.** Harnesses run separately across eight fixed open control models by merging FrontierHarness v1.1 and Harness Leaderboard into one 25-harness board covering OpenCode, Pi, Claude Code, Codex, OpenClaw, and 20 more agents.
+- **Controlled coding agent harness rankings.** Harnesses run separately across fixed open control models by merging FrontierHarness v1.1 and Harness Leaderboard into one unified board covering OpenCode, Pi, Claude Code, Codex, OpenClaw, and 20 more agents.
 
 ## Public API and AI agents
 

@@ -41,6 +41,28 @@ const CANONICAL_HARNESS_PROVIDER_BY_KEY: Readonly<Record<string, string>> = {
   "meta-llama": "Meta",
   "meta-models": "Meta",
   facebook: "Meta",
+  thinkingmachines: "Thinking Machines",
+  "thinking-machines": "Thinking Machines",
+  "thinking machines": "Thinking Machines",
+  "thinking machines lab": "Thinking Machines",
+  "thinking-machines-lab": "Thinking Machines",
+  mistral: "Mistral",
+  mistralai: "Mistral",
+  "mistral ai": "Mistral",
+  allenai: "AllenAI",
+  "allen ai": "AllenAI",
+  "allen-ai": "AllenAI",
+  minimax: "MiniMax",
+  minimaxai: "MiniMax",
+  "minimax ai": "MiniMax",
+  nousresearch: "Nous Research",
+  "nous research": "Nous Research",
+  "nous-research": "Nous Research",
+  stepfun: "StepFun",
+  "stepfun-ai": "StepFun",
+  "google-deepmind": "Google",
+  deepmind: "Google",
+  nvidia: "NVIDIA",
 };
 
 export function canonicalizeHarnessProviderName(raw: string | null | undefined): string | null {
@@ -611,14 +633,18 @@ function canonicalModelTail(sliceId: string): string {
   return slash >= 0 ? trimmed.slice(slash + 1) : trimmed;
 }
 
+function normalizeProviderMatchKey(raw: string | null | undefined): string | null {
+  const canonical = canonicalizeHarnessProviderName(raw);
+  if (!canonical) return null;
+  const compact = canonical.toLowerCase().replace(/[^a-z0-9]+/g, "");
+  return compact.length > 0 ? compact : null;
+}
+
 function canonicalSliceOrg(slice: HarnessModelSlice): string | null {
-  const explicit = canonicalizeHarnessProviderName(slice.org)?.toLowerCase() ?? null;
+  const explicit = normalizeProviderMatchKey(slice.org);
   const trimmed = slice.sliceId.trim();
   const slash = trimmed.indexOf("/");
-  const nsOrg =
-    slash > 0
-      ? (canonicalizeHarnessProviderName(trimmed.slice(0, slash))?.toLowerCase() ?? null)
-      : null;
+  const nsOrg = slash > 0 ? normalizeProviderMatchKey(trimmed.slice(0, slash)) : null;
   if (explicit && nsOrg && explicit !== nsOrg) {
     throw new Error(
       `Conflicting provider provenance for slice '${slice.sliceId}': namespace '${nsOrg}' !== org '${explicit}'`,
