@@ -2954,18 +2954,18 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
-    "rawModelName": "glm-4.5-air",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:glm-4.5-air"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
     "rawModelName": "qwen3-max",
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:qwen3-max"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_gamedev",
+    "rawModelName": "glm-4.5-air",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-4.5-air"
   },
   {
     "sourceId": "designarena",

@@ -1,7 +1,7 @@
 # ProChoice Daily Ingestion Summary
 
-- Generated at: 2026-11-25T06:46:29.875Z
-- Snapshot hash: `9b4e4e949553b8f1`
+- Generated at: 2026-11-25T16:57:24.910Z
+- Snapshot hash: `6ae787efaa93f584`
 - Unmapped allowlisted records: 527
 
 ## Mandatory Source Health
@@ -18,7 +18,7 @@
 | Harness Leaderboard (TB 2.1 + DeepSWE) | OK | 72 | 0 | OK |
 | LiveBench 2.0 Contamination-Free Suite | OK | 40 | 0 | OK |
 | Vals AI Frontier Suite (8 Benchmarks) | OK | 447 | 0 | OK |
-| DesignArena Visual & Agentic Arenas (7 Modalities) | OK | 894 | 0 | designarena_3d: Upstream btStdErr null on 169 rows; conservatively down-weighted by reliability model; designarena_dataviz: Upstream btStdErr null on 108 rows; conservatively down-weighted by reliability model; designarena_gamedev: Upstream btStdErr null on 173 rows; conservatively down-weighted by reliability model; designarena_mobileapps: Upstream btStdErr null on 56 rows; conservatively down-weighted by reliability model; designarena_slides: Upstream btStdErr null on 38 rows; conservatively down-weighted by reliability model; designarena_svg: Upstream btStdErr null on 143 rows; conservatively down-weighted by reliability model; designarena_website: Upstream btStdErr null on 207 rows; conservatively down-weighted by reliability model |
+| DesignArena Visual & Agentic Arenas (7 Modalities) | OK | 896 | 0 | designarena_3d: Upstream btStdErr null on 169 rows; conservatively down-weighted by reliability model; designarena_dataviz: Upstream btStdErr null on 108 rows; conservatively down-weighted by reliability model; designarena_gamedev: Upstream btStdErr null on 174 rows; conservatively down-weighted by reliability model; designarena_mobileapps: Upstream btStdErr null on 56 rows; conservatively down-weighted by reliability model; designarena_slides: Upstream btStdErr null on 38 rows; conservatively down-weighted by reliability model; designarena_svg: Upstream btStdErr null on 144 rows; conservatively down-weighted by reliability model; designarena_website: Upstream btStdErr null on 207 rows; conservatively down-weighted by reliability model |
 | Surge AI Frontier Benchmarks (11 Benchmarks) | OK | 398 | 0 | OK |
 | ToneBench Script Writing | OK | 150 | 0 | OK |
 | First-Party API Pricing (LiteLLM Verified SKUs) | OK | 71 | 0 | OK |

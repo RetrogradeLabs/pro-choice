@@ -3,8 +3,8 @@
     "sourceId": "epoch",
     "label": "Epoch AI Benchmark Hub (2 Frontier Benchmarks)",
     "status": "ok",
-    "fetchedAt": "2026-11-25T06:46:29.875Z",
-    "lastHealthyAt": "2026-11-25T06:46:29.875Z",
+    "fetchedAt": "2026-11-25T16:57:24.910Z",
+    "lastHealthyAt": "2026-11-25T16:57:24.910Z",
     "staleDays": 0,
     "rowCount": 182,
     "license": "CC-BY-4.0",
@@ -18,7 +18,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
+        "lastHealthyAt": "2026-11-25T16:57:24.910Z",
         "message": null
       },
       {
@@ -28,7 +28,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-25T06:46:29.875Z",
+        "lastHealthyAt": "2026-11-25T16:57:24.910Z",
         "message": null
       }
     ],
