@@ -3,8 +3,8 @@
     "sourceId": "livebench",
     "label": "LiveBench 2.0 Contamination-Free Suite",
     "status": "ok",
-    "fetchedAt": "2026-11-25T16:57:24.910Z",
-    "lastHealthyAt": "2026-11-25T16:57:24.910Z",
+    "fetchedAt": "2026-11-26T16:36:40.309Z",
+    "lastHealthyAt": "2026-11-26T16:36:40.309Z",
     "staleDays": 0,
     "rowCount": 40,
     "license": "Apache-2.0",
@@ -18,7 +18,7 @@
         "rejectedCount": 1,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-25T16:57:24.910Z",
+        "lastHealthyAt": "2026-11-26T16:36:40.309Z",
         "message": null
       }
     ],

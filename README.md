@@ -19,13 +19,13 @@ Open-source LLM leaderboard and coding agent harness benchmark by [Retrograde La
 
 ## Live composite indices
 
-Snapshot `6ae787efaa93f584`, updated `2026-11-25` from 15 live benchmark and first-party pricing feeds across 47 active private and live benchmarks with unique dataset lineages within each domain. Default model picks cover the five Western providers shown on initial load; toggle DeepSeek, Moonshot, Alibaba, and Zhipu on [prochoice.industries](https://prochoice.industries) to compare all nine.
+Snapshot `137e1e58f301178f`, updated `2026-11-26` from 15 live benchmark and first-party pricing feeds across 47 active private and live benchmarks with unique dataset lineages within each domain. Default model picks cover the five Western providers shown on initial load; toggle DeepSeek, Moonshot, Alibaba, and Zhipu on [prochoice.industries](https://prochoice.industries) to compare all nine.
 
 | Composite index | Active benchmarks | Budget | Best value | Top score |
 | :--- | :---: | :--- | :--- | :--- |
 | [Coding](https://prochoice.industries/coding) | 6 | GPT-6 Luna at 21.5, \$0.0051 | GPT-6.1 Terra at 57.4, \$0.17 | Claude Fable 5.2 at 90.0, \$26.5 |
 | [Writing](https://prochoice.industries/writing) | 2 | GPT-6 Luna at 46.2, \$0.0030 | Gemini 4 Carbon at 70.3, \$0.060 | Claude Fable 5.2 at 75.2, \$0.24 |
-| [Design](https://prochoice.industries/design) | 8 | GPT-6 Luna at 49.8, \$0.0051 | GPT-6.2 Sol at 78.8, \$0.16 | Claude Fable 5.2 at 86.7, \$3.28 |
+| [Design](https://prochoice.industries/design) | 8 | GPT-6 Luna at 49.7, \$0.0051 | Gemini 4 Carbon at 80.5, \$0.21 | Claude Fable 5.2 at 86.7, \$3.32 |
 | [Research](https://prochoice.industries/research) | 27 | Muse Ember at 53.8, \$0.14 | N/A | Gemini 4 Neon at 77.5, \$3.74 |
 | [Cyber](https://prochoice.industries/cyber) | 3 | GPT-6.1 Terra at 56.4, \$0.44 | GPT-6.2 Sol at 68.6, \$0.80 | Claude Fable 5.2 at 78.4, \$7.93 |
 | [Harnesses](https://prochoice.industries/harnesses) | 1 (+3 controlled) | OpenClaw at 39.4%, \$0.36 | Pi at 44.0%, \$0.48 | OpenCode at 47.5%, \$0.52 |

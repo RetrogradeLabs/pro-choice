@@ -2498,18 +2498,18 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_3d",
-    "rawModelName": "grok-4-fast-reasoning",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:grok-4-fast"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_3d",
     "rawModelName": "grok-4",
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:grok-4"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_3d",
+    "rawModelName": "grok-4-fast-reasoning",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:grok-4-fast"
   },
   {
     "sourceId": "designarena",
@@ -2658,18 +2658,18 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_dataviz",
-    "rawModelName": "claude-opus-4-1-20250805",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-opus-4-1"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_dataviz",
     "rawModelName": "glm-4.6",
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:glm-4.6"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_dataviz",
+    "rawModelName": "claude-opus-4-1-20250805",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:claude-opus-4-1"
   },
   {
     "sourceId": "designarena",
@@ -2858,14 +2858,6 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
-    "rawModelName": "deepseek-v3p2-exp",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:deepseek-v3p2-exp"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
     "rawModelName": "glm-4.5",
     "rawProvider": null,
     "rawHarness": null,
@@ -2874,10 +2866,10 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
-    "rawModelName": "claude-3.7-sonnet",
+    "rawModelName": "deepseek-v3p2-exp",
     "rawProvider": null,
     "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-3.7-sonnet"
+    "reason": "unresolved_allowlisted_model:deepseek-v3p2-exp"
   },
   {
     "sourceId": "designarena",
@@ -2886,6 +2878,14 @@
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:claude-sonnet-4"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_gamedev",
+    "rawModelName": "claude-3.7-sonnet",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:claude-3.7-sonnet"
   },
   {
     "sourceId": "designarena",

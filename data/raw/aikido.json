@@ -3,8 +3,8 @@
     "sourceId": "aikido",
     "label": "Aikido Arena Real-World CVE Detection",
     "status": "ok",
-    "fetchedAt": "2026-11-25T16:57:24.910Z",
-    "lastHealthyAt": "2026-11-25T16:57:24.910Z",
+    "fetchedAt": "2026-11-26T16:36:40.309Z",
+    "lastHealthyAt": "2026-11-26T16:36:40.309Z",
     "staleDays": 0,
     "rowCount": 14,
     "license": "Public Research Leaderboard / Attribution Required",
@@ -18,7 +18,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-25T16:57:24.910Z",
+        "lastHealthyAt": "2026-11-26T16:36:40.309Z",
         "message": null
       }
     ],
