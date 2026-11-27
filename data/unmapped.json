@@ -2346,14 +2346,6 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_3d",
-    "rawModelName": "claude-opus-4-1-20250805-thinking",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-opus-4-1"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_3d",
     "rawModelName": "deepseek-v3p1-thinking",
     "rawProvider": null,
     "rawHarness": null,
@@ -2362,10 +2354,10 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_3d",
-    "rawModelName": "claude-sonnet-4",
+    "rawModelName": "claude-opus-4-1-20250805-thinking",
     "rawProvider": null,
     "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-sonnet-4"
+    "reason": "unresolved_allowlisted_model:claude-opus-4-1"
   },
   {
     "sourceId": "designarena",
@@ -2374,6 +2366,14 @@
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:claude-opus-4"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_3d",
+    "rawModelName": "claude-sonnet-4",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:claude-sonnet-4"
   },
   {
     "sourceId": "designarena",
@@ -2446,14 +2446,6 @@
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:deepseek-chat"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_3d",
-    "rawModelName": "gemini-2.5-pro",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-pro"
   },
   {
     "sourceId": "designarena",
@@ -2538,66 +2530,10 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_3d",
-    "rawModelName": "gemini-2.5-flash",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-flash"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_3d",
-    "rawModelName": "qwen3-235B-a22B-thinking-2507",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-235B-a22B-thinking-2507"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_3d",
-    "rawModelName": "qwen3-235b-a22b-instruct-2507",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-235b-a22b-instruct-2507"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_3d",
     "rawModelName": "gpt-5.1-codex-mini",
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:gpt-5.1-codex-mini"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_3d",
-    "rawModelName": "gpt-5-nano",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5-nano"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_3d",
-    "rawModelName": "gemini-2.5-flash-lite-preview-09-2025",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-flash-lite-preview-09-2025"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_3d",
-    "rawModelName": "grok-3-mini",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:grok-3-mini"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_3d",
-    "rawModelName": "qwen3-235b-a22b",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-235b-a22b"
   },
   {
     "sourceId": "designarena",
@@ -2658,14 +2594,6 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_dataviz",
-    "rawModelName": "glm-4.6",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:glm-4.6"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_dataviz",
     "rawModelName": "claude-opus-4-1-20250805",
     "rawProvider": null,
     "rawHarness": null,
@@ -2678,14 +2606,6 @@
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:deepseek-v3p2"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_dataviz",
-    "rawModelName": "deepseek-v3p2-exp",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:deepseek-v3p2-exp"
   },
   {
     "sourceId": "designarena",
@@ -2753,22 +2673,6 @@
   },
   {
     "sourceId": "designarena",
-    "benchmarkId": "designarena_dataviz",
-    "rawModelName": "grok-4",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:grok-4"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_dataviz",
-    "rawModelName": "grok-3",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:grok-3"
-  },
-  {
-    "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
     "rawModelName": "qwen3.8-max-preview",
     "rawProvider": null,
@@ -2826,18 +2730,18 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
-    "rawModelName": "claude-opus-4",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-opus-4"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
     "rawModelName": "claude-opus-4-1-20250805-thinking",
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:claude-opus-4-1"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_gamedev",
+    "rawModelName": "claude-opus-4",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:claude-opus-4"
   },
   {
     "sourceId": "designarena",
@@ -2890,18 +2794,18 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
-    "rawModelName": "glm-4.7-flash",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:glm-4.7-flash"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
     "rawModelName": "claude-sonnet-4",
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:claude-sonnet-4"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_gamedev",
+    "rawModelName": "glm-4.7-flash",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:glm-4.7-flash"
   },
   {
     "sourceId": "designarena",
@@ -2926,14 +2830,6 @@
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:gpt-5-mini"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
-    "rawModelName": "gemini-2.5-pro",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-pro"
   },
   {
     "sourceId": "designarena",
@@ -3026,22 +2922,6 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
-    "rawModelName": "gemini-2.5-flash-lite-preview-09-2025",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-flash-lite-preview-09-2025"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
-    "rawModelName": "gpt-5-nano",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gpt-5-nano"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
     "rawModelName": "grok-3",
     "rawProvider": null,
     "rawHarness": null,
@@ -3058,50 +2938,10 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
-    "rawModelName": "gemini-2.5-flash",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:gemini-2.5-flash"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
     "rawModelName": "grok-4",
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:grok-4"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
-    "rawModelName": "qwen3-235B-a22B-thinking-2507",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-235B-a22B-thinking-2507"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
-    "rawModelName": "qwen3-235b-a22b-instruct-2507",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-235b-a22b-instruct-2507"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
-    "rawModelName": "grok-3-mini",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:grok-3-mini"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_gamedev",
-    "rawModelName": "qwen3-235b-a22b",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-235b-a22b"
   },
   {
     "sourceId": "designarena",
@@ -3153,14 +2993,6 @@
   },
   {
     "sourceId": "designarena",
-    "benchmarkId": "designarena_slides",
-    "rawModelName": "glm-5v-turbo",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:glm-5v-turbo"
-  },
-  {
-    "sourceId": "designarena",
     "benchmarkId": "designarena_svg",
     "rawModelName": "glm-5-turbo",
     "rawProvider": null,
@@ -3482,14 +3314,6 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_website",
-    "rawModelName": "glm-4.7-flash",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:glm-4.7-flash"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_website",
     "rawModelName": "claude-3.7-sonnet",
     "rawProvider": null,
     "rawHarness": null,
@@ -3498,10 +3322,10 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_website",
-    "rawModelName": "deepseek-v3p1-thinking",
+    "rawModelName": "glm-4.7-flash",
     "rawProvider": null,
     "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:deepseek-v3p1"
+    "reason": "unresolved_allowlisted_model:glm-4.7-flash"
   },
   {
     "sourceId": "designarena",
@@ -3510,6 +3334,14 @@
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:qwen3.5-plus-02-15"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_website",
+    "rawModelName": "deepseek-v3p1-thinking",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:deepseek-v3p1"
   },
   {
     "sourceId": "designarena",
@@ -3530,18 +3362,18 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_website",
-    "rawModelName": "deepseek-v3p2",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:deepseek-v3p2"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_website",
     "rawModelName": "glm-4.6",
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:glm-4.6"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_website",
+    "rawModelName": "deepseek-v3p2",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:deepseek-v3p2"
   },
   {
     "sourceId": "designarena",
@@ -3602,18 +3434,18 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_website",
-    "rawModelName": "claude-sonnet-4",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:claude-sonnet-4"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_website",
     "rawModelName": "glm-4.5-air",
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:glm-4.5-air"
+  },
+  {
+    "sourceId": "designarena",
+    "benchmarkId": "designarena_website",
+    "rawModelName": "claude-sonnet-4",
+    "rawProvider": null,
+    "rawHarness": null,
+    "reason": "unresolved_allowlisted_model:claude-sonnet-4"
   },
   {
     "sourceId": "designarena",
@@ -3674,14 +3506,6 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_website",
-    "rawModelName": "kimi-k2-thinking",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:kimi-k2"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_website",
     "rawModelName": "gpt-5.1-codex-mini",
     "rawProvider": null,
     "rawHarness": null,
@@ -3734,14 +3558,6 @@
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:kimi-k2-turbo-preview"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_website",
-    "rawModelName": "qwen3-coder-30b-a3b-instruct",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-coder-30b-a3b-instruct"
   },
   {
     "sourceId": "designarena",
@@ -3862,14 +3678,6 @@
     "rawProvider": null,
     "rawHarness": null,
     "reason": "unresolved_allowlisted_model:qwen3-30b-a3b"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_website",
-    "rawModelName": "qwen3-30b-a3b-thinking-2507",
-    "rawProvider": null,
-    "rawHarness": null,
-    "reason": "unresolved_allowlisted_model:qwen3-30b-a3b-thinking-2507"
   },
   {
     "sourceId": "designarena",
@@ -4153,22 +3961,6 @@
   },
   {
     "sourceId": "designarena",
-    "benchmarkId": "designarena_dataviz",
-    "rawModelName": "deepseek-v4-flash-0731",
-    "rawProvider": "deepseek",
-    "rawHarness": "Direct API",
-    "reason": "ambiguous_alias_collision:deepseek:deepseek-v4-flash:high:direct:native"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_dataviz",
-    "rawModelName": "deepseek-v4-flash",
-    "rawProvider": "deepseek",
-    "rawHarness": "Direct API",
-    "reason": "ambiguous_alias_collision:deepseek:deepseek-v4-flash:high:direct:native"
-  },
-  {
-    "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
     "rawModelName": "deepseek-v4-flash-0731",
     "rawProvider": "deepseek",
@@ -4178,22 +3970,6 @@
   {
     "sourceId": "designarena",
     "benchmarkId": "designarena_gamedev",
-    "rawModelName": "deepseek-v4-flash",
-    "rawProvider": "deepseek",
-    "rawHarness": "Direct API",
-    "reason": "ambiguous_alias_collision:deepseek:deepseek-v4-flash:high:direct:native"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_svg",
-    "rawModelName": "deepseek-v4-flash-0731",
-    "rawProvider": "deepseek",
-    "rawHarness": "Direct API",
-    "reason": "ambiguous_alias_collision:deepseek:deepseek-v4-flash:high:direct:native"
-  },
-  {
-    "sourceId": "designarena",
-    "benchmarkId": "designarena_svg",
     "rawModelName": "deepseek-v4-flash",
     "rawProvider": "deepseek",
     "rawHarness": "Direct API",
