@@ -3,8 +3,8 @@
     "sourceId": "tonebench",
     "label": "ToneBench Script Writing",
     "status": "ok",
-    "fetchedAt": "2026-11-27T16:22:16.583Z",
-    "lastHealthyAt": "2026-11-27T16:22:16.583Z",
+    "fetchedAt": "2026-11-28T15:14:59.385Z",
+    "lastHealthyAt": "2026-11-28T15:14:59.385Z",
     "staleDays": 0,
     "rowCount": 150,
     "license": "Public Research Leaderboard / Attribution Required",
@@ -18,7 +18,7 @@
         "rejectedCount": 0,
         "consecutiveDropDays": 0,
         "lastLowCountDate": null,
-        "lastHealthyAt": "2026-11-27T16:22:16.583Z",
+        "lastHealthyAt": "2026-11-28T15:14:59.385Z",
         "message": null
       }
     ],

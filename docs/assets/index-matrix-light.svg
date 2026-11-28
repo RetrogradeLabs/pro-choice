@@ -43,7 +43,7 @@
         </g>
       </g>
       <text x="61" y="29" class="wordmark">prochoice</text>
-      <text x="932" y="28" text-anchor="end" class="meta">6 indices · 47 benchmarks · 2026-11-27</text>
+      <text x="932" y="28" text-anchor="end" class="meta">6 indices · 47 benchmarks · 2026-11-28</text>
       <line x1="0" y1="48" x2="960" y2="48" class="hairline" />
     </g>
 
@@ -119,28 +119,30 @@
       <text x="28" y="73" class="tagline">mobile app, and slide blind arenas.</text>
 
       <g transform="translate(0, -200)">
-        <path class="spark-area" d="M348 260 L371.6 252.6 L388.3 248.4 L402.6 244.4 L405.4 236.7 L431.5 230.7 L448 230 L448 260 L348 260 Z" />
-        <path class="spark-line" d="M348 260 L371.6 252.6 L388.3 248.4 L402.6 244.4 L405.4 236.7 L431.5 230.7 L448 230" />
+        <path class="spark-area" d="M348 260 L365.5 252.6 L382 249.6 L394.8 245.9 L396.5 241.2 L401.9 236.4 L405.7 235.2 L443.5 234.1 L448 230 L448 260 L348 260 Z" />
+        <path class="spark-line" d="M348 260 L365.5 252.6 L382 249.6 L394.8 245.9 L396.5 241.2 L401.9 236.4 L405.7 235.2 L443.5 234.1 L448 230" />
         <circle cx="348" cy="260" r="1.8" class="spark-dot" />
-        <circle cx="371.6" cy="252.6" r="1.8" class="spark-dot" />
-        <circle cx="388.3" cy="248.4" r="1.8" class="spark-dot" />
-        <circle cx="402.6" cy="244.4" r="1.8" class="spark-dot" />
-        <circle cx="405.4" cy="236.7" r="1.8" class="spark-dot" />
-        <circle cx="431.5" cy="230.7" r="1.8" class="spark-dot" />
+        <circle cx="365.5" cy="252.6" r="1.8" class="spark-dot" />
+        <circle cx="382" cy="249.6" r="1.8" class="spark-dot" />
+        <circle cx="394.8" cy="245.9" r="1.8" class="spark-dot" />
+        <circle cx="396.5" cy="241.2" r="1.8" class="spark-dot" />
+        <circle cx="401.9" cy="236.4" r="1.8" class="spark-dot" />
+        <circle cx="405.7" cy="235.2" r="1.8" class="spark-dot" />
+        <circle cx="443.5" cy="234.1" r="1.8" class="spark-dot" />
         <circle cx="448" cy="230" r="2.8" class="spark-end" />
       </g>
 
       <line x1="28" y1="93" x2="452" y2="93" class="hairline" />
 
       <text x="28" y="116" class="label">Top score</text>
-      <rect x="102.2" y="109.2" width="5.6" height="5.6" fill="#006955" />
-      <text x="116" y="116" clip-path="url(#name-clip)"><tspan class="top-name">GPT-6 Astra</tspan><tspan dx="7" class="effort">Medium</tspan></text>
-      <text x="452" y="116" text-anchor="end" class="top-val">80.3 · $1.32</text>
+      <circle cx="105" cy="112" r="3.1" fill="#b01e25" />
+      <text x="116" y="116" clip-path="url(#name-clip)"><tspan class="top-name">Claude Fable 5.2</tspan><tspan dx="7" class="effort">High</tspan></text>
+      <text x="452" y="116" text-anchor="end" class="top-val">86.8 · $3.32</text>
 
       <text x="28" y="139" class="label">Best value</text>
-      <rect x="102.2" y="132.2" width="5.6" height="5.6" fill="#006955" />
-      <text x="116" y="139" clip-path="url(#name-clip)"><tspan class="sec-name">GPT-6.1 Sol</tspan><tspan dx="7" class="effort">Medium</tspan></text>
-      <text x="452" y="139" text-anchor="end" class="sec-val">74.6 · $0.12</text>
+      <polygon points="105,131.6 108.4,137.8 101.6,137.8" fill="#1d5bd6" />
+      <text x="116" y="139" clip-path="url(#name-clip)"><tspan class="sec-name">Gemini 4 Carbon</tspan><tspan dx="7" class="effort">Medium</tspan></text>
+      <text x="452" y="139" text-anchor="end" class="sec-val">80.3 · $0.21</text>
     </g>
 
     <g id="cell-research" transform="translate(480, 209.5)">
@@ -207,11 +209,10 @@
       <text x="28" y="73" class="tagline">and fixed open-model control suites.</text>
 
       <g transform="translate(-480, -360)">
-        <path class="spark-area" d="M828 420 L901 405.6 L904.1 403.1 L928 390 L928 420 L828 420 Z" />
-        <path class="spark-line" d="M828 420 L901 405.6 L904.1 403.1 L928 390" />
+        <path class="spark-area" d="M828 420 L925.7 407.9 L928 390 L928 420 L828 420 Z" />
+        <path class="spark-line" d="M828 420 L925.7 407.9 L928 390" />
         <circle cx="828" cy="420" r="1.8" class="spark-dot" />
-        <circle cx="901" cy="405.6" r="1.8" class="spark-dot" />
-        <circle cx="904.1" cy="403.1" r="1.8" class="spark-dot" />
+        <circle cx="925.7" cy="407.9" r="1.8" class="spark-dot" />
         <circle cx="928" cy="390" r="2.8" class="spark-end" />
       </g>
 
@@ -220,12 +221,12 @@
       <text x="28" y="116" class="label">Top score</text>
       <circle cx="105" cy="112" r="3.1" fill="#2563eb" />
       <text x="116" y="116" clip-path="url(#name-clip)"><tspan class="top-name">OpenCode</tspan><tspan dx="7" class="effort">v2.2.6</tspan></text>
-      <text x="452" y="116" text-anchor="end" class="top-val">47.5% · $0.52</text>
+      <text x="452" y="116" text-anchor="end" class="top-val">47.7% · $0.49</text>
 
       <text x="28" y="139" class="label">Best value</text>
       <circle cx="105" cy="135" r="3.1" fill="#55534e" />
-      <text x="116" y="139" clip-path="url(#name-clip)"><tspan class="sec-name">Pi</tspan><tspan dx="7" class="effort">v1.4.0 / v1.2.0</tspan></text>
-      <text x="452" y="139" text-anchor="end" class="sec-val">44.0% · $0.48</text>
+      <text x="116" y="139" clip-path="url(#name-clip)"><tspan class="sec-name">Codex CLI</tspan><tspan dx="7" class="effort">v0.164.0+baseten-catalog.1 / v0.162.1</tspan></text>
+      <text x="452" y="139" text-anchor="end" class="sec-val">42.8% · $0.49</text>
     </g>
 
     <g id="footer">
